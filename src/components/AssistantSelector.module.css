@@ -1,0 +1,58 @@
+.selector {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--apm-cmd-border);
+  border-radius: 3px;
+  color: var(--apm-t2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.btn:hover {
+  border-color: var(--apm-accent2);
+  color: var(--apm-t1);
+}
+
+.active {
+  border-color: var(--apm-accent2);
+  color: var(--apm-accent);
+}
+
+.logo {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+.active .logo {
+  opacity: 1;
+}
+
+.name {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .btn {
+    padding: 5px 8px;
+    font-size: 9px;
+  }
+
+  .logo {
+    width: 14px;
+    height: 14px;
+  }
+}

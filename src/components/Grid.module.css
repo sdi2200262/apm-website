@@ -1,0 +1,56 @@
+/* ============================================
+   Grid-as-Background System
+   ============================================ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  width: 100%;
+  min-height: 100vh;
+  background: var(--apm-bg);
+  position: relative;
+}
+
+/* Empty cell — visible borders create the grid texture */
+.cell {
+  border-right: 1px solid var(--apm-grid);
+  border-bottom: 1px solid var(--apm-grid);
+  min-height: 50px;
+}
+
+/* Merged region — content container, bordered on right and bottom */
+.region {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 16px;
+  z-index: 1;
+  position: relative;
+  border-right: 1px solid var(--apm-border);
+  border-bottom: 1px solid var(--apm-border);
+}
+
+/* Separator row cell — stronger border */
+.separatorCell {
+  border-right: 1px solid var(--apm-grid);
+  border-bottom: 2px solid var(--apm-border);
+  min-height: 50px;
+}
+
+/* ============================================
+   Responsive: Tablet (16 cols)
+   ============================================ */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(16, 1fr);
+  }
+}
+
+/* ============================================
+   Responsive: Mobile (12 cols)
+   ============================================ */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}

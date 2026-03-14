@@ -1,0 +1,460 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   APM Design System — CSS Variables
+   ============================================ */
+
+:root {
+  /* APM Custom Properties — Dark (default) */
+  --apm-bg: #0e0e11;
+  --apm-grid: #1a1a20;
+  --apm-border: #252530;
+  --apm-t1: #e2e2e8;
+  --apm-t2: #888899;
+  --apm-t3: #4a4a5c;
+  --apm-accent: #3aada5;
+  --apm-accent2: #2a8d86;
+  --apm-cmd-bg: #111115;
+  --apm-cmd-border: #1e1e28;
+
+  /* Map to Docusaurus Infima variables */
+  --ifm-color-primary: #3aada5;
+  --ifm-color-primary-dark: #2a8d86;
+  --ifm-color-primary-darker: #237d77;
+  --ifm-color-primary-darkest: #1a5f5a;
+  --ifm-color-primary-light: #4fbfb7;
+  --ifm-color-primary-lighter: #60cac3;
+  --ifm-color-primary-lightest: #84d9d3;
+
+  --ifm-background-color: #0e0e11;
+  --ifm-background-surface-color: #111115;
+  --ifm-font-color-base: #e2e2e8;
+  --ifm-font-color-secondary: #888899;
+  --ifm-heading-color: #e2e2e8;
+
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', monospace;
+  --ifm-heading-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --ifm-global-radius: 3px;
+  --ifm-code-border-radius: 3px;
+  --ifm-button-border-radius: 3px;
+  --ifm-card-border-radius: 3px;
+
+  --ifm-code-font-size: 85%;
+  --ifm-line-height-base: 1.75;
+
+  --ifm-navbar-background-color: #0e0e11;
+  --ifm-navbar-shadow: none;
+  --ifm-footer-background-color: #111115;
+
+  --ifm-link-color: #3aada5;
+  --ifm-link-hover-color: #4fbfb7;
+
+  --ifm-menu-color: #888899;
+  --ifm-menu-color-active: #3aada5;
+  --ifm-menu-color-background-active: rgba(58, 173, 165, 0.08);
+
+  --ifm-toc-link-color: #888899;
+  --ifm-toc-border-color: #252530;
+
+  --ifm-hr-border-color: #252530;
+  --ifm-table-border-color: #252530;
+
+  --ifm-breadcrumb-color-active: #3aada5;
+  --ifm-breadcrumb-item-background-active: rgba(58, 173, 165, 0.08);
+
+  --docusaurus-highlighted-code-line-bg: rgba(58, 173, 165, 0.1);
+}
+
+/* Light theme overrides */
+[data-theme='light'] {
+  --apm-bg: #f5f5f7;
+  --apm-grid: #e2e2e8;
+  --apm-border: #d0d0d8;
+  --apm-t1: #1a1a20;
+  --apm-t2: #5a5a6a;
+  --apm-t3: #9090a0;
+  --apm-accent: #2a8d86;
+  --apm-accent2: #237d77;
+  --apm-cmd-bg: #eaeaef;
+  --apm-cmd-border: #d0d0d8;
+
+  --ifm-color-primary: #2a8d86;
+  --ifm-color-primary-dark: #237d77;
+  --ifm-color-primary-darker: #1d6d68;
+  --ifm-color-primary-darkest: #155450;
+  --ifm-color-primary-light: #3aada5;
+  --ifm-color-primary-lighter: #4fbfb7;
+  --ifm-color-primary-lightest: #84d9d3;
+
+  --ifm-background-color: #f5f5f7;
+  --ifm-background-surface-color: #eaeaef;
+  --ifm-font-color-base: #1a1a20;
+  --ifm-font-color-secondary: #5a5a6a;
+  --ifm-heading-color: #1a1a20;
+
+  --ifm-navbar-background-color: #f5f5f7;
+  --ifm-footer-background-color: #eaeaef;
+
+  --ifm-link-color: #2a8d86;
+  --ifm-link-hover-color: #237d77;
+
+  --ifm-menu-color: #5a5a6a;
+  --ifm-menu-color-active: #2a8d86;
+  --ifm-menu-color-background-active: rgba(42, 141, 134, 0.08);
+
+  --ifm-toc-link-color: #5a5a6a;
+  --ifm-toc-border-color: #d0d0d8;
+
+  --ifm-hr-border-color: #d0d0d8;
+  --ifm-table-border-color: #d0d0d8;
+
+  --docusaurus-highlighted-code-line-bg: rgba(42, 141, 134, 0.1);
+}
+
+/* ============================================
+   Global Styles
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--ifm-font-family-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Navbar — Docs pages only
+   ============================================ */
+
+.navbar {
+  border-bottom: 1px solid var(--apm-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: var(--apm-bg) !important;
+}
+
+.navbar__title {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.3px;
+}
+
+.navbar__link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   Sidebar
+   ============================================ */
+
+.menu__link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  border-radius: 3px;
+}
+
+.menu__link--active {
+  color: var(--apm-accent) !important;
+}
+
+.menu__list-item-collapsible:hover {
+  background: rgba(58, 173, 165, 0.06);
+}
+
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--apm-border) !important;
+}
+
+.theme-doc-sidebar-menu {
+  padding: 8px 0;
+}
+
+.menu__list .menu__list {
+  border-left: 1px solid var(--apm-border);
+  margin-left: 12px;
+  padding-left: 0;
+}
+
+/* ============================================
+   Doc Article
+   ============================================ */
+
+.theme-doc-markdown {
+  padding: 0 8px;
+}
+
+.markdown h1:first-child {
+  border-bottom: 1px solid var(--apm-border);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+}
+
+.markdown h2 {
+  border-bottom: 1px solid var(--apm-border);
+  padding-bottom: 8px;
+  margin-top: 40px;
+  font-size: 1.2rem;
+  letter-spacing: -0.3px;
+}
+
+.markdown h3 {
+  color: var(--apm-accent);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  margin-top: 28px;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h4 {
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.3px;
+}
+
+.markdown p {
+  line-height: 1.8;
+  color: var(--apm-t2);
+  margin-bottom: 1rem;
+}
+
+/* Lists */
+.markdown ul,
+.markdown ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--apm-t2);
+  line-height: 1.8;
+}
+
+.markdown li {
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+}
+
+.markdown li::marker {
+  color: var(--apm-accent);
+}
+
+.markdown li > p {
+  margin-bottom: 0.3rem;
+}
+
+/* Nested lists */
+.markdown ul ul,
+.markdown ol ol,
+.markdown ul ol,
+.markdown ol ul {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.markdown strong {
+  color: var(--apm-t1);
+  font-weight: 600;
+}
+
+.markdown blockquote {
+  border-left: 3px solid var(--apm-accent2);
+  background: var(--apm-cmd-bg);
+  padding: 12px 16px;
+  margin: 16px 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.markdown blockquote p {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* Tables */
+.markdown table {
+  font-size: 13px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.markdown table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--apm-t3);
+  background: var(--apm-cmd-bg);
+  padding: 8px 12px;
+  border: 1px solid var(--apm-border);
+}
+
+.markdown table td {
+  padding: 8px 12px;
+  border: 1px solid var(--apm-border);
+  color: var(--apm-t2);
+}
+
+.markdown table tr:hover td {
+  background: rgba(58, 173, 165, 0.04);
+}
+
+/* ============================================
+   Code Blocks
+   ============================================ */
+
+.prism-code {
+  border: 1px solid var(--apm-cmd-border);
+  border-radius: 3px !important;
+  font-size: 13px;
+  background: var(--apm-cmd-bg) !important;
+}
+
+code {
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 85%;
+  background: var(--apm-cmd-bg);
+  border: 1px solid var(--apm-cmd-border);
+  padding: 2px 5px;
+}
+
+.theme-code-block {
+  --prism-background-color: var(--apm-cmd-bg) !important;
+}
+
+/* Code block title */
+.codeBlockTitle_node_modules-\@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--apm-cmd-bg);
+  border-bottom: 1px solid var(--apm-cmd-border);
+  color: var(--apm-t3);
+}
+
+/* ============================================
+   Footer — Docs pages
+   ============================================ */
+
+.footer {
+  border-top: 1px solid var(--apm-border);
+  background: var(--apm-cmd-bg);
+}
+
+.footer__title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--apm-t3);
+}
+
+.footer__link-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--apm-t2);
+}
+
+.footer__link-item:hover {
+  color: var(--apm-accent);
+}
+
+/* ============================================
+   Table of Contents
+   ============================================ */
+
+.table-of-contents {
+  border-left: 1px solid var(--apm-border);
+  padding-left: 12px;
+}
+
+.table-of-contents__link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--apm-t3);
+}
+
+.table-of-contents__link:hover,
+.table-of-contents__link--active {
+  color: var(--apm-accent);
+}
+
+/* ============================================
+   Breadcrumbs
+   ============================================ */
+
+.breadcrumbs__link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--apm-t3);
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--apm-accent);
+}
+
+.breadcrumbs__item:not(:last-child):after {
+  color: var(--apm-t3);
+}
+
+/* ============================================
+   Pagination (prev/next)
+   ============================================ */
+
+.pagination-nav__link {
+  border: 1px solid var(--apm-border);
+  border-radius: 3px;
+  transition: border-color 0.15s ease;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--apm-accent2);
+}
+
+.pagination-nav__sublabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--apm-t3);
+}
+
+.pagination-nav__label {
+  font-size: 14px;
+  color: var(--apm-t1);
+}
+
+/* ============================================
+   Scrollbar (landing page)
+   ============================================ */
+
+.landing-page ::-webkit-scrollbar {
+  display: none;
+}
+
+.landing-page {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================
+   Selection
+   ============================================ */
+
+::selection {
+  background: rgba(58, 173, 165, 0.25);
+  color: inherit;
+}
