@@ -16,8 +16,8 @@ export default function AssistantSelector({ active, onSelect }) {
         return (
           <button
             key={ast.id}
-            className={`${styles.btn} ${active.id === ast.id ? styles.active : ''}`}
-            onClick={() => onSelect(ast)}
+            className={`${styles.btn} ${active?.id === ast.id ? styles.active : ''}`}
+            onClick={() => onSelect(active?.id === ast.id ? null : ast)}
             title={ast.name}
           >
             {logo ? (

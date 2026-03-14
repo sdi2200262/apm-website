@@ -26,8 +26,8 @@
   padding: 8px 16px;
   z-index: 1;
   position: relative;
-  border-right: 1px solid var(--apm-border);
-  border-bottom: 1px solid var(--apm-border);
+  border-right: 1px solid var(--apm-grid);
+  border-bottom: 1px solid var(--apm-grid);
 }
 
 /* Separator row cell — stronger border */

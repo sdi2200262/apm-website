@@ -5,7 +5,9 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
+    "prestart": "node scripts/build-all-docs.js",
     "build": "docusaurus build",
+    "prebuild": "node scripts/build-all-docs.js",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",

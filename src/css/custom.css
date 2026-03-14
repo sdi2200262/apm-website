@@ -321,7 +321,8 @@ body {
   background: var(--apm-cmd-bg) !important;
 }
 
-code {
+/* Inline code only — block code is handled by .prism-code / pre */
+:not(pre) > code {
   border-radius: 3px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 85%;
@@ -349,6 +350,17 @@ code {
    Footer — Docs pages
    ============================================ */
 
+.footer__links {
+  justify-content: center !important;
+}
+
+.footer__col {
+  flex: none !important;
+  width: auto !important;
+  min-width: 160px;
+  padding: 0 24px;
+}
+
 .footer {
   border-top: 1px solid var(--apm-border);
   background: var(--apm-cmd-bg);
@@ -356,16 +368,20 @@ code {
 
 .footer__title {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--apm-t3);
+  margin-bottom: 12px;
 }
 
 .footer__link-item {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--apm-t2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 2;
 }
 
 .footer__link-item:hover {
@@ -377,8 +393,14 @@ code {
    ============================================ */
 
 .table-of-contents {
-  border-left: 1px solid var(--apm-border);
   padding-left: 12px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Remove default left border — container-level border handles the TOC edge */
+.table-of-contents__left-border {
+  border-left: none;
 }
 
 .table-of-contents__link {

@@ -82,7 +82,7 @@ const config = {
         respectPrefersColorScheme: true,
       },
       navbar: {
-        title: 'APM',
+        title: '',
         logo: {
           alt: 'APM Logo',
           src: 'img/apm-logo.svg',
@@ -108,14 +108,13 @@ const config = {
             items: [
               { label: 'Introduction', to: '/docs/introduction' },
               { label: 'Getting Started', to: '/docs/getting-started' },
-              { label: 'Agent Types', to: '/docs/agent-types' },
             ],
           },
           {
             title: 'Community',
             items: [
               {
-                label: 'GitHub Issues',
+                label: 'Issues',
                 href: 'https://github.com/sdi2200262/agentic-project-management/issues',
               },
               {
@@ -128,12 +127,8 @@ const config = {
             title: 'More',
             items: [
               {
-                label: 'GitHub',
-                href: 'https://github.com/sdi2200262/agentic-project-management',
-              },
-              {
-                label: 'NPM',
-                href: 'https://www.npmjs.com/package/agentic-pm',
+                label: 'Contributing',
+                href: 'https://github.com/sdi2200262/agentic-project-management/blob/main/CONTRIBUTING.md',
               },
               {
                 label: 'Changelog',
@@ -142,12 +137,15 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright ${new Date().getFullYear()} APM Contributors. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
         additionalLanguages: ['bash', 'json', 'yaml', 'toml'],
+      },
+      tableOfContents: {
+        minHeadingLevel: 2,
+        maxHeadingLevel: 2,
       },
       mermaid: {
         theme: { light: 'neutral', dark: 'dark' },

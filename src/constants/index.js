@@ -4,6 +4,7 @@ export const GITHUB_ISSUES_URL = 'https://github.com/sdi2200262/agentic-project-
 export const GITHUB_DISCUSSIONS_URL = 'https://github.com/sdi2200262/agentic-project-management/discussions';
 export const GITHUB_CHANGELOG_URL = 'https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md';
 export const GITHUB_LICENSE_URL = 'https://github.com/sdi2200262/agentic-project-management/blob/main/LICENSE';
+export const GITHUB_SECURITY_URL = 'https://github.com/sdi2200262/agentic-project-management/security/policy';
 export const NPM_URL = 'https://www.npmjs.com/package/agentic-pm';
 export const COPY_FEEDBACK_DURATION = 2000;
 
@@ -42,8 +43,6 @@ export const ASSISTANTS = [
   },
 ];
 
-export const DEFAULT_ASSISTANT = ASSISTANTS[0]; // Cursor
-
 /**
  * Grid region map for the landing page.
  * Each region: { id, r1, c1, r2, c2 }
@@ -58,9 +57,11 @@ export const LANDING_REGIONS = [
   { id: 'hdr',    r1: 0,  c1: 0,  r2: 0,  c2: 23 },
 
   // Hero heading — matches command block column span
-  { id: 'hero-h', r1: 3,  c1: 7,  r2: 5,  c2: 16 },
+  { id: 'hero-h',    r1: 3, c1: 7, r2: 5, c2: 16 },
   // Hero subtitle
-  { id: 'hero-sub', r1: 6, c1: 7, r2: 6, c2: 16 },
+  { id: 'hero-sub',  r1: 6, c1: 7, r2: 6, c2: 16 },
+  // Hero stats (stars + downloads)
+  { id: 'hero-stats', r1: 7, c1: 7, r2: 7, c2: 16 },
 
   // Step 1 label
   { id: 'step1',  r1: 9,  c1: 7,  r2: 9,  c2: 16 },

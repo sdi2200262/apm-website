@@ -1,0 +1,36 @@
+.toolbar {
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--apm-border);
+  border-right: 1px solid var(--apm-border);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: sticky;
+  bottom: 0;
+  background: var(--ifm-background-color);
+}
+
+.btn {
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--apm-t3);
+  background: transparent;
+  border: 1px solid var(--apm-cmd-border);
+  border-radius: 3px;
+  padding: 5px 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover {
+  color: var(--apm-accent);
+  border-color: var(--apm-accent2);
+}
+
+.btn.active {
+  color: var(--apm-accent);
+}

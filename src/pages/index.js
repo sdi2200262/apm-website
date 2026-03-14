@@ -8,7 +8,6 @@ import { useStats } from '../hooks/useStats';
 import { useContributors } from '../hooks/useContributors';
 import {
   ASSISTANTS,
-  DEFAULT_ASSISTANT,
   LANDING_REGIONS,
   GITHUB_URL,
   GITHUB_RELEASES_URL,
@@ -20,14 +19,21 @@ import {
 } from '../constants';
 import styles from './index.module.css';
 
+function fmtNum(n) {
+  if (!n) return null;
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return n.toString();
+}
+
 // Inner component — rendered inside <Layout> so useColorMode has its provider
 function HomeContent() {
-  const [assistant, setAssistant] = useState(DEFAULT_ASSISTANT);
+  const [assistant, setAssistant] = useState(null);
   const { stats } = useStats();
   const { contributors } = useContributors();
   const { colorMode, setColorMode } = useColorMode();
 
-  const initCommand = `apm init ${assistant.flag}`;
+  const initCommand = assistant ? `apm init ${assistant.flag}` : 'apm init';
 
   // Version labels
   const templateVersion = stats.githubRelease || null;
@@ -111,6 +117,37 @@ function HomeContent() {
           </p>
         </Grid.Region>
 
+        {/* ===== STATS ROW ===== */}
+        <Grid.Region r1={7} c1={7} r2={7} c2={16} className={styles.statsRow}>
+          {stats.stars > 0 && (
+            <a href={GITHUB_URL} className={styles.statChip} target="_blank" rel="noopener">
+              <img
+                src={colorMode === 'dark' ? '/img/github-mark-white.svg' : '/img/github-mark-black.svg'}
+                alt="GitHub"
+                className={styles.statLogo}
+                width="14"
+                height="14"
+              />
+              {fmtNum(stats.stars)} stars
+            </a>
+          )}
+          {stats.stars > 0 && stats.downloads > 0 && (
+            <span className={styles.statSep}>·</span>
+          )}
+          {stats.downloads > 0 && (
+            <a href={NPM_URL} className={styles.statChip} target="_blank" rel="noopener">
+              <img
+                src="/img/npm-logo.svg"
+                alt="npm"
+                className={`${styles.statLogo} ${colorMode === 'dark' ? styles.statLogoInvert : ''}`}
+                width="28"
+                height="11"
+              />
+              {fmtNum(stats.downloads)} downloads
+            </a>
+          )}
+        </Grid.Region>
+
         {/* ===== STEP 1 ===== */}
         <Grid.Region r1={9} c1={7} r2={9} c2={16} className={styles.step}>
           <span className={styles.stepLabel}>1. Install the CLI</span>
@@ -133,7 +170,10 @@ function HomeContent() {
 
         {/* ===== ASSISTANT SELECTOR ===== */}
         <Grid.Region r1={13} c1={7} r2={13} c2={16} className={styles.astRegion}>
-          <AssistantSelector active={assistant} onSelect={setAssistant} />
+          <AssistantSelector
+            active={assistant}
+            onSelect={setAssistant}
+          />
         </Grid.Region>
 
         {/* ===== HOW IT WORKS LABEL ===== */}
@@ -146,36 +186,36 @@ function HomeContent() {
           <h2 className={styles.sectionTitle}>Plan. Assign. Execute.</h2>
         </Grid.Region>
 
-        {/* ===== PLANNER PROSE ===== */}
+        {/* ===== PLANNING PHASE PROSE ===== */}
         <Grid.Region r1={24} c1={5} r2={26} c2={11} className={styles.prose}>
-          <h3 className={styles.proseHeading}>Planner</h3>
+          <h3 className={styles.proseHeading}>Planning Phase</h3>
           <p className={styles.proseText}>
-            Runs once at project start. Takes your requirements through three rounds of questions,
-            then writes three documents: a Spec (what to build), a Plan (staged tasks with
-            dependencies), and Rules (execution standards). Sets up the file-based bus system,
-            then hands off to the Manager.
+            You start by running the Planner. It takes you through three iterative question
+            rounds — from project vision to technical requirements — then delivers an
+            understanding summary for your review. Once approved, it writes the Spec, Plan,
+            and Rules, sets up the workspace, and hands off to the Manager.
           </p>
         </Grid.Region>
 
-        {/* ===== MANAGER PROSE ===== */}
+        {/* ===== IMPLEMENTATION PROSE ===== */}
         <Grid.Region r1={27} c1={5} r2={29} c2={11} className={styles.prose}>
-          <h3 className={styles.proseHeading}>Manager</h3>
+          <h3 className={styles.proseHeading}>Implementation</h3>
           <p className={styles.proseText}>
-            Drives the implementation loop. Reads the planning docs, tracks every task in a Tracker
-            file, writes self-contained Task Prompts for Workers, and delivers them via the file bus.
-            Reviews each completed task and dispatches the next without waiting. Handles branching
-            for parallel work. Hands off to a fresh Manager instance when context runs low.
+            The Manager reads the Plan, determines what's ready, and writes Task Prompts for
+            Workers. You deliver each with a single command. After a Worker reports back, you
+            trigger a check — the Manager reviews and dispatches the next task immediately.
+            No idle time between tasks.
           </p>
         </Grid.Region>
 
-        {/* ===== WORKERS PROSE ===== */}
+        {/* ===== YOUR ROLE PROSE ===== */}
         <Grid.Region r1={30} c1={5} r2={32} c2={11} className={styles.prose}>
-          <h3 className={styles.proseHeading}>Workers</h3>
+          <h3 className={styles.proseHeading}>Your Role</h3>
           <p className={styles.proseText}>
-            AI agents scoped to individual tasks. Each gets a Task Prompt with everything they
-            need — objective, context, steps, and validation criteria. They execute, validate,
-            iterate if needed, write a Task Log, then report back via the bus. All coordination
-            goes through files and the Manager — Workers never talk to each other directly.
+            You trigger every handoff — delivering tasks and collecting reports with a single
+            command each. Workers stay scoped to their prompt and report back through the bus.
+            The Manager handles all dispatch and sequencing. Context limits are covered by
+            built-in handoff between instances.
           </p>
         </Grid.Region>
 
@@ -205,6 +245,7 @@ function HomeContent() {
                   target="_blank"
                   rel="noopener noreferrer"
                   title={c.login}
+                  style={{ display: 'flex', alignItems: 'center' }}
                 >
                   <img
                     src={c.avatar}
@@ -228,23 +269,19 @@ function HomeContent() {
           <div className={styles.barInner}>
             <div className={styles.barLeft}>
               <span className={styles.copyright}>
-                {new Date().getFullYear()} APM Contributors
-              </span>
-              <span className={styles.licenseText}>
-                Licensed under the{' '}
-                <a href={GITHUB_LICENSE_URL} target="_blank" rel="noopener">
-                  Mozilla Public License 2.0
+                {new Date().getFullYear()} APM Contributors · Licensed under{' '}
+                <a href={GITHUB_LICENSE_URL} className={styles.licenseLink} target="_blank" rel="noopener">
+                  MPL 2.0
                 </a>
-                .
               </span>
             </div>
             <div className={styles.barRight}>
-              <nav className={styles.barNav}>
+              <div className={styles.footerNavRow}>
                 <a href={GITHUB_ISSUES_URL} className={styles.navLink} target="_blank" rel="noopener">Issues</a>
                 <a href={GITHUB_DISCUSSIONS_URL} className={styles.navLink} target="_blank" rel="noopener">Discussions</a>
-                <a href={GITHUB_CHANGELOG_URL} className={styles.navLink} target="_blank" rel="noopener">Changelog</a>
                 <a href={`${GITHUB_URL}/blob/main/CONTRIBUTING.md`} className={styles.navLink} target="_blank" rel="noopener">Contributing</a>
-              </nav>
+                <a href={GITHUB_CHANGELOG_URL} className={styles.navLink} target="_blank" rel="noopener">Changelog</a>
+              </div>
             </div>
           </div>
         </Grid.Region>

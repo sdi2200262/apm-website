@@ -352,6 +352,89 @@
   margin-left: 4px;
 }
 
+/* ===== Stats Row ===== */
+
+.statsRow {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+.statChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--apm-t3);
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.statChip:hover {
+  color: var(--apm-t2);
+  text-decoration: none;
+}
+
+.statSep {
+  color: var(--apm-t3);
+  opacity: 0.4;
+  font-size: 10px;
+}
+
+.statLogo {
+  display: inline-block;
+  vertical-align: middle;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.statLogoInvert {
+  filter: invert(1);
+}
+
+/* ===== Footer nav rows ===== */
+
+.footerNavRows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.footerNavRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.footerNavLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--apm-t3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+/* ===== Footer license link ===== */
+
+.licenseLink {
+  color: var(--apm-t3);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.licenseLink:hover {
+  color: var(--apm-accent);
+  text-decoration: none;
+}
+
 /* ============================================
    Responsive: Tablet
    ============================================ */
