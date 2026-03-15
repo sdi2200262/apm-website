@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useMemo, useState, useEffect, useRef, createContext, useContext } from 'react';
 import clsx from 'clsx';
 import styles from './Grid.module.css';
 
@@ -16,19 +16,28 @@ import styles from './Grid.module.css';
  */
 
 const FOLD_ROW = 20;
+const GridContext = createContext(FOLD_ROW);
 
 function Grid({ regions = [], rows = 26, children }) {
-  const [belowRevealed, setBelowRevealed] = useState(false);
-  const sentinelRef = useRef(null);
+  const [revealedUpTo, setRevealedUpTo] = useState(FOLD_ROW);
+  const gridRef = useRef(null);
 
-  // Observe when below-fold content enters viewport
+  // Progressive reveal: observe sentinel divs placed every 3 rows below the fold
   useEffect(() => {
-    if (!sentinelRef.current) return;
+    if (!gridRef.current) return;
+    const sentinels = gridRef.current.querySelectorAll('[data-sentinel]');
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setBelowRevealed(true); },
-      { threshold: 0 }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const row = parseInt(entry.target.dataset.sentinel, 10);
+            setRevealedUpTo((prev) => Math.max(prev, row));
+          }
+        });
+      },
+      { threshold: 0, rootMargin: '0px 0px' }
     );
-    observer.observe(sentinelRef.current);
+    sentinels.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
   }, []);
 
@@ -52,11 +61,17 @@ function Grid({ regions = [], rows = 26, children }) {
       for (let c = 0; c < 24; c++) {
         if (!claimedCells.has(`${r}-${c}`)) {
           const isBelow = r > FOLD_ROW;
-          const delay = isBelow ? (r - FOLD_ROW) * 0.04 : r * 0.04;
+          // Delay relative to the wave start — clusters of 3 rows animate together
+          const waveStart = isBelow ? Math.floor((r - FOLD_ROW) / 3) * 3 + FOLD_ROW + 1 : 0;
+          const delay = isBelow ? (r - waveStart) * 0.04 : r * 0.04;
           cells.push(
             <div
               key={`c-${r}-${c}`}
-              className={clsx(styles.cell, isBelow ? styles.cellBelow : styles.cellAbove)}
+              className={clsx(
+                styles.cell,
+                isBelow ? styles.cellBelow : styles.cellAbove,
+                isBelow && r <= revealedUpTo && styles.cellRevealed,
+              )}
               style={{
                 gridRow: r + 1,
                 gridColumn: c + 1,
@@ -68,21 +83,35 @@ function Grid({ regions = [], rows = 26, children }) {
       }
     }
     return cells;
-  }, [rows, claimedCells]);
+  }, [rows, claimedCells, revealedUpTo]);
+
+  // Generate sentinel divs every 3 rows below the fold
+  const sentinels = useMemo(() => {
+    const s = [];
+    for (let r = FOLD_ROW + 1; r < rows; r += 3) {
+      s.push(
+        <div
+          key={`sentinel-${r}`}
+          data-sentinel={r + 2}
+          style={{ gridRow: r + 1, gridColumn: 1, height: 0, width: 0, overflow: 'hidden' }}
+        />
+      );
+    }
+    return s;
+  }, [rows]);
 
   return (
-    <div
-      className={clsx(styles.grid, belowRevealed && styles.belowRevealed)}
-      style={{ gridTemplateRows: `repeat(${rows}, minmax(var(--apm-row-h, 50px), auto))` }}
-    >
-      {emptyCells}
-      {/* Sentinel element at fold row to trigger below-fold animations */}
+    <GridContext.Provider value={revealedUpTo}>
       <div
-        ref={sentinelRef}
-        style={{ gridRow: FOLD_ROW + 1, gridColumn: 1, height: 0, width: 0, overflow: 'hidden' }}
-      />
-      {children}
-    </div>
+        ref={gridRef}
+        className={styles.grid}
+        style={{ gridTemplateRows: `repeat(${rows}, minmax(var(--apm-row-h, 50px), auto))` }}
+      >
+        {emptyCells}
+        {sentinels}
+        {children}
+      </div>
+    </GridContext.Provider>
   );
 }
 
@@ -92,12 +121,20 @@ function Grid({ regions = [], rows = 26, children }) {
  * Content fades in with same top-down timing as grid borders.
  */
 function Region({ r1, c1, r2, c2, className, children, style, ...props }) {
+  const revealedUpTo = useContext(GridContext);
   const isBelow = r1 > FOLD_ROW;
-  const delay = isBelow ? (r1 - FOLD_ROW) * 0.04 + 0.15 : r1 * 0.04 + 0.15;
+  const isRevealed = !isBelow || r1 <= revealedUpTo;
+  const waveStart = isBelow ? Math.floor((r1 - FOLD_ROW) / 3) * 3 + FOLD_ROW + 1 : 0;
+  const delay = isBelow ? (r1 - waveStart) * 0.04 + 0.15 : r1 * 0.04 + 0.15;
 
   return (
     <div
-      className={clsx(styles.region, isBelow ? styles.regionBelow : styles.regionAbove, className)}
+      className={clsx(
+        styles.region,
+        isBelow ? styles.regionBelow : styles.regionAbove,
+        isBelow && isRevealed && styles.regionRevealed,
+        className,
+      )}
       style={{
         gridRow: `${r1 + 1} / ${r2 + 2}`,
         gridColumn: `${c1 + 1} / ${c2 + 2}`,

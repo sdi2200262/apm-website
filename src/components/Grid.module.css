@@ -53,8 +53,8 @@
   animation-play-state: paused;
 }
 
-.belowRevealed .cellBelow,
-.belowRevealed .regionBelow {
+.cellRevealed,
+.regionRevealed {
   animation-play-state: running;
 }
 

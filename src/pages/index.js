@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from '@theme/Layout';
 import { useColorMode } from '@docusaurus/theme-common';
 import Grid from '../components/Grid';
@@ -42,8 +42,8 @@ function HomeContent() {
       const start = performance.now();
       const step = (now) => {
         const progress = Math.min((now - start) / duration, 1);
-        // Slight ease-out so it doesn't feel mechanical, but mostly linear
-        const eased = 1 - Math.pow(1 - progress, 1.5);
+        // Mostly linear, decelerates towards the end
+        const eased = progress < 0.7 ? progress / 0.7 * 0.85 : 0.85 + (1 - Math.pow(1 - (progress - 0.7) / 0.3, 3)) * 0.15;
         setValue(Math.floor(eased * target));
         if (progress < 1) requestAnimationFrame(step);
       };
@@ -63,8 +63,9 @@ function HomeContent() {
 
   useEffect(() => {
     let i = 0;
+    let interval;
     const delay = setTimeout(() => {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         i++;
         setTypedText(SUBTITLE.slice(0, i));
         if (i >= SUBTITLE.length) {
@@ -72,9 +73,8 @@ function HomeContent() {
           setTypingDone(true);
         }
       }, 30);
-      return () => clearInterval(interval);
     }, 600);
-    return () => clearTimeout(delay);
+    return () => { clearTimeout(delay); clearInterval(interval); };
   }, []);
 
   // Contributor scroll-in observer
@@ -90,6 +90,34 @@ function HomeContent() {
     observer.observe(ctrRef.current);
     return () => observer.disconnect();
   }, []);
+
+  // Theme wipe transition — dark wipes down, light wipes up
+  const handleThemeToggle = () => {
+    const goingLight = colorMode === 'dark';
+    const oldBg = getComputedStyle(document.documentElement).getPropertyValue('--apm-bg').trim();
+    setColorMode(goingLight ? 'light' : 'dark');
+
+    const overlay = document.createElement('div');
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      inset: '0',
+      zIndex: '10000',
+      background: oldBg,
+      pointerEvents: 'none',
+      clipPath: 'inset(0 0 0 0)',
+      transition: 'clip-path 0.6s ease-in-out',
+    });
+    document.body.appendChild(overlay);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Dark bg wipes down (reveals light underneath), light bg wipes up (reveals dark underneath)
+        overlay.style.clipPath = goingLight ? 'inset(0 0 100% 0)' : 'inset(100% 0 0 0)';
+      });
+    });
+
+    setTimeout(() => overlay.remove(), 700);
+  };
 
   // Hide Docusaurus navbar — we have our own
   useEffect(() => {
@@ -129,7 +157,7 @@ function HomeContent() {
               )}
               <button
                 className={styles.themeToggle}
-                onClick={() => setColorMode(colorMode === 'dark' ? 'light' : 'dark')}
+                onClick={handleThemeToggle}
                 title="Toggle theme"
                 aria-label="Toggle theme"
               >

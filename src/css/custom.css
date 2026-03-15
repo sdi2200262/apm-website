@@ -467,11 +467,13 @@ div[class*='codeBlockTitle'] {
    Scrollbar (landing page)
    ============================================ */
 
-.landing-page ::-webkit-scrollbar {
+.landing-page ::-webkit-scrollbar,
+html:has(.landing-page) ::-webkit-scrollbar {
   display: none;
 }
 
-.landing-page {
+.landing-page,
+html:has(.landing-page) {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
