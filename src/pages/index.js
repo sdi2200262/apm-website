@@ -145,7 +145,7 @@ function HomeContent() {
 
         {/* ===== STEP 1 ===== */}
         <Grid.Region r1={9} c1={7} r2={9} c2={16} className={styles.step}>
-          <span className={styles.stepLabel}>1. Install the CLI</span>
+          <span className={styles.stepLabel}><span className={styles.stepNum}>1.</span> Install the CLI</span>
         </Grid.Region>
 
         {/* ===== COMMAND 1 ===== */}
@@ -155,7 +155,7 @@ function HomeContent() {
 
         {/* ===== STEP 2 ===== */}
         <Grid.Region r1={11} c1={7} r2={11} c2={16} className={styles.step}>
-          <span className={styles.stepLabel}>2. Initialize your project</span>
+          <span className={styles.stepLabel}><span className={styles.stepNum}>2.</span> Initialize your project</span>
         </Grid.Region>
 
         {/* ===== COMMAND 2 ===== */}
@@ -254,6 +254,10 @@ function HomeContent() {
                 </a>
               </span>
             </div>
+            <a href="https://github.com/sdi2200262" className={styles.mascot} target="_blank" rel="noopener noreferrer" title="sdi2200262">
+              <img src="/img/cobuter-man-black-and-white-no-bg.png" alt="" className={`${styles.mascotImg} ${styles.mascotDefault}`} />
+              <img src="/img/cobuter-man-black-and-white-no-bg-hover.png" alt="" className={`${styles.mascotImg} ${styles.mascotHover}`} />
+            </a>
             <div className={styles.barRight}>
               <div className={styles.footerNavRow}>
                 <a href={GITHUB_ISSUES_URL} className={styles.navLink} target="_blank" rel="noopener">Issues</a>
