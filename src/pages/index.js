@@ -77,6 +77,16 @@ function HomeContent() {
     return () => { clearTimeout(delay); clearInterval(interval); };
   }, []);
 
+  // Smooth subtitle height
+  const subtitleRef = useRef(null);
+  useEffect(() => {
+    const el = subtitleRef.current;
+    if (!el) return;
+    const child = el.firstElementChild;
+    if (!child) return;
+    el.style.height = `${child.scrollHeight}px`;
+  }, [typedText]);
+
   // Contributor scroll-in observer
   const ctrRef = useRef(null);
   const [ctrVisible, setCtrVisible] = useState(false);
@@ -192,10 +202,12 @@ function HomeContent() {
 
         {/* ===== HERO SUBTITLE ===== */}
         <Grid.Region r1={6} c1={7} r2={6} c2={16} className={styles.heroSub}>
-          <p className={styles.heroSubText}>
-            {typedText}
-            <span className={`${styles.typedCursor} ${typingDone ? styles.typedCursorDone : ''}`} />
-          </p>
+          <div className={styles.heroSubWrap} ref={subtitleRef}>
+            <p className={styles.heroSubText}>
+              {typedText}
+              <span className={`${styles.typedCursor} ${typingDone ? styles.typedCursorDone : ''}`} />
+            </p>
+          </div>
         </Grid.Region>
 
         {/* ===== STATS ROW ===== */}

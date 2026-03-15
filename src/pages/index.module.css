@@ -138,6 +138,14 @@
   justify-content: center;
 }
 
+.heroSubWrap {
+  overflow: hidden;
+  transition: height 0.3s ease;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .heroSubText {
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 15px;
