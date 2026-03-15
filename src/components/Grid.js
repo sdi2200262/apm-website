@@ -77,27 +77,6 @@ function Region({ r1, c1, r2, c2, className, children, style, ...props }) {
   );
 }
 
-/**
- * Separator row — a row of cells with a stronger bottom border.
- */
-function Separator({ row }) {
-  const cells = [];
-  for (let c = 0; c < 24; c++) {
-    cells.push(
-      <div
-        key={`sep-${row}-${c}`}
-        className={styles.separatorCell}
-        style={{
-          gridRow: row + 1,
-          gridColumn: c + 1,
-        }}
-      />
-    );
-  }
-  return <>{cells}</>;
-}
-
 Grid.Region = Region;
-Grid.Separator = Separator;
 
 export default Grid;

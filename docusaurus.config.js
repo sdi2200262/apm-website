@@ -18,7 +18,6 @@ const config = {
   projectName: 'apm-website',
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
 
   i18n: {
     defaultLocale: 'en',

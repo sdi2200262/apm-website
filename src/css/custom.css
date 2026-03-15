@@ -338,8 +338,8 @@ body {
   --prism-background-color: var(--apm-cmd-bg) !important;
 }
 
-/* Code block title */
-.codeBlockTitle_node_modules-\@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module {
+/* Code block title — uses attribute selector to survive class name changes across Docusaurus versions */
+div[class*='codeBlockTitle'] {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   text-transform: uppercase;

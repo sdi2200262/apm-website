@@ -18,14 +18,8 @@ import {
   GITHUB_LICENSE_URL,
   NPM_URL,
 } from '../constants';
+import { formatNumber } from '../utils/format';
 import styles from './index.module.css';
-
-function fmtNum(n) {
-  if (!n) return null;
-  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return n.toString();
-}
 
 // Inner component — rendered inside <Layout> so useColorMode has its provider
 function HomeContent() {
@@ -129,7 +123,7 @@ function HomeContent() {
                 width="14"
                 height="14"
               />
-              {fmtNum(stats.stars)} stars
+              {formatNumber(stats.stars)} stars
             </a>
           )}
           {stats.stars > 0 && stats.downloads > 0 && (
@@ -144,7 +138,7 @@ function HomeContent() {
                 width="28"
                 height="11"
               />
-              {fmtNum(stats.downloads)} downloads
+              {formatNumber(stats.downloads)} downloads
             </a>
           )}
         </Grid.Region>

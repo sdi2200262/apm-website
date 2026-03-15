@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './SidebarToolbar.module.css';
+import { COPY_FEEDBACK_DURATION } from '../constants';
 
 export default function SidebarToolbar() {
   const [copied, setCopied] = useState(false);
@@ -10,7 +11,7 @@ export default function SidebarToolbar() {
       const text = await res.text();
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      setTimeout(() => setCopied(false), COPY_FEEDBACK_DURATION);
     } catch {}
   };
 

@@ -4,7 +4,6 @@ export const GITHUB_ISSUES_URL = 'https://github.com/sdi2200262/agentic-project-
 export const GITHUB_DISCUSSIONS_URL = 'https://github.com/sdi2200262/agentic-project-management/discussions';
 export const GITHUB_CHANGELOG_URL = 'https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md';
 export const GITHUB_LICENSE_URL = 'https://github.com/sdi2200262/agentic-project-management/blob/main/LICENSE';
-export const GITHUB_SECURITY_URL = 'https://github.com/sdi2200262/agentic-project-management/security/policy';
 export const NPM_URL = 'https://www.npmjs.com/package/agentic-pm';
 export const COPY_FEEDBACK_DURATION = 2000;
 

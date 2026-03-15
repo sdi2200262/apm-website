@@ -30,13 +30,6 @@
   border-bottom: 1px solid var(--apm-grid);
 }
 
-/* Separator row cell — stronger border */
-.separatorCell {
-  border-right: 1px solid var(--apm-grid);
-  border-bottom: 2px solid var(--apm-border);
-  min-height: var(--apm-row-h, 50px);
-}
-
 /* ============================================
    Responsive: Tablet (16 cols)
    ============================================ */

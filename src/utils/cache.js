@@ -5,7 +5,7 @@
 
 const DEFAULT_TTL = 3600000; // 1 hour
 
-export function isCacheValid(cachedData, ttl = DEFAULT_TTL) {
+function isCacheValid(cachedData, ttl = DEFAULT_TTL) {
   if (!cachedData || !cachedData.timestamp) return false;
   return Date.now() - cachedData.timestamp < ttl;
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './DocToolbar.module.css';
+import { COPY_FEEDBACK_DURATION } from '../constants';
 
 export default function DocToolbar() {
   const [copied, setCopied] = useState(null);
@@ -17,7 +18,7 @@ export default function DocToolbar() {
     try {
       await navigator.clipboard.writeText(getPageText());
       setCopied('page');
-      setTimeout(() => setCopied(null), 1500);
+      setTimeout(() => setCopied(null), COPY_FEEDBACK_DURATION);
     } catch {}
   };
 
@@ -28,7 +29,7 @@ export default function DocToolbar() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${title}.md`;
+    a.download = `${title}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
