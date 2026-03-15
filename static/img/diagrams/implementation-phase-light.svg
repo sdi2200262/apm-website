@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 266" fill="none">
+  <defs>
+    <marker id="ah" viewBox="0 0 8 6" refX="7.5" refY="3" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#9090a0"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="360" height="266" fill="#f5f5f7"/>
+
+  <!-- Header -->
+  <text x="180" y="20" font-family="'JetBrains Mono', monospace" font-size="9" fill="#5a5a6a" letter-spacing="1.5" text-anchor="middle">IMPLEMENTATION PHASE</text>
+
+  <!-- MANAGER subgraph -->
+  <rect x="2" y="36" width="112" height="166" rx="2" stroke="#9090a0" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="58" y="48" font-family="'JetBrains Mono', monospace" font-size="8" fill="#5a5a6a" letter-spacing="1.0" text-anchor="middle">MANAGER</text>
+
+  <!-- WORKER subgraph -->
+  <rect x="120" y="36" width="238" height="62" rx="2" stroke="#9090a0" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="239" y="48" font-family="'JetBrains Mono', monospace" font-size="8" fill="#5a5a6a" letter-spacing="1.0" text-anchor="middle">WORKER</text>
+
+  <!-- .apm/memory/ subgraph -->
+  <rect x="120" y="106" width="238" height="96" rx="2" stroke="#9090a0" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="239" y="120" font-family="'JetBrains Mono', monospace" font-size="8" fill="#5a5a6a" letter-spacing="0.8" text-anchor="middle">.apm/memory/</text>
+  <text x="239" y="132" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle">persistent · centralized</text>
+
+  <!-- TASK ASSIGNMENT (MANAGER) -->
+  <rect x="10" y="54" width="94" height="32" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="57" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#1a1a20" letter-spacing="0.8" text-anchor="middle">TASK ASSIGNMENT</text>
+  <text x="57" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle">plan · assign</text>
+
+  <!-- TASK EXECUTION (WORKER) -->
+  <rect x="128" y="54" width="98" height="32" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="177" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#1a1a20" letter-spacing="0.8" text-anchor="middle">TASK EXECUTION</text>
+  <text x="177" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle">execute · validate</text>
+
+  <!-- TASK LOGGING (WORKER) -->
+  <rect x="252" y="54" width="98" height="32" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="301" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#1a1a20" letter-spacing="0.8" text-anchor="middle">TASK LOGGING</text>
+  <text x="301" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle">log · report</text>
+
+  <!-- TASK LOG artifact (.apm/memory/) — stacked to show accumulation -->
+  <rect x="197" y="167" width="96" height="26" rx="2" stroke="#d0d0d8" stroke-width="1" fill="#eaeaef"/>
+  <rect x="194" y="164" width="96" height="26" rx="2" stroke="#d0d0d8" stroke-width="1" fill="#eaeaef"/>
+  <rect x="191" y="161" width="96" height="26" rx="2" stroke="#d0d0d8" stroke-width="1" fill="#eaeaef"/>
+  <text x="239" y="178" font-family="'JetBrains Mono', monospace" font-size="8" fill="#5a5a6a" letter-spacing="0.8" text-anchor="middle">TASK LOG</text>
+
+  <!-- TASK REVIEWING (MANAGER) -->
+  <rect x="10" y="158" width="94" height="32" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="57" y="171" font-family="'JetBrains Mono', monospace" font-size="8" fill="#1a1a20" letter-spacing="0.8" text-anchor="middle">TASK REVIEWING</text>
+  <text x="57" y="182" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle">review · assess</text>
+
+  <!-- TASK ASSIGNMENT → TASK EXECUTION (crosses MANAGER→WORKER) -->
+  <path d="M 104,70 L 128,70" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- TASK EXECUTION → TASK LOGGING (within WORKER) -->
+  <path d="M 226,70 L 252,70" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- TASK LOGGING → TASK LOG (down then left, crosses WORKER→.apm/memory/) -->
+  <path d="M 301,86 L 301,138 Q 301,145 294,145 L 246,145 Q 239,145 239,152 L 239,161" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- TASK LOG → TASK REVIEWING (crosses .apm/memory/→MANAGER) -->
+  <path d="M 191,174 L 104,174" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- TASK REVIEWING → TASK ASSIGNMENT (loop back, within MANAGER) -->
+  <path d="M 57,158 L 57,86" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Footer -->
+  <text x="180" y="252" font-family="'JetBrains Mono', monospace" font-size="8" fill="#5a5a6a" letter-spacing="0.5" text-anchor="middle">you trigger each step</text>
+</svg>

@@ -15,7 +15,7 @@
 .cell {
   border-right: 1px solid var(--apm-grid);
   border-bottom: 1px solid var(--apm-grid);
-  min-height: 50px;
+  min-height: var(--apm-row-h, 50px);
 }
 
 /* Merged region — content container, bordered on right and bottom */
@@ -34,7 +34,7 @@
 .separatorCell {
   border-right: 1px solid var(--apm-grid);
   border-bottom: 2px solid var(--apm-border);
-  min-height: 50px;
+  min-height: var(--apm-row-h, 50px);
 }
 
 /* ============================================

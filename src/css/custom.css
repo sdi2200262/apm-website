@@ -7,6 +7,9 @@
    ============================================ */
 
 :root {
+  /* Grid row height — single source of truth, referenced by grid + ContentViewer */
+  --apm-row-h: 50px;
+
   /* APM Custom Properties — Dark (default) */
   --apm-bg: #0e0e11;
   --apm-grid: #1a1a20;

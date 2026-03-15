@@ -50,7 +50,7 @@ function Grid({ regions = [], rows = 26, children }) {
   }, [rows, claimedCells]);
 
   return (
-    <div className={styles.grid} style={{ gridTemplateRows: `repeat(${rows}, minmax(50px, auto))` }}>
+    <div className={styles.grid} style={{ gridTemplateRows: `repeat(${rows}, minmax(var(--apm-row-h, 50px), auto))` }}>
       {emptyCells}
       {children}
     </div>

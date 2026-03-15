@@ -74,22 +74,22 @@ export const LANDING_REGIONS = [
   // Assistant selector
   { id: 'ast',    r1: 13, c1: 7,  r2: 13, c2: 16 },
 
-  // How It Works label
-  { id: 'hw-lbl', r1: 22, c1: 5,  r2: 22, c2: 11 },
-  // How It Works title
-  { id: 'hw-t',   r1: 23, c1: 5,  r2: 23, c2: 11 },
-  // Planner prose
-  { id: 'hw-p1',  r1: 24, c1: 5,  r2: 26, c2: 11 },
-  // Manager prose
-  { id: 'hw-p2',  r1: 27, c1: 5,  r2: 29, c2: 11 },
-  // Workers prose
-  { id: 'hw-p3',  r1: 30, c1: 5,  r2: 32, c2: 11 },
-  // Visual / video placeholder — covers all HW rows
-  { id: 'vis',    r1: 22, c1: 13, r2: 32, c2: 18 },
+  // How It Works label (row 21)
+  { id: 'hw-lbl',   r1: 21, c1: 5,  r2: 21, c2: 18 },
+  // Intro paragraph — full width (row 22)
+  { id: 'hw-intro', r1: 22, c1: 5,  r2: 22, c2: 18 },
+  // row 23: empty gap
+  // Prose paragraph 1 — Planning (rows 24-26, left column)
+  { id: 'hw-p1',    r1: 24, c1: 5,  r2: 26, c2: 11 },
+  // row 27: empty gap
+  // Prose paragraph 2 — Implementation (rows 28-30, left column)
+  { id: 'hw-p2',    r1: 28, c1: 5,  r2: 30, c2: 11 },
+  // Content viewer — spans both prose paragraphs (right column)
+  { id: 'vis',      r1: 24, c1: 13, r2: 30, c2: 18 },
 
   // Contributors
-  { id: 'ctr',    r1: 34, c1: 5,  r2: 34, c2: 18 },
+  { id: 'ctr',    r1: 35, c1: 5,  r2: 35, c2: 18 },
 
   // Footer bar — full width
-  { id: 'ftr',    r1: 37, c1: 0,  r2: 37, c2: 23 },
+  { id: 'ftr',    r1: 38, c1: 0,  r2: 38, c2: 23 },
 ];

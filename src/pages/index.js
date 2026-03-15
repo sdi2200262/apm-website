@@ -4,6 +4,7 @@ import { useColorMode } from '@docusaurus/theme-common';
 import Grid from '../components/Grid';
 import CommandBlock from '../components/CommandBlock';
 import AssistantSelector from '../components/AssistantSelector';
+import ContentViewer from '../components/ContentViewer';
 import { useStats } from '../hooks/useStats';
 import { useContributors } from '../hooks/useContributors';
 import {
@@ -50,7 +51,7 @@ function HomeContent() {
 
   return (
     <main className={`landing-page ${styles.landing}`}>
-      <Grid regions={LANDING_REGIONS} rows={38}>
+      <Grid regions={LANDING_REGIONS} rows={39}>
 
         {/* ===== HEADER BAR (sticky) ===== */}
         <Grid.Region r1={0} c1={0} r2={0} c2={23} className={styles.bar} style={{ position: 'sticky', top: 0, zIndex: 100 }}>
@@ -177,64 +178,48 @@ function HomeContent() {
         </Grid.Region>
 
         {/* ===== HOW IT WORKS LABEL ===== */}
-        <Grid.Region r1={22} c1={5} r2={22} c2={11} className={styles.hwLabel} id="how-it-works">
+        <Grid.Region r1={21} c1={5} r2={21} c2={18} className={styles.hwLabel} id="how-it-works">
           <span className={styles.sectionLabel}>HOW IT WORKS</span>
         </Grid.Region>
 
-        {/* ===== HOW IT WORKS TITLE ===== */}
-        <Grid.Region r1={23} c1={5} r2={23} c2={11} className={styles.hwTitle}>
-          <h2 className={styles.sectionTitle}>Plan. Assign. Execute.</h2>
+        {/* ===== INTRO — full width under label ===== */}
+        <Grid.Region r1={22} c1={5} r2={22} c2={18} className={styles.prose}>
+          <p className={styles.proseText}>
+            An <strong>APM session</strong> runs across two phases. A Planner, a Manager, and multiple Workers each
+            operate in their own isolated context, coordinating through planning documents, centralized Memory and
+            project tracking, and a file-based communication system.
+          </p>
         </Grid.Region>
 
-        {/* ===== PLANNING PHASE PROSE ===== */}
+        {/* ===== PROSE 1 — PLANNING (left column) ===== */}
         <Grid.Region r1={24} c1={5} r2={26} c2={11} className={styles.prose}>
-          <h3 className={styles.proseHeading}>Planning Phase</h3>
           <p className={styles.proseText}>
-            You start by running the Planner. It takes you through three iterative question
-            rounds — from project vision to technical requirements — then delivers an
-            understanding summary for your review. Once approved, it writes the Spec, Plan,
-            and Rules, sets up the workspace, and hands off to the Manager.
+            The <strong>Planning Phase</strong> starts with the <strong>Planner</strong> doing collaborative
+            project discovery — asking targeted questions about requirements, constraints and preferences
+            while exploring your codebase. Once you sign off on its understanding, the Planner breaks gathered
+            context into three planning documents: a <strong>Spec</strong>, a <strong>Plan</strong> and a <strong>Rules</strong> file — yours to review
+            and correct before implementation begins.
           </p>
         </Grid.Region>
 
-        {/* ===== IMPLEMENTATION PROSE ===== */}
-        <Grid.Region r1={27} c1={5} r2={29} c2={11} className={styles.prose}>
-          <h3 className={styles.proseHeading}>Implementation</h3>
+        {/* ===== PROSE 2 — IMPLEMENTATION (left column) ===== */}
+        <Grid.Region r1={28} c1={5} r2={30} c2={11} className={styles.prose}>
           <p className={styles.proseText}>
-            The Manager reads the Plan, determines what's ready, and writes Task Prompts for
-            Workers. You deliver each with a single command. After a Worker reports back, you
-            trigger a check — the Manager reviews and dispatches the next task immediately.
-            No idle time between tasks.
+            The <strong>Implementation Phase</strong> is a continuous loop until project completion. The <strong>Manager</strong> assigns Tasks
+            based on the Plan's dependencies and reviews outcomes. <strong>Workers</strong> execute, log their work to <strong>Memory</strong>,
+            and report back — all coordinated through a file-based communication system with you triggering every step.
+            When any agent's context window fills, you can perform a <strong>Handoff</strong> — capturing working context so the next
+            instance picks up without context gaps.
           </p>
         </Grid.Region>
 
-        {/* ===== YOUR ROLE PROSE ===== */}
-        <Grid.Region r1={30} c1={5} r2={32} c2={11} className={styles.prose}>
-          <h3 className={styles.proseHeading}>Your Role</h3>
-          <p className={styles.proseText}>
-            You trigger every handoff — delivering tasks and collecting reports with a single
-            command each. Workers stay scoped to their prompt and report back through the bus.
-            The Manager handles all dispatch and sequencing. Context limits are covered by
-            built-in handoff between instances.
-          </p>
-        </Grid.Region>
-
-        {/* ===== VIDEO PLACEHOLDER ===== */}
-        <Grid.Region r1={22} c1={13} r2={32} c2={18} className={styles.visual}>
-          <div className={styles.videoPh}>
-            <div className={styles.videoPhInner}>
-              <svg className={styles.playIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="12" cy="12" r="10" />
-                <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" opacity="0.6" />
-              </svg>
-              <span className={styles.videoPhLabel}>Demo video</span>
-              <span className={styles.videoPhSub}>coming soon</span>
-            </div>
-          </div>
+        {/* ===== CONTENT VIEWER (right column) ===== */}
+        <Grid.Region r1={24} c1={13} r2={30} c2={18} className={styles.visual}>
+          <ContentViewer />
         </Grid.Region>
 
         {/* ===== CONTRIBUTORS ===== */}
-        <Grid.Region r1={34} c1={5} r2={34} c2={18} className={styles.contributors}>
+        <Grid.Region r1={35} c1={5} r2={35} c2={18} className={styles.contributors}>
           <div className={styles.ctrInner}>
             <span className={styles.ctrLabel}>CONTRIBUTORS</span>
             <div className={styles.ctrAvatars}>
@@ -265,11 +250,11 @@ function HomeContent() {
         </Grid.Region>
 
         {/* ===== FOOTER BAR ===== */}
-        <Grid.Region r1={37} c1={0} r2={37} c2={23} className={styles.bar}>
+        <Grid.Region r1={38} c1={0} r2={38} c2={23} className={styles.bar}>
           <div className={styles.barInner}>
             <div className={styles.barLeft}>
               <span className={styles.copyright}>
-                {new Date().getFullYear()} APM Contributors · Licensed under{' '}
+                {new Date().getFullYear()} Agentic Project Management · Licensed under{' '}
                 <a href={GITHUB_LICENSE_URL} className={styles.licenseLink} target="_blank" rel="noopener">
                   MPL 2.0
                 </a>
