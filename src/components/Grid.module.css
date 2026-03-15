@@ -11,14 +11,14 @@
   position: relative;
 }
 
-/* Empty cell — visible borders create the grid texture */
+/* ===== Cell & Region base — start hidden ===== */
+
 .cell {
-  border-right: 1px solid var(--apm-grid);
-  border-bottom: 1px solid var(--apm-grid);
   min-height: var(--apm-row-h, 50px);
+  border-right: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 
-/* Merged region — content container, bordered on right and bottom */
 .region {
   display: flex;
   flex-direction: column;
@@ -26,8 +26,48 @@
   padding: 8px 16px;
   z-index: 1;
   position: relative;
-  border-right: 1px solid var(--apm-grid);
-  border-bottom: 1px solid var(--apm-grid);
+  border-right: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  opacity: 0;
+}
+
+/* ===== Above-fold: animate on load ===== */
+
+.cellAbove {
+  animation: borderFadeIn 0.8s ease-out both;
+}
+
+.regionAbove {
+  animation: borderFadeIn 0.8s ease-out both, contentFadeIn 0.6s ease-out both;
+}
+
+/* ===== Below-fold: wait for scroll ===== */
+
+.cellBelow {
+  animation: borderFadeIn 0.8s ease-out both;
+  animation-play-state: paused;
+}
+
+.regionBelow {
+  animation: borderFadeIn 0.8s ease-out both, contentFadeIn 0.6s ease-out both;
+  animation-play-state: paused;
+}
+
+.belowRevealed .cellBelow,
+.belowRevealed .regionBelow {
+  animation-play-state: running;
+}
+
+/* ===== Keyframes ===== */
+
+@keyframes borderFadeIn {
+  from { border-color: transparent; }
+  to { border-color: var(--apm-grid); }
+}
+
+@keyframes contentFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ============================================

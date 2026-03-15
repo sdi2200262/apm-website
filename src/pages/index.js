@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Layout from '@theme/Layout';
 import { useColorMode } from '@docusaurus/theme-common';
 import Grid from '../components/Grid';
@@ -33,6 +33,63 @@ function HomeContent() {
   // Version labels
   const templateVersion = stats.githubRelease || null;
   const cliVersion = stats.npmVersion ? `v${stats.npmVersion}` : null;
+
+  // Animated counter hook — slow count-up that finishes ~3s after load
+  function useCounter(target, duration = 4000) {
+    const [value, setValue] = useState(0);
+    useEffect(() => {
+      if (!target) return;
+      const start = performance.now();
+      const step = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        // Slight ease-out so it doesn't feel mechanical, but mostly linear
+        const eased = 1 - Math.pow(1 - progress, 1.5);
+        setValue(Math.floor(eased * target));
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      const delay = setTimeout(() => requestAnimationFrame(step), 400);
+      return () => clearTimeout(delay);
+    }, [target]);
+    return value;
+  }
+
+  const animStars = useCounter(stats.stars);
+  const animDownloads = useCounter(stats.downloads);
+
+  // Typed subtitle effect
+  const SUBTITLE = 'Manage complex projects with a team of AI agents, smoothly and efficiently.';
+  const [typedText, setTypedText] = useState('');
+  const [typingDone, setTypingDone] = useState(false);
+
+  useEffect(() => {
+    let i = 0;
+    const delay = setTimeout(() => {
+      const interval = setInterval(() => {
+        i++;
+        setTypedText(SUBTITLE.slice(0, i));
+        if (i >= SUBTITLE.length) {
+          clearInterval(interval);
+          setTypingDone(true);
+        }
+      }, 30);
+      return () => clearInterval(interval);
+    }, 600);
+    return () => clearTimeout(delay);
+  }, []);
+
+  // Contributor scroll-in observer
+  const ctrRef = useRef(null);
+  const [ctrVisible, setCtrVisible] = useState(false);
+
+  useEffect(() => {
+    if (!ctrRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setCtrVisible(true); },
+      { threshold: 0.3 }
+    );
+    observer.observe(ctrRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Hide Docusaurus navbar — we have our own
   useEffect(() => {
@@ -108,7 +165,8 @@ function HomeContent() {
         {/* ===== HERO SUBTITLE ===== */}
         <Grid.Region r1={6} c1={7} r2={6} c2={16} className={styles.heroSub}>
           <p className={styles.heroSubText}>
-            Manage complex projects with a team of AI agents, smoothly and efficiently.
+            {typedText}
+            <span className={`${styles.typedCursor} ${typingDone ? styles.typedCursorDone : ''}`} />
           </p>
         </Grid.Region>
 
@@ -123,7 +181,7 @@ function HomeContent() {
                 width="14"
                 height="14"
               />
-              {formatNumber(stats.stars)} stars
+              {formatNumber(animStars)} stars
             </a>
           )}
           {stats.stars > 0 && stats.downloads > 0 && (
@@ -138,7 +196,7 @@ function HomeContent() {
                 width="28"
                 height="11"
               />
-              {formatNumber(stats.downloads)} downloads
+              {formatNumber(animDownloads)} downloads
             </a>
           )}
         </Grid.Region>
@@ -214,10 +272,10 @@ function HomeContent() {
 
         {/* ===== CONTRIBUTORS ===== */}
         <Grid.Region r1={35} c1={5} r2={35} c2={18} className={styles.contributors}>
-          <div className={styles.ctrInner}>
+          <div className={styles.ctrInner} ref={ctrRef}>
             <span className={styles.ctrLabel}>CONTRIBUTORS</span>
             <div className={styles.ctrAvatars}>
-              {contributors.slice(0, 12).map((c) => (
+              {contributors.slice(0, 12).map((c, i) => (
                 <a
                   key={c.login}
                   href={c.url}
@@ -229,7 +287,8 @@ function HomeContent() {
                   <img
                     src={c.avatar}
                     alt={c.login}
-                    className={styles.ctrAvatar}
+                    className={`${styles.ctrAvatar} ${ctrVisible ? styles.ctrAvatarVisible : ''}`}
+                    style={ctrVisible ? { animationDelay: `${i * 0.08}s` } : undefined}
                     width="22"
                     height="22"
                     loading="lazy"

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import styles from './Grid.module.css';
 
@@ -11,9 +11,27 @@ import styles from './Grid.module.css';
  *
  * Regions are defined as coordinate pairs: { id, r1, c1, r2, c2 }
  * Desktop: 24 columns, Tablet: 16, Mobile: 12
+ *
+ * Animation: grid lines fade in top-down on load (hero) and on scroll (below fold).
  */
 
+const FOLD_ROW = 20;
+
 function Grid({ regions = [], rows = 26, children }) {
+  const [belowRevealed, setBelowRevealed] = useState(false);
+  const sentinelRef = useRef(null);
+
+  // Observe when below-fold content enters viewport
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setBelowRevealed(true); },
+      { threshold: 0 }
+    );
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   // Build a set of claimed cells from regions
   const claimedCells = useMemo(() => {
     const claimed = new Set();
@@ -33,13 +51,16 @@ function Grid({ regions = [], rows = 26, children }) {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < 24; c++) {
         if (!claimedCells.has(`${r}-${c}`)) {
+          const isBelow = r > FOLD_ROW;
+          const delay = isBelow ? (r - FOLD_ROW) * 0.04 : r * 0.04;
           cells.push(
             <div
               key={`c-${r}-${c}`}
-              className={styles.cell}
+              className={clsx(styles.cell, isBelow ? styles.cellBelow : styles.cellAbove)}
               style={{
                 gridRow: r + 1,
                 gridColumn: c + 1,
+                animationDelay: `${delay}s`,
               }}
             />
           );
@@ -50,8 +71,16 @@ function Grid({ regions = [], rows = 26, children }) {
   }, [rows, claimedCells]);
 
   return (
-    <div className={styles.grid} style={{ gridTemplateRows: `repeat(${rows}, minmax(var(--apm-row-h, 50px), auto))` }}>
+    <div
+      className={clsx(styles.grid, belowRevealed && styles.belowRevealed)}
+      style={{ gridTemplateRows: `repeat(${rows}, minmax(var(--apm-row-h, 50px), auto))` }}
+    >
       {emptyCells}
+      {/* Sentinel element at fold row to trigger below-fold animations */}
+      <div
+        ref={sentinelRef}
+        style={{ gridRow: FOLD_ROW + 1, gridColumn: 1, height: 0, width: 0, overflow: 'hidden' }}
+      />
       {children}
     </div>
   );
@@ -60,14 +89,19 @@ function Grid({ regions = [], rows = 26, children }) {
 /**
  * A merged region within the grid.
  * Spans from (r1,c1) to (r2,c2) inclusive. Grid is 1-indexed in CSS.
+ * Content fades in with same top-down timing as grid borders.
  */
 function Region({ r1, c1, r2, c2, className, children, style, ...props }) {
+  const isBelow = r1 > FOLD_ROW;
+  const delay = isBelow ? (r1 - FOLD_ROW) * 0.04 + 0.15 : r1 * 0.04 + 0.15;
+
   return (
     <div
-      className={clsx(styles.region, className)}
+      className={clsx(styles.region, isBelow ? styles.regionBelow : styles.regionAbove, className)}
       style={{
         gridRow: `${r1 + 1} / ${r2 + 2}`,
         gridColumn: `${c1 + 1} / ${c2 + 2}`,
+        animationDelay: `${delay}s`,
         ...style,
       }}
       {...props}
