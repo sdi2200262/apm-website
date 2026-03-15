@@ -7,18 +7,32 @@
 
 .content {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   padding: 24px 16px;
   min-height: 0;
   overflow: hidden;
 }
 
 .diagram {
+  grid-area: 1 / 1;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+.diagramActive {
+  opacity: 1;
+}
+
+.diagramHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.diagramFading {
+  opacity: 0;
 }
 
 .nav {
