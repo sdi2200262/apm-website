@@ -109,11 +109,72 @@
   color: var(--apm-t2);
 }
 
+/* ===== Hamburger (hidden on desktop) ===== */
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 4px;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hamburgerLine {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--apm-t2);
+  border-radius: 1px;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.hamburgerLine::before,
+.hamburgerLine::after {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--apm-t2);
+  border-radius: 1px;
+  position: absolute;
+  left: 0;
+  transition: transform 0.2s ease;
+}
+
+.hamburgerLine::before {
+  top: -5px;
+}
+
+.hamburgerLine::after {
+  top: 5px;
+}
+
+.hamburgerOpen {
+  background: transparent;
+}
+
+.hamburgerOpen::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.hamburgerOpen::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
 .copyright {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   color: var(--apm-t3);
 }
+
 
 /* ===== Hero ===== */
 
@@ -245,7 +306,7 @@
   font-weight: 500;
 }
 
-/* ===== Video Viewer ===== */
+/* ===== Content Viewer ===== */
 
 .visual {
   padding: 0;
@@ -417,6 +478,12 @@
   80% { transform: translate(0.5px, 1px) rotate(0.3deg); }
 }
 
+/* ===== Footer inner ===== */
+
+.footerInner {
+  /* same as barInner on desktop */
+}
+
 /* ===== Footer nav rows ===== */
 
 .footerNavRow {
@@ -438,8 +505,102 @@
   text-decoration: none;
 }
 
+/* ===== Mobile Assistants (hidden on desktop) ===== */
+
+.mobileAst {
+  align-items: center;
+  justify-content: center;
+  padding: 4px 14px 8px;
+  gap: 8px;
+}
+
+.mobileAstLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--apm-t3);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+
+.mobileAstGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.mobileAstItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid var(--apm-cmd-border);
+  border-radius: 3px;
+  opacity: 0;
+  transform: translateX(-8px);
+  animation: astSlideIn 0.4s ease-out forwards;
+}
+
+@keyframes astSlideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.mobileAstLogo {
+  width: 14px;
+  height: 14px;
+  opacity: 0.7;
+}
+
+.mobileAstName {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--apm-t2);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.ctaRegion {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 16px;
+}
+
+.ctaBtn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--apm-accent);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  padding: 8px 20px;
+  border: 1px solid var(--apm-cmd-border);
+  border-radius: 3px;
+}
+
+.ctaBtn:hover {
+  color: var(--apm-accent2);
+  border-color: var(--apm-accent2);
+  text-decoration: none;
+}
+
+.ctaBtnSecondary {
+  color: var(--apm-t3);
+}
+
+.ctaBtnSecondary:hover {
+  color: var(--apm-t2);
+  border-color: var(--apm-t3);
+}
+
 /* ============================================
-   Responsive: Tablet
+   Responsive: Tablet (769px – 1024px)
    ============================================ */
 @media (max-width: 1024px) {
   .barNav {
@@ -449,33 +610,254 @@
   .versionBadge {
     display: none;
   }
-}
 
-/* ============================================
-   Responsive: Mobile
-   ============================================ */
-@media (max-width: 768px) {
-  .barInner {
-    padding: 0 12px;
-  }
-
-  .barNav {
-    gap: 8px;
+  .footerNavRow {
+    gap: 10px;
   }
 
   .navLink {
-    font-size: 9px;
+    font-size: 11px;
+  }
+
+  .copyright {
+    font-size: 10px;
+  }
+
+  .footerInner {
+    padding: 0 16px;
+  }
+}
+
+/* ============================================
+   Responsive: Mobile (≤768px)
+   ============================================ */
+@media (max-width: 768px) {
+
+  /* --- Header --- */
+  .barInner {
+    padding: 0 12px;
+    min-height: 36px;
+  }
+
+  .barLogo {
+    height: 18px;
+  }
+
+  .barNav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--apm-bg);
+    border-bottom: 1px solid var(--apm-border);
+    padding: 0 16px;
+    gap: 0;
+    z-index: 99;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+
+  .barNavOpen {
+    max-height: 300px;
+    padding: 8px 16px;
+  }
+
+  .barNav .navLink {
+    font-size: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--apm-border);
+  }
+
+  .barNav .navLink:last-child {
+    border-bottom: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .barRight {
+    gap: 6px;
+  }
+
+  /* --- Hero --- */
+  .heroHeading {
+    padding: 12px 14px;
+    align-items: center;
   }
 
   .heroTitle {
-    font-size: 18px;
+    font-size: clamp(22px, 6.5vw, 30px);
+    letter-spacing: -0.5px;
+  }
+
+  .heroSub {
+    padding: 4px 14px;
+  }
+
+  .heroSubText {
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 100%;
+  }
+
+  /* --- Stats --- */
+  .statsRow {
+    padding: 4px 14px;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .statChip {
+    font-size: 10px;
+  }
+
+  /* --- Steps & Commands --- */
+  .step {
+    padding: 8px 14px 2px;
+  }
+
+  .stepLabel {
+    font-size: 11px;
+  }
+
+  .cmdRegion {
+    padding: 2px 14px 8px;
+  }
+
+  .astRegion {
+    padding: 6px 14px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* --- How It Works --- */
+  .hwLabel {
+    padding: 16px 14px 4px;
+    align-items: center;
+  }
+
+  .sectionLabel {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+  }
+
+  .prose {
+    padding: 6px 14px;
+  }
+
+  .proseText {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* --- Content Viewer --- */
+  .visual {
+    min-height: 200px;
+    padding: 4px 8px;
+  }
+
+  /* --- CTA buttons --- */
+  .ctaBtn {
+    font-size: 10px;
+    padding: 6px 14px;
+  }
+
+  /* --- Contributors --- */
+  .contributors {
+    padding: 10px 14px;
+  }
+
+  .ctrInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ctrLabel {
+    font-size: 10px;
+  }
+
+  .ctrAvatars {
+    gap: 5px;
+  }
+
+  .ctrAvatar {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* --- Footer (stacked column) --- */
+  .footerInner {
+    flex-direction: column;
+    padding: 12px 14px;
+    gap: 8px;
+    min-height: auto;
+  }
+
+  .footerInner .barLeft,
+  .footerInner .barRight {
+    justify-content: center;
+    flex: none;
+    width: 100%;
+  }
+
+  .copyright {
+    font-size: 9px;
+    text-align: center;
+  }
+
+  .footerNavRow {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .footerNavRow .navLink {
+    font-size: 9px;
+  }
+
+  .mascot {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* ============================================
+   Small Mobile (≤400px)
+   ============================================ */
+@media (max-width: 400px) {
+  .heroTitle {
+    font-size: 20px;
   }
 
   .heroSubText {
     font-size: 12px;
   }
+}
 
-  .ctrLabel {
-    font-size: 8px;
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .typedCursor {
+    animation: none;
+    opacity: 1;
+  }
+
+  .typedCursorDone {
+    animation: none;
+    opacity: 0;
+  }
+
+  .ctrAvatar {
+    opacity: 1;
+    transform: none;
+  }
+
+  .ctrAvatarVisible {
+    animation: none;
   }
 }

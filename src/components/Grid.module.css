@@ -80,10 +80,30 @@
 }
 
 /* ============================================
-   Responsive: Mobile (12 cols)
+   Responsive: Mobile (8 cols, shorter rows)
    ============================================ */
 @media (max-width: 768px) {
   .grid {
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat(8, 1fr);
+  }
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .cellAbove,
+  .cellBelow,
+  .regionAbove,
+  .regionBelow {
+    animation: none;
+  }
+
+  .cell {
+    border-color: var(--apm-grid);
+  }
+
+  .region {
+    opacity: 1;
   }
 }

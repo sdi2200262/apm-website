@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '@theme/Layout';
 import { useColorMode } from '@docusaurus/theme-common';
-import Grid from '../components/Grid';
+import Grid, { useColumns } from '../components/Grid';
 import CommandBlock from '../components/CommandBlock';
 import AssistantSelector from '../components/AssistantSelector';
 import ContentViewer from '../components/ContentViewer';
@@ -9,7 +9,6 @@ import { useStats } from '../hooks/useStats';
 import { useContributors } from '../hooks/useContributors';
 import {
   ASSISTANTS,
-  LANDING_REGIONS,
   GITHUB_URL,
   GITHUB_RELEASES_URL,
   GITHUB_ISSUES_URL,
@@ -17,16 +16,29 @@ import {
   GITHUB_CHANGELOG_URL,
   GITHUB_LICENSE_URL,
   NPM_URL,
+  getRegionsForCols,
+  getRegion,
 } from '../constants';
 import { formatNumber } from '../utils/format';
 import styles from './index.module.css';
 
+// Shorthand: get region coords by id from current responsive map
+function R(regions, id) {
+  const r = getRegion(regions, id);
+  return r ? { r1: r.r1, c1: r.c1, r2: r.r2, c2: r.c2 } : null;
+}
+
 // Inner component — rendered inside <Layout> so useColorMode has its provider
 function HomeContent() {
   const [assistant, setAssistant] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { stats } = useStats();
   const { contributors } = useContributors();
   const { colorMode, setColorMode } = useColorMode();
+  const cols = useColumns();
+  const regions = getRegionsForCols(cols);
+  const isMobile = cols <= 8;
+  const isDesktop = cols > 16;
 
   const initCommand = assistant ? `apm init ${assistant.flag}` : 'apm init';
 
@@ -42,7 +54,6 @@ function HomeContent() {
       const start = performance.now();
       const step = (now) => {
         const progress = Math.min((now - start) / duration, 1);
-        // Mostly linear, decelerates towards the end
         const eased = progress < 0.7 ? progress / 0.7 * 0.85 : 0.85 + (1 - Math.pow(1 - (progress - 0.7) / 0.3, 3)) * 0.15;
         setValue(Math.floor(eased * target));
         if (progress < 1) requestAnimationFrame(step);
@@ -101,56 +112,46 @@ function HomeContent() {
     return () => observer.disconnect();
   }, []);
 
-  // Theme wipe transition — dark wipes down, light wipes up
+  // Theme wipe transition
   const handleThemeToggle = () => {
     const goingLight = colorMode === 'dark';
-    const oldBg = getComputedStyle(document.documentElement).getPropertyValue('--apm-bg').trim();
     setColorMode(goingLight ? 'light' : 'dark');
 
+    const oldBg = getComputedStyle(document.documentElement).getPropertyValue('--apm-bg').trim();
     const overlay = document.createElement('div');
     Object.assign(overlay.style, {
-      position: 'fixed',
-      inset: '0',
-      zIndex: '10000',
-      background: oldBg,
-      pointerEvents: 'none',
-      clipPath: 'inset(0 0 0 0)',
-      transition: 'clip-path 0.6s ease-in-out',
+      position: 'fixed', inset: '0', zIndex: '10000', background: oldBg,
+      pointerEvents: 'none', clipPath: 'inset(0 0 0 0)', transition: 'clip-path 0.35s ease-in-out',
     });
     document.body.appendChild(overlay);
-
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        // Dark bg wipes down (reveals light underneath), light bg wipes up (reveals dark underneath)
         overlay.style.clipPath = goingLight ? 'inset(0 0 100% 0)' : 'inset(100% 0 0 0)';
       });
     });
-
-    setTimeout(() => overlay.remove(), 700);
+    setTimeout(() => overlay.remove(), 450);
   };
 
   // Hide Docusaurus navbar — we have our own
   useEffect(() => {
     const navbar = document.querySelector('.navbar');
     if (navbar) navbar.style.display = 'none';
-    return () => {
-      if (navbar) navbar.style.display = '';
-    };
+    return () => { if (navbar) navbar.style.display = ''; };
   }, []);
 
   return (
     <main className={`landing-page ${styles.landing}`}>
-      <Grid regions={LANDING_REGIONS} rows={39}>
+      <Grid regions={regions} rows={43}>
 
         {/* ===== HEADER BAR (sticky) ===== */}
-        <Grid.Region r1={0} c1={0} r2={0} c2={23} className={styles.bar} style={{ position: 'sticky', top: 0, zIndex: 100 }}>
+        <Grid.Region {...R(regions, 'hdr')} id="hdr" className={styles.bar} style={{ position: 'sticky', top: 0, zIndex: 100 }}>
           <div className={styles.barInner}>
             <div className={styles.barLeft}>
-              <img src="/img/apm-logo.svg" height="22" alt="APM" className={styles.barLogo} />
+              <img src={colorMode === 'dark' ? '/img/apm-logo-dark.svg' : '/img/apm-logo.svg'} height="22" alt="APM" className={styles.barLogo} />
             </div>
-            <nav className={styles.barNav}>
-              <a href="#how-it-works" className={styles.navLink}>How it Works</a>
-              <a href="/docs/introduction" className={styles.navLink}>Docs</a>
+            <nav className={`${styles.barNav} ${menuOpen ? styles.barNavOpen : ''}`}>
+              <a href="#how-it-works" className={styles.navLink} onClick={() => setMenuOpen(false)}>How it Works</a>
+              <a href="/docs/introduction" className={styles.navLink} onClick={() => setMenuOpen(false)}>Docs</a>
               <a href={GITHUB_URL} className={styles.navLink} target="_blank" rel="noopener">GitHub</a>
               <a href={NPM_URL} className={styles.navLink} target="_blank" rel="noopener">NPM</a>
             </nav>
@@ -165,23 +166,13 @@ function HomeContent() {
                   cli {cliVersion}
                 </a>
               )}
-              <button
-                className={styles.themeToggle}
-                onClick={handleThemeToggle}
-                title="Toggle theme"
-                aria-label="Toggle theme"
-              >
+              <button className={styles.themeToggle} onClick={handleThemeToggle} title="Toggle theme" aria-label="Toggle theme">
                 {colorMode === 'dark' ? (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="5" />
-                    <line x1="12" y1="1" x2="12" y2="3" />
-                    <line x1="12" y1="21" x2="12" y2="23" />
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                    <line x1="1" y1="12" x2="3" y2="12" />
-                    <line x1="21" y1="12" x2="23" y2="12" />
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                   </svg>
                 ) : (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -189,19 +180,20 @@ function HomeContent() {
                   </svg>
                 )}
               </button>
+              <button className={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+                <span className={`${styles.hamburgerLine} ${menuOpen ? styles.hamburgerOpen : ''}`} />
+              </button>
             </div>
           </div>
         </Grid.Region>
 
         {/* ===== HERO HEADING ===== */}
-        <Grid.Region r1={3} c1={7} r2={5} c2={16} className={styles.heroHeading}>
-          <h1 className={styles.heroTitle}>
-            Agentic Project<br />Management
-          </h1>
+        <Grid.Region {...R(regions, 'hero-h')} id="hero-h" className={styles.heroHeading}>
+          <h1 className={styles.heroTitle}>Agentic Project<br />Management</h1>
         </Grid.Region>
 
         {/* ===== HERO SUBTITLE ===== */}
-        <Grid.Region r1={6} c1={7} r2={6} c2={16} className={styles.heroSub}>
+        <Grid.Region {...R(regions, 'hero-sub')} id="hero-sub" className={styles.heroSub}>
           <div className={styles.heroSubWrap} ref={subtitleRef}>
             <p className={styles.heroSubText}>
               {typedText}
@@ -211,71 +203,67 @@ function HomeContent() {
         </Grid.Region>
 
         {/* ===== STATS ROW ===== */}
-        <Grid.Region r1={7} c1={7} r2={7} c2={16} className={styles.statsRow}>
+        <Grid.Region {...R(regions, 'hero-stats')} id="hero-stats" className={styles.statsRow}>
           {stats.stars > 0 && (
             <a href={GITHUB_URL} className={styles.statChip} target="_blank" rel="noopener">
-              <img
-                src={colorMode === 'dark' ? '/img/github-mark-white.svg' : '/img/github-mark-black.svg'}
-                alt="GitHub"
-                className={styles.statLogo}
-                width="14"
-                height="14"
-              />
+              <img src={colorMode === 'dark' ? '/img/github-mark-white.svg' : '/img/github-mark-black.svg'} alt="GitHub" className={styles.statLogo} width="14" height="14" />
               {formatNumber(animStars)} stars
             </a>
           )}
-          {stats.stars > 0 && stats.downloads > 0 && (
-            <span className={styles.statSep}>·</span>
-          )}
+          {stats.stars > 0 && stats.downloads > 0 && <span className={styles.statSep}>·</span>}
           {stats.downloads > 0 && (
             <a href={NPM_URL} className={styles.statChip} target="_blank" rel="noopener">
-              <img
-                src="/img/npm-logo.svg"
-                alt="npm"
-                className={`${styles.statLogo} ${colorMode === 'dark' ? styles.statLogoInvert : ''}`}
-                width="28"
-                height="11"
-              />
+              <img src="/img/npm-logo.svg" alt="npm" className={`${styles.statLogo} ${colorMode === 'dark' ? styles.statLogoInvert : ''}`} width="28" height="11" />
               {formatNumber(animDownloads)} downloads
             </a>
           )}
         </Grid.Region>
 
-        {/* ===== STEP 1 ===== */}
-        <Grid.Region r1={9} c1={7} r2={9} c2={16} className={styles.step}>
-          <span className={styles.stepLabel}><span className={styles.stepNum}>1.</span> Install the CLI</span>
-        </Grid.Region>
+        {/* ===== STEPS & COMMANDS (desktop only) ===== */}
+        {isDesktop && R(regions, 'step1') && (
+          <>
+            <Grid.Region {...R(regions, 'step1')} id="step1" className={styles.step}>
+              <span className={styles.stepLabel}><span className={styles.stepNum}>1.</span> Install the CLI</span>
+            </Grid.Region>
+            <Grid.Region {...R(regions, 'cmd1')} id="cmd1" className={styles.cmdRegion}>
+              <CommandBlock command="npm install -g agentic-pm" />
+            </Grid.Region>
+            <Grid.Region {...R(regions, 'step2')} id="step2" className={styles.step}>
+              <span className={styles.stepLabel}><span className={styles.stepNum}>2.</span> Initialize your project</span>
+            </Grid.Region>
+            <Grid.Region {...R(regions, 'cmd2')} id="cmd2" className={styles.cmdRegion}>
+              <CommandBlock command={initCommand} />
+            </Grid.Region>
+            <Grid.Region {...R(regions, 'ast')} id="ast" className={styles.astRegion}>
+              <AssistantSelector active={assistant} onSelect={setAssistant} />
+            </Grid.Region>
+          </>
+        )}
 
-        {/* ===== COMMAND 1 ===== */}
-        <Grid.Region r1={10} c1={7} r2={10} c2={16} className={styles.cmdRegion}>
-          <CommandBlock command="npm install -g agentic-pm" />
-        </Grid.Region>
+        {/* ===== SUPPORTED ASSISTANTS (mobile + tablet) ===== */}
+        {!isDesktop && R(regions, 'mobile-ast') && (
+          <Grid.Region {...R(regions, 'mobile-ast')} id="mobile-ast" className={styles.mobileAst}>
+            <span className={styles.mobileAstLabel}>Supported Assistants</span>
+            <div className={styles.mobileAstGrid}>
+              {ASSISTANTS.map((ast, i) => {
+                const logo = ast.logoDark ? (colorMode === 'dark' ? ast.logoDark : ast.logoLight) : ast.logo;
+                return (
+                  <div key={ast.id} className={styles.mobileAstItem} style={{ animationDelay: `${0.6 + i * 0.12}s` }}>
+                    {logo && <img src={logo} alt="" className={styles.mobileAstLogo} width="16" height="16" />}
+                    <span className={styles.mobileAstName}>{ast.name}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </Grid.Region>
+        )}
 
-        {/* ===== STEP 2 ===== */}
-        <Grid.Region r1={11} c1={7} r2={11} c2={16} className={styles.step}>
-          <span className={styles.stepLabel}><span className={styles.stepNum}>2.</span> Initialize your project</span>
-        </Grid.Region>
-
-        {/* ===== COMMAND 2 ===== */}
-        <Grid.Region r1={12} c1={7} r2={12} c2={16} className={styles.cmdRegion}>
-          <CommandBlock command={initCommand} />
-        </Grid.Region>
-
-        {/* ===== ASSISTANT SELECTOR ===== */}
-        <Grid.Region r1={13} c1={7} r2={13} c2={16} className={styles.astRegion}>
-          <AssistantSelector
-            active={assistant}
-            onSelect={setAssistant}
-          />
-        </Grid.Region>
-
-        {/* ===== HOW IT WORKS LABEL ===== */}
-        <Grid.Region r1={21} c1={5} r2={21} c2={18} className={styles.hwLabel} id="how-it-works">
+        {/* ===== HOW IT WORKS ===== */}
+        <Grid.Region {...R(regions, 'hw-lbl')} id="hw-lbl" anchor="how-it-works" className={styles.hwLabel}>
           <span className={styles.sectionLabel}>HOW IT WORKS</span>
         </Grid.Region>
 
-        {/* ===== INTRO — full width under label ===== */}
-        <Grid.Region r1={22} c1={5} r2={22} c2={18} className={styles.prose}>
+        <Grid.Region {...R(regions, 'hw-intro')} id="hw-intro" className={styles.prose}>
           <p className={styles.proseText}>
             An <strong>APM session</strong> runs across two phases. A Planner, a Manager, and multiple Workers each
             operate in their own isolated context, coordinating through planning documents, centralized Memory and
@@ -283,8 +271,7 @@ function HomeContent() {
           </p>
         </Grid.Region>
 
-        {/* ===== PROSE 1 — PLANNING (left column) ===== */}
-        <Grid.Region r1={24} c1={5} r2={26} c2={11} className={styles.prose}>
+        <Grid.Region {...R(regions, 'hw-p1')} id="hw-p1" className={styles.prose}>
           <p className={styles.proseText}>
             The <strong>Planning Phase</strong> starts with the <strong>Planner</strong> doing collaborative
             project discovery — asking targeted questions about requirements, constraints and preferences
@@ -294,8 +281,7 @@ function HomeContent() {
           </p>
         </Grid.Region>
 
-        {/* ===== PROSE 2 — IMPLEMENTATION (left column) ===== */}
-        <Grid.Region r1={28} c1={5} r2={30} c2={11} className={styles.prose}>
+        <Grid.Region {...R(regions, 'hw-p2')} id="hw-p2" className={styles.prose}>
           <p className={styles.proseText}>
             The <strong>Implementation Phase</strong> is a continuous loop until project completion. The <strong>Manager</strong> assigns Tasks
             based on the Plan's dependencies and reviews outcomes. <strong>Workers</strong> execute, log their work to <strong>Memory</strong>,
@@ -305,52 +291,39 @@ function HomeContent() {
           </p>
         </Grid.Region>
 
-        {/* ===== CONTENT VIEWER (right column) ===== */}
-        <Grid.Region r1={24} c1={13} r2={30} c2={18} className={styles.visual}>
+        <Grid.Region {...R(regions, 'vis')} id="vis" className={styles.visual}>
           <ContentViewer />
         </Grid.Region>
 
+        {/* ===== CTA BUTTONS (all views, after How It Works) ===== */}
+        <Grid.Region {...R(regions, 'cta')} id="cta" className={styles.ctaRegion}>
+          <a href="/docs/getting-started" className={styles.ctaBtn}>See Documentation</a>
+          <a href={GITHUB_URL} className={`${styles.ctaBtn} ${styles.ctaBtnSecondary}`} target="_blank" rel="noopener">View on GitHub</a>
+        </Grid.Region>
+
         {/* ===== CONTRIBUTORS ===== */}
-        <Grid.Region r1={35} c1={5} r2={35} c2={18} className={styles.contributors}>
+        <Grid.Region {...R(regions, 'ctr')} id="ctr" className={styles.contributors}>
           <div className={styles.ctrInner} ref={ctrRef}>
             <span className={styles.ctrLabel}>CONTRIBUTORS</span>
             <div className={styles.ctrAvatars}>
               {contributors.slice(0, 12).map((c, i) => (
-                <a
-                  key={c.login}
-                  href={c.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={c.login}
-                  style={{ display: 'flex', alignItems: 'center' }}
-                >
-                  <img
-                    src={c.avatar}
-                    alt={c.login}
-                    className={`${styles.ctrAvatar} ${ctrVisible ? styles.ctrAvatarVisible : ''}`}
-                    style={ctrVisible ? { animationDelay: `${i * 0.08}s` } : undefined}
-                    width="22"
-                    height="22"
-                    loading="lazy"
-                  />
+                <a key={c.login} href={c.url} target="_blank" rel="noopener noreferrer" title={c.login} style={{ display: 'flex', alignItems: 'center' }}>
+                  <img src={c.avatar} alt={c.login} className={`${styles.ctrAvatar} ${ctrVisible ? styles.ctrAvatarVisible : ''}`}
+                    style={ctrVisible ? { animationDelay: `${i * 0.08}s` } : undefined} width="22" height="22" loading="lazy" />
                 </a>
               ))}
-              {contributors.length > 12 && (
-                <span className={styles.ctrMore}>+{contributors.length - 12}</span>
-              )}
+              {contributors.length > 12 && <span className={styles.ctrMore}>+{contributors.length - 12}</span>}
             </div>
           </div>
         </Grid.Region>
 
         {/* ===== FOOTER BAR ===== */}
-        <Grid.Region r1={38} c1={0} r2={38} c2={23} className={styles.bar}>
-          <div className={styles.barInner}>
+        <Grid.Region {...R(regions, 'ftr')} id="ftr" className={styles.bar}>
+          <div className={`${styles.barInner} ${styles.footerInner}`}>
             <div className={styles.barLeft}>
               <span className={styles.copyright}>
                 {new Date().getFullYear()} Agentic Project Management · Licensed under{' '}
-                <a href={GITHUB_LICENSE_URL} className={styles.licenseLink} target="_blank" rel="noopener">
-                  MPL 2.0
-                </a>
+                <a href={GITHUB_LICENSE_URL} className={styles.licenseLink} target="_blank" rel="noopener">MPL 2.0</a>
               </span>
             </div>
             <a href="https://github.com/sdi2200262" className={styles.mascot} target="_blank" rel="noopener noreferrer" title="sdi2200262">
@@ -373,14 +346,9 @@ function HomeContent() {
   );
 }
 
-// Outer wrapper — provides Layout (and thus ColorModeProvider) context
 export default function Home() {
   return (
-    <Layout
-      title="Agentic Project Management"
-      description="Manage complex projects with a team of AI agents, smoothly and efficiently."
-      noFooter
-    >
+    <Layout title="Agentic Project Management" description="Manage complex projects with a team of AI agents, smoothly and efficiently." noFooter>
       <HomeContent />
     </Layout>
   );

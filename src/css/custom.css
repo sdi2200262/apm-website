@@ -486,3 +486,31 @@ html:has(.landing-page) {
   background: rgba(58, 173, 165, 0.25);
   color: inherit;
 }
+
+/* ============================================
+   Landing Page — Mobile Performance
+   ============================================ */
+@media (max-width: 768px) {
+  :root {
+    --apm-row-h: 36px;
+  }
+
+  /* Disable backdrop-filter on mobile — expensive on low-end GPUs */
+  .landing-page [data-region="hdr"],
+  .landing-page [data-region="ftr"] {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--apm-bg) !important;
+  }
+}
+
+/* ============================================
+   Reduced Motion — Global
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

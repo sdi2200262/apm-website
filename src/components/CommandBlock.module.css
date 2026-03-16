@@ -53,3 +53,24 @@
   color: var(--apm-accent);
   background: rgba(123, 140, 239, 0.1);
 }
+
+@media (max-width: 768px) {
+  .cmd {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .text {
+    min-width: 0;
+  }
+
+  .copyBtn {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .copyBtn {
+    display: none;
+  }
+}

@@ -8,7 +8,7 @@ export default function AssistantSelector({ active, onSelect }) {
 
   return (
     <div className={styles.selector}>
-      {ASSISTANTS.map((ast) => {
+      {ASSISTANTS.map((ast, i) => {
         const logo = ast.logoDark
           ? (colorMode === 'dark' ? ast.logoDark : ast.logoLight)
           : ast.logo;
@@ -19,6 +19,7 @@ export default function AssistantSelector({ active, onSelect }) {
             className={`${styles.btn} ${active?.id === ast.id ? styles.active : ''}`}
             onClick={() => onSelect(active?.id === ast.id ? null : ast)}
             title={ast.name}
+            style={{ animationDelay: `${0.6 + i * 0.12}s` }}
           >
             {logo ? (
               <img src={logo} alt={ast.name} className={styles.logo} width="16" height="16" />
