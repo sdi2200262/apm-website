@@ -2,95 +2,102 @@
 id: introduction
 slug: /introduction
 sidebar_label: Introduction
-sidebar_position: 3
+sidebar_position: 1
 ---
+
+import ThemedImage from '@theme/ThemedImage';
 
 # Agentic Project Management (APM)
 
-**A structured approach to building complex projects with AI Agents**
+**A structured approach to building complex projects with AI Agents.**
 
-APM is an open-source framework that helps you manage ambitious software projects using AI assistants like Claude, Cursor, GitHub Copilot and more. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI Agents handle planning, coordination, and execution as a team.
+APM is an open-source framework for managing ambitious software projects with AI assistants - Claude Code, Cursor, GitHub Copilot, Gemini CLI, and OpenCode. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI Agents handle planning, coordination, and execution as a team.
 
 ## The Problem: Context Decay
 
-Building complex projects with AI assistants presents a fundamental challenge: **context window limits**.
+Building complex projects with AI assistants hits a fundamental wall: **context window limits**.
 
-As conversations extend, context degrades. The AI loses track of original requirements, produces contradictory suggestions, and hallucinates details. Earlier parts of the conversation get compressed or discarded to make room for new messages. For substantial projects, this context decay makes sustained progress difficult.
+As conversations grow, context degrades. The AI loses track of requirements and constraints, produces bad code, and hallucinates details. Earlier parts of the conversation get compressed or discarded. For substantial projects, this makes sustained progress nearly impossible.
 
 ## The Solution: Structured Multi-Agent Coordination
 
-APM addresses context limitations by treating the AI not as a single continuous assistant, but as a team of specialized AI Agents, each focused on a specific role with intentionally scoped context. The workload distribution of the framework aims for:
+APM treats the AI not as a single continuous assistant, but as a team of specialized Agents - each focused on a specific role with intentionally scoped context.
 
-- **Specialization:** Different Agents handle planning, coordination, and implementation. Each operates in its own context with only the information needed for its specific role.
+- **Specialization** - Different Agents handle planning, coordination, and implementation. Each operates in its own context with only the information it needs.
 
-- **Persistence:** Project state lives in structured documents outside Agent contexts. Planning documents define all work. Memory tracks the project's progression. A file-based bus system enables communication between Agents.
+- **Persistence** - Project state lives in structured documents outside Agent contexts.
+    - Planning documents define all work
+    - Memory tracks progression
+    - A file-based message bus system enables cross-Agent communication
 
-- **Continuity:** When an Agent's context window fills, a Handoff Protocol transfers working knowledge to a fresh instance, which reconstructs context using the project's documents and continues seamlessly. Completed sessions can be archived and preserved for future reference, enabling new sessions to build on prior work.
+- **Continuity** - When an Agent's context fills, a Handoff transfers working knowledge to a fresh instance. At intervals, completed APM sessions can be archived for future reference
 
-This architecture mirrors how human teams collaborate: specialized roles, shared documentation, and explicit communication protocols ensure consistent progress regardless of individual capacity limits.
-
----
+This mirrors how human teams collaborate: specialized roles, shared documentation, and explicit communication protocols.
 
 ## Agent Types
 
-APM coordinates three specialized Agent types that are all capable of using platform-native subagents:
+APM coordinates three specialized agent types:
 
-- **Planner** - Operates once at project start. Conducts structured project discovery to gather requirements and constraints, then decomposes the gathered context into three planning documents: Spec, Plan, and Rules. Initializes the bus system for the Implementation Phase. Acts as the project architect - designs the structure that guides all subsequent work.
+- **Planner** - Runs once at project start. Conducts structured discovery to gather requirements and constraints, then decomposes everything into three planning documents: Spec, Plan, and Rules. Acts as the project architect.
 
-- **Manager** - Receives the populated planning documents from the Planner and coordinates overall project execution. Assigns tasks to Workers, reviews completed work, manages task dependencies, and maintains the big picture.
+- **Manager** - Receives planning documents from the Planner and coordinates execution. Assigns tasks to Workers, reviews completed work, manages dependencies, and maintains the big picture.
 
-- **Workers** - Execute specific tasks within defined domains. Each Worker is assigned a specialized area (frontend, backend, API development, etc.) and receives focused task assignments. Workers operate with tightly scoped context - they see their current task and accumulated working context from previous tasks, but not the full project scope.
+- **Workers** - Execute specific tasks within defined domains (frontend, backend, API, etc.). Workers operate with tightly scoped context - they see their current task and accumulated working context, not the full project scope.
 
-- **Subagents** - Temporary instances spawned for isolated work such as debugging or research. Solve a specific problem and close, preventing context pollution in the main Agent contexts. Modern AI platforms provide native subagent support that APM leverages.
+Each role is covered in depth in [Agent Types](Agent_Types.md).
 
-> For detailed description on the three APM agent types, see [Agent Types](Agent_Types.md).
+## Project State
 
----
+Structured files outside any Agent's context keep track of state and history, so nothing is lost when a chat ends or an Agent reaches its limits.
 
-## Project Memory and Coordination
+- **Planning Documents** - Three documents created by the Planner that guide all subsequent work: the Spec (what to build), the Plan (how work is organized), and the Rules (how work is performed).
 
-APM maintains project state through structured documents and protocols:
+- **Memory** - A file hierarchy that tracks project progression. Workers log their completed work; the Manager reads those logs to track progress without reviewing code directly. Durable observations accumulate across the project.
 
-- **Planning Documents** - Design and coordination documents that guide all work
-  - **Spec** - Defines what is being built (design decisions and constraints)
-  - **Plan** - Defines how work is organized (Stages, Tasks, dependencies)
-  - **Rules** - Define how work is performed (universal execution patterns, maintained in the platform's agents file)
+- **Message Bus System** - File-based message passing between Agent chats. The Manager writes task assignments; Workers write completion reports. You deliver messages by running simple commands, keeping APM platform-agnostic and every interaction auditable.
 
-- **Memory** - A hierarchical structure containing the Tracker (live project state with task tracking, agent tracking, and working notes), the Index (durable project memory with stage summaries), and Task Logs for each completed Task. Workers document their work in Task Logs. The Manager reads them to track progress without reviewing code directly, maintaining coordination-level focus.
+- **Handoff** - When an Agent's context window fills up, you transfer its working knowledge to a fresh instance. The outgoing Agent captures what it knows in structured artifacts; the incoming Agent reads them and picks up where the previous left off.
 
-- **Bus System** - A file-based communication mechanism for passing messages between Agent chats. The Manager writes Task Prompts to Task Bus files; Workers write Task Reports to Report Bus files. The User triggers bus checks using commands (`/apm-4-check-tasks`, `/apm-5-check-reports`), keeping APM platform agnostic while making communication explicit and auditable.
-- **Handoff** - When an Agent's context window approaches limits, the User triggers a Handoff. The outgoing Agent creates a Handoff Log capturing working knowledge and writes a handoff prompt to the Handoff Bus with reconstruction instructions. The incoming Agent reads these artifacts and relevant Task Logs to reconstruct context and continue work seamlessly.
-
----
-
-## Workflow Phases
+## Workflow
 
 APM operates in two distinct phases:
 
-- **Planning Phase** - The Planner conducts structured discovery through question rounds, gathering comprehensive project context. It then performs Work Breakdown, decomposing requirements into a concrete Plan with defined Stages, Tasks, Worker assignments, and dependencies.
+- **Planning Phase** - The Planner runs two procedures back to back:
+  1. **Context Gathering** - The Planner asks you structured questions across three rounds to understand your project's vision, technical requirements, and implementation approach. After each round it iterates on gaps, and once all rounds are complete it presents an understanding summary for your approval.
+  2. **Work Breakdown** - The Planner decomposes everything it gathered into three planning documents: the Spec, the Plan, and the Rules. You review and approve each one before the Planner moves on.
 
-- **Implementation Phase** - The Manager and Workers execute the Plan through repeating assignment-execution-review cycles:
+- **Implementation Phase** - The Manager and Workers turn the planning documents into working software through repeating cycles:
+  1. **Task Assignment** - The Manager assesses which tasks are ready, constructs a self-contained Task Prompt with all the context a Worker needs, and delivers it via the message bus system.
+  2. **Task Execution** - The Worker receives the assignment, executes the work, and validates results against the criteria specified in the prompt.
+  3. **Task Logging** - The Worker documents the outcome in a structured Task Log and writes a brief report back to the Manager via the message bus system.
+  4. **Task Review** - The Manager reviews the log and report, then decides the next step: proceed to the next task, retry with refined instructions, or update the planning documents.
 
-  1. **Task Assignment** - Manager assesses task readiness, constructs task prompts with required context, delivers via Task Bus
-  2. **Task Execution** - Worker receives task assignment via trigger command, executes work, validates results, logs outcomes
-  3. **Task Review** - Manager reviews completion logs via trigger command, determines review outcome
+  The cycle repeats until all tasks complete. The Manager can dispatch tasks in parallel when dependencies allow, or batch sequential tasks to the same Worker.
 
-  The cycle repeats until all tasks complete. The Manager can dispatch multiple tasks in parallel when dependencies allow, or send batches of sequential tasks to the same Worker for efficiency.
+<ThemedImage
+  alt="APM session overview - Planning Phase produces Spec, Plan, and Rules; Implementation Phase cycles through task assignment, execution, logging, and review"
+  sources={{
+    light: '/img/diagrams/apm-overview-light.svg',
+    dark: '/img/diagrams/apm-overview-dark.svg',
+  }}
+  style={{margin: '1.5rem 0'}}
+/>
 
-- **Session Continuation** - After a session completes, it can be archived and a fresh session started in its place. Archived sessions are preserved in `.apm/archives/` and accessible to future Planners during Context Gathering, enabling iterative development across multiple sessions.
-
----
+When an APM session completes - or at any point during one - you can archive it and start fresh. Archives live in `.apm/archives/` and are accessible to future Planners during Context Gathering, so subsequent APM sessions build on what came before rather than starting from zero.
 
 ## Installation & Usage
 
-APM is installed via the [`agentic-pm`](https://www.npmjs.com/package/Agentic-pm) CLI, which scaffolds the necessary commands, guides and skills into your project workspace.
+APM is installed via the [`agentic-pm`](https://www.npmjs.com/package/Agentic-pm) CLI, which scaffolds commands, guides, and skills into your project workspace.
 
-To get started with installation and your first session, see [Getting Started](Getting_Started.md).
-
----
+To get started, see [Getting Started](Getting_Started.md).
 
 ## Contributing
 
-APM is open source and welcomes contributions. You can report bugs or request features via [GitHub Issues](https://github.com/sdi2200262/Agentic-project-management/issues), submit improvements via Pull Requests.
+APM is open source and welcomes contributions. Report bugs or request features via [GitHub Issues](https://github.com/sdi2200262/Agentic-project-management/issues), or submit improvements via Pull Requests.
 
 For contribution guidelines, see [CONTRIBUTING.md](https://github.com/sdi2200262/Agentic-project-management/blob/main/CONTRIBUTING.md).
+
+## Next Steps
+
+- [Getting Started](Getting_Started.md) - Install APM and run your first APM session
+- [Agent Types](Agent_Types.md) - Deep dive into Planner, Manager, and Worker roles
