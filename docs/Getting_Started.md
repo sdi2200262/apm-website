@@ -7,51 +7,21 @@ sidebar_position: 2
 
 # Getting Started with APM
 
-This guide walks you through your first APM session, from installation through completing your first few tasks. The time invested in planning determines execution quality - thorough planning prevents roadblocks during implementation.
-
-For deeper context on Agent roles and workflow structure, see [Agent Types](Agent_Types.md) and [Workflow Overview](Workflow_Overview.md).
-
----
+This guide walks you through your first APM session - from installation through completing your first few tasks.
 
 ## Prerequisites
 
 Before starting, ensure you have:
 
-### Required Resources
-
 - **Node.js** - Version 18 or higher for the APM CLI
-- **AI Assistant Platform** - Access to Claude, Cursor, GitHub Copilot, or similar
-- **Project Workspace** - A dedicated directory for your project
+- **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Gemini CLI, or OpenCode
+- **Project Workspace** - A directory for your project
 
-### Recommended Models
-
-APM Agents perform best with models that excel at systematic reasoning and context management. **Claude Sonnet 4.5** provides consistent performance across all Agent types.
-
-| Agent Type | Recommended Models | Cost-Effective Alternatives | Notes |
-| :--- | :--- | :--- | :--- |
-| **Planner Agent** | Claude Sonnet 4/4.5, Claude Opus 4.5/4.6, | - | Prefer the recommended models for best planning output. Avoid switching models during Planning Phase to prevent context gaps. Use one model throughout. |
-| **Manager Agent** | Claude Sonnet 4/4.5, Claude Opus 4.5/4.6, Gemini 3 Pro | Claude Haiku 4.5, Cursor Auto | Model switching mid-chat not recommended though less critical than for Planner. |
-| **Worker Agents** | Claude Sonnet 4.5, Claude Opus 4.5/4.6, GPT-5.x, GPT-5.x-Codex, Gemini 3 Pro | Claude Haiku 4.5, GPT-5.x-mini, GPT-5.x-Codex-mini, Grok Code, Cursor Composer, Cursor Auto | Context is tightly scoped, making model switching viable for matching task complexity. |
-
-> For guidance on economical model selection, see [Token Consumption Tips](Token_Consumption_Tips.md).
-
----
-
-## Platform-Specific Notes
-
-Platform-specific guidance will be added as new releases occur and user feedback is collected.
-
-> **GitHub Copilot Context Summarization:** As of November 2025, GitHub Copilot lacks context window visualization and uses internal "conversation history summarization" that can break cached context. If summarization triggers during any phase, the Agent may lose crucial context (guides, commands, task details). Stop the response immediately and re-provide necessary context. Consider disabling summarization via `github.copilot.chat.summarizeAgentConversationHistory.enabled: false` in settings.
-
----
+**Model selection:** APM Agents perform best with capable reasoning models. Use Claude Opus 4.6 or Claude Sonnet 4.6 for the Planner and Manager. Workers are more flexible since their context is tightly scoped - cost-effective models work well. For detailed model guidance, see [Token Consumption Tips](Token_Consumption_Tips.md).
 
 ## Installation
 
-APM provides a CLI tool that automates installation and setup.
-
-### Install the CLI
-
-Install globally via npm:
+Install the CLI globally via npm:
 
 ```bash
 npm install -g agentic-pm
@@ -63,9 +33,7 @@ Or locally in your project workspace:
 npm install agentic-pm
 ```
 
-### Initialize Your Project
-
-Navigate to your project directory and run:
+Then navigate to your project directory and run:
 
 ```bash
 apm init
@@ -75,255 +43,186 @@ The initialization command will:
 
 - **Prompt for AI Assistant** - Select your platform from supported assistants
 - **Download APM Assets** - Fetch the latest commands, guides, and skills
-- **Create APM Directory Structure** - Set up `.apm/` with:
-  - `.apm/spec.md` - Spec template (populated by Planner)
-  - `.apm/plan.md` - Plan template (populated by Planner)
-  - `.apm/tracker.md` - Project state tracker (populated by Manager)
-  - `.apm/memory/index.md` - Project memory index (populated by Manager)
-  - `.apm/metadata.json` - Installation metadata
-- **Install Procedural Files** - Create required commands, guides, skills, and agents in platform-specific directories (`.cursor/`, `.github/`, `.claude/`, etc.):
-  - `.cursor/commands/` - Agent initiation, handoff, and utility commands
-  - `.cursor/apm-guides/` - Procedure guides for Agents
-  - `.cursor/skills/` - Shared procedural skills
-  - `.cursor/agents/` - Custom subagent configurations
+- **Create `.apm/` directory** - Planning document templates, project Tracker, Memory Index, and installation metadata
+- **Install procedural files** - Commands, guides, skills, and Agent configurations placed in your platform's directory (e.g. `.claude/` for Claude Code, `.cursor/` for Cursor, `.github/` for Copilot)
 
 After initialization completes, you're ready to begin.
 
----
+:::note How Agents communicate
+Throughout an APM session, Agents communicate by writing to files in `.apm/bus/` - the **Message Bus**. The Manager writes task assignments to a Worker's Task Bus; the Worker writes results back to its Report Bus. You act as the messenger between Agent conversations, running commands like `/apm-4-check-tasks` and `/apm-5-check-reports` to deliver messages. Each Agent tells you exactly what to do next - which command to run and in which conversation.
+:::
 
-## Step 1: Initiate Planner
+:::note "Open a new Agent"
+Each APM Agent runs in its own isolated conversation. What this looks like varies by platform:
 
-The Planning Phase creates the planning documents that guide all subsequent work.
+**IDE assistants:**
+- **Cursor** - Start a new Cursor Agent chat
+- **GitHub Copilot** - Start a new Copilot Chat
 
-### 1. Create Planner Chat
+**CLI assistants:**
+- **Claude Code** - Open a new terminal and start Claude Code
+- **Gemini CLI** - Open a new terminal and start Gemini CLI
+- **OpenCode** - Open a new terminal and start OpenCode
 
-1. Open a new chat in your AI assistant (Agent mode if available)
-2. Name it clearly: "Planner" or "APM Planner"
-3. Select a top-tier model as recommended in Prerequisites
+Throughout this guide, **"open a new Agent"** means whichever of the above applies to your platform. The key is that each Agent gets its own context - separate from every other Agent. Keep active Agent conversations open during the APM session for easy switching between them - don't delete conversations until the Agent has Handed off or the session is complete.
+:::
 
-### 2. Run Initialization Command
+## Step 1: Initiate the Planner
 
-Enter the command:
+Open a new Agent and run:
 
 ```markdown
 /apm-1-initiate-planner
 ```
 
-The Planner will greet you and outline its two-step process:
+The Planner will introduce itself, confirm its role, and outline its two procedures: Context Gathering (structured project discovery) followed by Work Breakdown (decomposition into planning documents).
 
-1. Context Gathering - Structured project discovery through question rounds
-2. Work Breakdown - Decomposition into planning documents
+You can optionally pass project context as an argument to give the Planner a head start:
 
----
+```markdown
+/apm-1-initiate-planner We're building a REST API for a task management app using Express and PostgreSQL. Here's the PRD: @docs/prd.md
+```
+
+The Planner incorporates this before starting Context Gathering - it won't skip the discovery process, but it will ask more targeted questions.
 
 ## Step 2: Work Through the Planning Phase
 
-The Planner guides you through Context Gathering and Work Breakdown to create the planning documents.
+The Planner guides you through both procedures to create the planning documents. Take your time here - the quality of these documents directly shapes how well implementation goes.
 
-### 1. Context Gathering
+### Context Gathering
 
 The Planner asks questions across three rounds to understand your project:
 
-- **Round 1:** Project vision, existing materials, and goals
-- **Round 2:** Technical requirements and validation criteria
-- **Round 3:** Implementation approach and quality standards
+- **Round 1** - Project vision, existing materials, and goals
+- **Round 2** - Technical requirements and validation criteria
+- **Round 3** - Implementation approach and quality standards
 
-After each round, the Planner iterates on gaps before advancing. After all rounds, it presents an Understanding Summary for your approval.
+After each round, the Planner iterates on gaps before advancing. It will also explore your codebase when your answers reference existing code or documentation. After all rounds, it presents an understanding summary for your approval.
 
-> **Tips:**
->
-> - Share all relevant constraints and uncertainties upfront
->
-> - Provide existing documentation early to improve subsequent questions
-> - Be specific about validation criteria - how will you know each requirement is met?
+:::tip
+- Share all relevant constraints and uncertainties upfront
+- Provide existing documentation early to improve subsequent questions
+- Be specific about validation criteria - how will you know each requirement is met?
+:::
 
-### 2. Work Breakdown
+### Work Breakdown
 
 The Planner creates three planning documents:
 
 - **Spec** - Design decisions and constraints defining what is being built
-- **Plan** - Stages, Tasks, Worker assignments, and Dependency Graph defining how work is organized
-- **Rules** - Universal execution patterns defining how work is performed (written as the APM standards block in the platform's agents file)
+- **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
+- **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`)
 
-You'll review and approve each document before the Planner proceeds to the next. After all three approvals, the Planner initializes the bus system and the Planning Phase completes.
+You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus (creating directories and bus files in `.apm/bus/` for each Worker defined in the Plan) and the Planning Phase completes.
 
-> For detailed mechanics of Context Gathering and Work Breakdown, see [Workflow Overview](Workflow_Overview.md).
+## Step 3: Initiate the Manager
 
----
-
-## Step 3: Initiate Manager
-
-The Manager coordinates execution of the Plan.
-
-### 1. Create Manager Chat
-
-1. Open a new chat in Agent mode
-2. Name it clearly: "Manager" or "APM Manager 1"
-3. Select a model as recommended in Prerequisites
-
-### 2. Run Initialization Command
-
-Enter the command:
+Open a new Agent and run:
 
 ```markdown
 /apm-2-initiate-manager
 ```
 
-The Manager will:
+As Manager 1 (the first instance), the Manager reads all planning documents and its procedural guides, initializes version control if a git repository exists, populates the Tracker with Stage 1 Tasks and all Worker assignments, initializes the Memory Index, and presents an understanding summary covering project scope, key design decisions, Workers, and Stage structure.
 
-- Read the planning documents (Spec, Plan, Rules)
-- Populate the Tracker and initialize the Index
-- Initialize version control if a git repository exists
-- Present an understanding summary
+Review the summary carefully. If it accurately reflects your project, authorize it to proceed - otherwise make corrections. The Manager then assesses which Tasks are ready and begins dispatching work.
 
-Review the Manager's summary carefully. If it accurately reflects your project authorize it to proceed, otherwise make corrections as needed. The Manager will then prepare the first assignment-execution-review cycle.
+## Step 4: Your First Task Cycle
 
----
+This is the core loop of the Implementation Phase. Each Task goes through four procedures - Assignment, Execution, Logging, and Review - with you carrying messages between Agent conversations. Each Agent directs you on what to do next.
 
-## Step 4: Work Through the Implementation Phase
+**1. Manager dispatches a Task** - The Manager constructs a self-contained Task Prompt (objective, instructions, validation criteria, and all the context a Worker needs) and writes it to the Worker's Task Bus. It then tells you which Worker conversation to go to and what to run.
 
-This step walks through your first assignment-execution-review cycle as an example of the repeating pattern.
-
-### 1. Manager Assigns Task
-
-The Manager assesses which tasks are ready and creates a Task Prompt with all required context. It writes this to the Worker's Task Bus file and provides you with the file path.
-
-### 2. Initialize Worker
-
-1. Open a new chat for the assigned Worker
-2. Name it using the Agent name from the Plan (e.g., "Frontend Agent")
-3. Select a model as recommended in Prerequisites
-4. Run the initialization command:
+**2. Initialize the Worker** - Open a new Agent for the assigned Worker and run the initiation command with the Worker's identifier. The Manager tells you the exact identifier to use.
 
 ```markdown
-/apm-3-initiate-worker
+/apm-3-initiate-worker frontend-agent
 ```
 
-### 3. Deliver Task Assignment
+The Worker resolves its identity against the Message Bus, confirms registration, and waits for its first Task Prompt.
 
-Run `/apm-4-check-tasks` in the Worker's chat. The Worker reads the Task Prompt from its Task Bus, registers its identity, and begins execution.
+**3. Deliver the Task** - Run `/apm-4-check-tasks` in the Worker's conversation. The Worker reads the Task Prompt from its Task Bus and begins execution - following the instructions, validating results against the criteria in the prompt, and iterating if validation fails.
 
-### 4. Worker Executes
+:::tip
+Workers pause for your review when User validation is specified in the Task Prompt. You can also interrupt or steer the Worker at any point during execution.
+:::
 
-The Worker works through the task, validates results, and creates a Task Log documenting the outcome. It then writes a Task Report to the Report Bus and directs you to run `/apm-5-check-reports` in the Manager's chat.
+**4. Worker logs and reports** - Once execution is complete, the Worker writes a structured Task Log to Memory (status, validation results, deliverables, and any flags for the Manager), then writes a brief Task Report to its Report Bus and tells you to deliver it to the Manager.
 
-> **Tips:**
->
-> - Workers pause for your review when User validation is specified
-> - You can interrupt or steer the conversation as needed during execution
+**5. Carry the report to the Manager** - Run `/apm-5-check-reports` in the Manager's conversation. Use the targeted version (e.g. `/apm-5-check-reports frontend-agent`) when multiple Workers are active. The Manager reads the Task Report and Task Log, then determines the next step:
 
-### 5. Carry Report to Manager
+- **Proceed** - Task successful, dispatch any newly ready Tasks
+- **Follow-up** - Task needs retry with refined instructions
+- **Document modification** - Execution revealed planning issues, update documents first
 
-Run `/apm-5-check-reports` in the Manager's chat. The Manager reads the Task Report and Task Log, then determines the review outcome:
+The Manager updates the Tracker and immediately assesses whether more Tasks are ready for dispatch. This completes one cycle.
 
-- **Proceed** - Move to next task
-- **Follow-up** - Send refined Task Prompt to retry
-- **Document Modification** - Update planning documents, then proceed or follow up
+## Step 5: Continuing the Project
 
-The Manager updates the Tracker to track progress. This completes one assignment-execution-review cycle.
-
-> For detailed mechanics of Task Assignment, Task Execution, and Task Review, see [Workflow Overview](Workflow_Overview.md).
-
----
-
-## Step 5: Establish Your Workflow
-
-The cycle from Step 4 repeats for each task. As you work through the project, you'll encounter variations:
+The cycle from Step 4 repeats for each Task. As you work through the project, you'll encounter these variations:
 
 ### Follow-up Tasks
 
-When a task needs retry, the Manager creates a follow-up Task Prompt with refined instructions based on what went wrong. The Worker uses the same Task Log path and overwrites the previous attempt.
+When a Task needs retry, the Manager creates a follow-up Task Prompt with refined instructions based on what went wrong. The Worker reuses the same Task Log path and overwrites the previous attempt.
 
 ### Document Modifications
 
-When execution reveals issues, the Manager may update planning documents:
-
-- **Spec** - Design decisions need adjustment
-- **Plan** - Task definitions or dependencies changed
-- **Rules** - Universal patterns need updating
-
-The Manager determines whether modifications require your collaboration or fall within its authority.
+When execution reveals issues with the planning documents, the Manager may update the Spec, Plan, or Rules. Small contained changes are within the Manager's authority. Significant changes - multiple Tasks affected, scope changes, design direction shifts - require your collaboration.
 
 ### Batch and Parallel Dispatch
 
-For efficiency, the Manager may dispatch multiple tasks:
+For efficiency, the Manager may dispatch multiple Tasks at once:
 
-**Batch Dispatch** - Sequential tasks to the same Worker in a single message. The Worker executes each task, logs immediately, and stops if any task fails. Returns a consolidated Batch Report.
+**Batch dispatch** - Sequential Tasks to the same Worker in a single message. The Worker executes each Task in order, logs immediately after each, and stops if any Task fails.
 
-**Parallel Dispatch** - Tasks to multiple Workers simultaneously when no cross-Worker dependencies exist. You manage multiple Workers, carrying messages as each completes in any order. The Manager initializes version control using git worktrees for workspace isolation.
-
----
+**Parallel dispatch** - Tasks to different Workers simultaneously when no cross-Worker dependencies exist. You manage multiple Worker conversations, carrying messages as each completes. The Manager uses git branches and worktrees for workspace isolation.
 
 ## When Agents Reach Context Limits
 
-When an Agent's context window approaches limits, perform a Handoff to transfer context to a fresh instance.
+When an Agent's context window approaches its limit, perform a Handoff to transfer working knowledge to a fresh instance.
 
 ### When to Handoff
 
-- Look for signs: repeated questions, forgetting constraints, degraded responses
-- Handoff proactively at 70-80% capacity to reduce hallucination risk
+Look for signs of context pressure: the Agent repeating questions it already asked, forgetting constraints you established earlier, or producing noticeably degraded responses. Handoff proactively rather than waiting for quality to collapse.
 
 ### Handoff Process
 
-1. **Trigger Handoff** - When context pressure appears, use the appropriate command:
-   - `/apm-6-handoff-manager` for Manager
-   - `/apm-7-handoff-worker` for Worker
+1. **Trigger Handoff** - Run `/apm-6-handoff-manager` or `/apm-7-handoff-worker` in the outgoing Agent's conversation.
+2. **Outgoing Agent wraps up** - Creates a Handoff Log (working knowledge not captured in Task Logs) and writes a handoff prompt to its Handoff Bus with context reconstruction instructions.
+3. **Open a new Agent** - For the same role (e.g. "Manager 2" or "Frontend Agent 2").
+4. **Initialize the incoming Agent** - Run the same initialization command (`/apm-2-initiate-manager` or `/apm-3-initiate-worker frontend-agent`). The incoming Agent auto-detects the handoff prompt from its Handoff Bus.
+5. **Verify and resume** - The incoming Agent reconstructs context from planning documents, Handoff Log, and relevant Task Logs, then presents an understanding summary for your verification before continuing.
 
-2. **Outgoing Agent Actions** - The Agent creates:
-   - Handoff Log capturing working knowledge not in formal logs (tracked Worker handoffs and VC state for Manager; working context and technical notes for Worker)
-   - Handoff prompt with context reconstruction instructions, written to Handoff Bus
+### If Context Compaction Happens
 
-3. **Create New Chat** - Open a new chat for the same agent role (e.g., "Manager 2" or "Frontend Agent 2")
+Most AI platforms compress or discard earlier parts of a conversation when the context window fills - this is called auto-compaction. The platform notifies you when this happens.
 
-4. **Initialize Incoming Agent** - Enter the same initialization command (`/apm-2-initiate-manager` or `/apm-3-initiate-worker`) — the incoming Agent auto-detects the handoff prompt from the Handoff Bus
-
-5. **Verify and Resume** - The incoming Agent reconstructs context from:
-   - Planning documents
-   - Handoff Log
-   - Relevant Task Logs (current-Stage for Workers; Tracker, Index, and recent logs for Manager)
-
-### Recovery
-
-If the platform auto-compacts an Agent's context window, or an initiated Agent needs to resume after a cleared session, use the recovery command to reconstruct working context:
+APM is designed so that you trigger a Handoff *before* compaction occurs. If compaction does happen and the Agent starts acting inconsistently - forgetting constraints, repeating questions, losing track of state - use the recovery command:
 
 ```markdown
-/apm-9-recover manager
-/apm-9-recover frontend-agent
+/apm-9-recover manager          # recover the Manager
+/apm-9-recover frontend-agent   # recover a Worker by its identifier
 ```
 
-Recovery determines the Agent's role from the command argument, conversation context, or by asking the User. It re-reads procedural guides and explores project artifacts (Tracker, bus files, Task Logs) to rebuild operational state. Unlike Handoff, recovery does not require creating a new instance — the Agent continues as the same instance with reconstructed context.
-
----
+The Agent re-reads its procedural documents and explores project artifacts to reconstruct working context. This is not a Handoff - the Agent continues as the same instance.
 
 ## After Project Completion
 
-When the Manager completes all tasks and stages, it recommends running `/apm-8-summarize-session` in a new chat to summarize the completed APM session.
+When the Manager completes all Tasks and Stages, it recommends running `/apm-8-summarize-session` in a new conversation. The summarization Agent reads all `.apm/` artifacts, validates them against the current codebase state, produces a session summary, and offers to archive.
 
-### Session Summary and Archival
-
-1. **Open a new chat** and run `/apm-8-summarize-session`
-2. The summarization agent reads all `.apm/` artifacts, produces a session summary, and presents it to you
-3. You can then choose to **archive** the session — this moves the current `.apm/` artifacts to `.apm/archives/`, removes installed assistant files, and deletes the installation metadata
-
-You can also archive directly via the CLI:
+To archive via the CLI:
 
 ```bash
-apm archive
+apm archive                        # auto-named session-YYYY-MM-DD-NNN
+apm archive --name my-feature-v1   # custom archive directory name
 ```
 
-### Starting a New Session
+Archival snapshots the current `.apm/` artifacts to `.apm/archives/`, removes installed assistant files, and deletes installation metadata. Run `apm init` afterward to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance - so each APM session can build on what came before.
 
-After archival, the project is uninitialized. Run `apm init` to begin a new session with fresh templates. Previous session archives remain accessible in `.apm/archives/`. When the new Planner runs Context Gathering, it detects existing archives and asks about their relevance — enabling iterative development where each session builds on prior work.
+## Next Steps
 
-> For details on Session Continuation mechanics, see [Workflow Overview](Workflow_Overview.md).
-
----
-
-**Congratulations!** You've launched your first APM session. The structured multi-agent approach provides consistent project execution and prevents the chaos typical of single-chat AI collaboration.
-
-**Next Steps:**
-
-- [Token Consumption Tips](Token_Consumption_Tips.md) - Optimize model usage and costs
-- [Agent Orchestration](Agent_Orchestration.md) - Understand Agent communication and memory architecture
-- [CLI Guide](CLI.md) - Session management, archival, and custom installations
-- [Modifying APM](Modifying_APM.md) - Customize APM for your specific needs
+- [Agent Types](Agent_Types.md) - How Planner, Manager, and Worker roles work in depth
+- [Agent Orchestration](Agent_Orchestration.md) - Communication, Memory, dispatch, and Handoff mechanics
+- [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure
+- [CLI Guide](CLI.md) - All CLI commands, archival, and custom installations
+- [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
