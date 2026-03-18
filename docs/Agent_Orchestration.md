@@ -2,291 +2,173 @@
 id: agent-orchestration
 slug: /agent-orchestration
 sidebar_label: Agent Orchestration
-sidebar_position: 7
+sidebar_position: 4
 ---
 
 # Agent Orchestration
 
-APM coordinates multiple Agent instances through file-based communication and structured memory. This architecture enables Agents to work together without direct programmatic connection, making the workflow platform-agnostic and all interactions auditable.
+APM coordinates Agents through planning documents, file-based communication, and structured memory. No Agent communicates with another directly - you mediate every exchange by running commands in the appropriate conversation. This keeps the workflow platform-agnostic and every interaction visible to you.
 
----
+This doc covers the coordination mechanisms that connect the Agent roles described in [Agent Types](Agent_Types.md). Together, these two docs provide the foundation for understanding the full [Workflow Overview](Workflow_Overview.md).
 
-## Agent Relationships
+## Planning Documents
 
-The framework establishes a coordination hierarchy where Agents interact through defined channels:
+Three documents created during the Planning Phase form the coordination foundation for the entire Implementation Phase.
 
-**Planner ↔ User → Manager**
+The **Spec** captures design decisions and constraints - what is being built. The Manager reads it directly and extracts relevant content into Task Prompts so that each Worker receives only the design context it needs. Workers never reference the Spec.
 
-- Planner creates planning documents during Planning Phase
-- User reviews, requests modifications if needed and approves, then initializes Manager for Implementation Phase
-- No ongoing relationship - Planner completes and exits
+The **Plan** defines how work is organized - Stages, Tasks, Worker assignments, dependencies, and a Dependency Graph. During Work Breakdown, the Planner identifies logical work domains from your project's requirements and maps each domain to a Worker (e.g. Frontend Agent, Backend Agent, API Agent). The Dependency Graph visualizes which Tasks can run in parallel, which form chains, and where one Worker's output feeds into another's. The Manager uses the Plan for dispatch decisions and progress tracking. Workers never reference the Plan.
 
-**Manager ↔ Workers (via User)**
+The **Rules** define how work is performed - universal execution patterns that apply to every Worker regardless of domain. This is the one document all Agents access directly. Because all Workers read the same file, only genuinely universal patterns belong here - domain-specific guidance goes into Task Prompts via Spec extraction instead.
 
-- Manager assigns tasks by writing Task Prompts to Task Bus files
-- User runs `/apm-4-check-tasks` in Worker chats to deliver assignments
-- Workers execute tasks and write Task Reports to Report Bus files
-- User runs `/apm-5-check-reports` in Manager's chat to deliver reports
-- Manager reviews and determines review outcome
+The flow between phases is direct: the Planner creates all three documents with your approval, then the Manager reads them and uses them to coordinate Workers throughout the Implementation Phase. Both the Manager and Workers may update these documents when execution findings warrant it - the Spec and Plan when design decisions or task definitions need adjustment, the Rules when new universal patterns emerge.
 
-**Outgoing Agent → Incoming Agent (via User)**
+## The Message Bus
 
-- Outgoing Agent creates Handoff Log and handoff prompt
-- User initializes new chat; incoming Agent auto-detects handoff prompt
-- Incoming Agent reconstructs context and continues work
+Agents communicate through a file-based Message Bus in `.apm/bus/`. The Planner initializes it at the end of the Planning Phase, creating a directory for each Worker defined in the Plan and one for the Manager.
 
-**All Agents ↔ Planning Documents**
+Each Worker's directory contains three bus files:
 
-- Planner creates all three planning documents
-- Manager reads all three, extracts from the Spec and Plan into Task Prompts, may update all three
-- Workers read Rules directly (via platform's agents file), receive extracted context via Task Prompts, may update Rules
+- **Task Bus** (`task.md`) - Manager writes Task Prompts here. The Worker reads them when you run `/apm-4-check-tasks` in the Worker's conversation.
+- **Report Bus** (`report.md`) - Worker writes Task Reports here. The Manager reads them when you run `/apm-5-check-reports` in the Manager's conversation.
+- **Handoff Bus** (`handoff.md`) - An outgoing Agent writes its handoff prompt here. The incoming Agent reads it during initialization.
 
----
+The communication cycle works like this:
 
-## Bus System
+1. Manager writes a Task Prompt to a Worker's Task Bus and tells you where to go next.
+2. You deliver the assignment by running `/apm-4-check-tasks` in the Worker's conversation.
+3. The Worker executes the Task, logs the outcome, writes a Task Report to its Report Bus, and tells you to carry it back.
+4. You deliver the report by running `/apm-5-check-reports` in the Manager's conversation.
+5. The Manager reviews the report and Task Log, then determines the next step.
 
-The bus system in `.apm/bus/` provides file-based communication between Agents. The Planner initializes it at the end of the Planning Phase, creating agent directories for each Worker defined in the Plan. The Manager has a bus directory containing only a Handoff Bus.
+You are the trigger at every boundary. Each Agent provides specific guidance covering only its end of the exchange - the Manager tells you which Worker to go to, the Worker tells you to return to the Manager.
 
-### Bus File Types
+## Task Prompts and Dispatch
 
-Each Worker's agent directory contains three bus files:
+The Manager's central coordination job is constructing Task Prompts and deciding when and how to dispatch them.
 
-**Task Bus** (`task.md`)
+### How Task Prompts Are Built
 
-- Manager writes Task Prompts (single or batched)
-- Worker reads to receive assignments
-- Direction: Manager → Worker
+A Task Prompt is a self-contained document that gives a Worker everything it needs to execute a Task without looking beyond the prompt itself. The Manager builds each one by synthesizing three sources:
 
-**Report Bus** (`report.md`)
+- **Dependency context** - If the Task depends on prior work, the Manager includes context from the producer Task. How much context depends on whether the Worker is familiar with that work (covered below).
+- **Spec content** - The Manager extracts design decisions, constraints, and specifications relevant to this specific Task and embeds them directly in the prompt. No references to the Spec by path.
+- **Plan Task fields** - The Task's objective, steps, guidance, output expectations, and validation criteria from the Plan, transformed into actionable instructions.
 
-- Worker writes Task Reports (single or batched)
-- Manager reads to review outcomes
-- Direction: Worker → Manager
+The result reads like a focused project plan for a single piece of work - complete with context, objectives, detailed instructions, expected outputs, and validation criteria. A Worker receiving a Task Prompt has everything it needs to execute end-to-end without referencing any other document unless explicitly required.
 
-**Handoff Bus** (`handoff.md`)
+### Dependency Context
 
-- Outgoing Agent writes handoff prompt
-- Incoming Agent reads to reconstruct context
-- Direction: Outgoing Agent → Incoming Agent
+Tasks often depend on outputs from prior Tasks. How much context the Manager includes depends on the Worker's familiarity with the producer's work:
 
-### Clear-on-Return Protocol
+**Same-Agent dependencies** - The Worker completed the producer Task itself and has working familiarity. The Manager provides light context: recall anchors, key file paths, brief references to previous work.
 
-Before writing to an outgoing bus file, an Agent clears its incoming bus file. This prevents stale messages from accumulating and signals message processing completion.
+**Cross-Agent dependencies** - A different Worker completed the producer Task. The consuming Worker has zero familiarity. The Manager provides comprehensive context: file reading instructions, output summaries, and integration guidance.
 
-Example: Worker clears Task Bus before writing to Report Bus.
+After a Worker Handoff, the incoming Worker doesn't have the previous instance's working familiarity with earlier Tasks. The Manager accounts for this by providing more comprehensive context in future Task Prompts - treating those dependencies the same way it would treat work done by a different Worker.
 
-### Message Flow
+### Dispatch Modes
 
-All communication requires User as trigger puller. For example:
+The Manager assesses all ready Tasks before each dispatch and determines the most efficient way to send them:
 
-1. Manager writes Task Prompt to Worker's Task Bus
-2. User runs `/apm-4-check-tasks` in Worker's chat
-3. Worker executes, clears Task Bus, writes Task Report to Report Bus
-4. User runs `/apm-5-check-reports` in Manager's chat
-5. Manager reads Report, clears Report Bus, determines review outcome
+**Single dispatch** - One Task to one Worker. The default when only one Task is ready or dependencies prevent grouping.
 
-This user-mediated model works universally across platforms without requiring tool-specific integrations.
+**Batch dispatch** - Multiple sequential Tasks to the same Worker in a single message. Candidates are either a chain where each Task depends on the previous, or a group of independent same-Worker Tasks all ready simultaneously. The Worker executes them in order, logging each before moving to the next.
 
----
+**Parallel dispatch** - Tasks to different Workers simultaneously when no unresolved cross-Worker dependencies exist. Requires version control - each dispatch unit operates on its own branch, and the Manager coordinates all merges. Workers commit to their assigned branch but never merge.
 
-## Memory
+Before dispatching, the Manager also considers intelligent waiting - if a pending report would unlock Tasks that combine well with what's currently ready, waiting briefly may produce a more efficient dispatch.
 
-Memory resides in `.apm/` and tracks project state and execution history through a hierarchical structure. Workers document their work, the Manager reviews logs and tracks coordination state, and all Agents use this archive for context reconstruction during Handoff.
+## Memory and Project State
 
-### Tracker
+Project state lives in structured files outside any Agent's context, so nothing is lost when a conversation ends or an Agent reaches its limits. The Manager is the primary consumer and maintainer of this state.
 
-**Location:** `.apm/tracker.md`
+### The Tracker
 
-Live project state document containing:
+The Tracker (`.apm/tracker.md`) is the live project state document - the Manager's operational dashboard. It contains:
 
-- **Task tracking** - Task statuses per Stage (Waiting, Ready, Active, Done), agent assignments, active branches, merge state; updated by Manager after each Task Review
-- **Agent tracking** - Agent identifiers, instance numbers, and notes; updated when agents are dispatched to or Handoffs are detected
-- **Version control state** - Base branch, branch convention, active branches, pending merges
-- **Working notes** - Ephemeral coordination notes maintained by Manager and User, inserted and removed as context evolves
+- **Task tracking** - Task statuses per Stage (Waiting, Ready, Active, Done), Agent assignments, and branch state. Updated after every Task Review.
+- **Agent tracking** - Which Workers exist, their current instance numbers, and coordination notes. Updated when Workers are first initialized and when Handoffs are detected.
+- **Version control state** - Base branch and branch convention established during Manager initialization.
+- **Working notes** - Ephemeral coordination context that the Manager and User accumulate during a Stage. Includes pending considerations, User preferences, and durable observations.
 
-The Manager populates the Tracker during the first initialization and updates it after each Task Review.
+### The Index
 
-### Index
+The Index (`.apm/memory/index.md`) is the project's durable memory. It contains:
 
-**Location:** `.apm/memory/index.md`
+- **Memory notes** - Persistent observations and patterns with lasting value. Placed first in the file so incoming Managers encounter durable knowledge immediately after Handoff.
+- **Stage summaries** - Appended after each Stage completes. Compress a Stage's execution into a coordination-ready summary: outcome, Agents involved, notable findings, and references to individual Task Logs.
 
-Durable project memory containing:
+At Stage completion, the Manager distills working notes from the Tracker into Memory notes in the Index - retaining only observations that would help a future Agent. Ephemeral items are discarded.
 
-- **Memory notes** - Persistent observations and patterns with lasting value, placed first so incoming Managers encounter durable knowledge immediately
-- **Stage summaries** - Stage-level outcomes appended after each Stage completes
+### File-based Memory
 
-The Manager initializes the Index during the first initialization and appends stage summaries as Stages complete.
+Memory is organized as a file hierarchy under `.apm/`:
 
-### Task Logs
-
-**Location:** `.apm/memory/stage-<NN>/task-<NN>-<MM>.log.md`
-
-Structured logs created by Workers after Task completion. Each log documents:
-
-- Task status (Success, Partial, Failed, Blocked)
-- Validation results per specified criteria
-- Deliverables and file changes
-- Technical decisions made during execution
-- Flags for Manager attention (important_findings, compatibility_issues)
-
-Task Logs serve as context abstraction layer - the Manager reads logs to understand outcomes without reviewing code and other output directly. During Handoff, incoming Agents read relevant logs to reconstruct context.
-
-Workers create the stage directory when writing their first log for that Stage.
-
-### Handoff Logs
-
-**Location:** `.apm/memory/handoffs/<agent>/handoff-<NN>.log.md`
-
-Logs created during Handoff capturing working context not recorded elsewhere:
-
-- Effective workflow patterns discovered during execution
-- User preferences observed during collaboration
-- Undocumented insights about codebase or project
-- Current execution context if Handoff occurs mid-task
-- Version control state (active branches, worktrees, pending merges)
-
-Incoming Agents read the Handoff Log during context reconstruction to resume seamlessly.
-
-### Session Archives
-
-**Location:** `.apm/archives/`
-
-Archived sessions preserved for future reference. Each archive contains the session's planning documents, Tracker, Memory, and an optional session summary. Archives accumulate across sessions and are accessible to future Planners during Context Gathering via the `apm-archive-explorer` custom subagent.
-
-### Memory as Context Archive
-
-As the project progresses, Memory becomes a comprehensive archive mapping the Plan to execution history. This structured mapping enables:
-
-- **Efficient Handoff** - Incoming Agents reconstruct context from the Tracker and Index (if Manager), Handoff Log, and relevant Task Logs rather than full conversation history
-- **Cross-Agent Context** - Workers integrate outputs from other Agents by reading specified Task Logs as instructed in Task Prompts
-- **Progress Tracking** - Manager assesses project state by reading stage summaries in the Index and task tracking in the Tracker rather than reviewing all code changes
-
----
-
-## Context Scoping
-
-APM achieves Agent specialization through intentional context boundaries. Each Agent sees only the information relevant to its role.
-
-### Planner
-
-**Access:**
-
-- User-provided requirements and existing documentation
-- Codebase if applicable
-- Full project vision during Planning Phase
-- Session archives (`.apm/archives/`) when present — explored via `apm-archive-explorer` custom subagent
-
-**Does not access:**
-
-- Memory (does not exist yet for current session)
-- Bus system (does not exist yet)
-- Implementation Phase activities
-
-Single instance, no Handoff.
-
-### Manager
-
-**Access:**
-
-- All planning documents (reads, may update)
-- Tracker and Index
-- All Task Logs
-- Bus system (all Task/Report/Handoff buses)
-- Version control state during parallel dispatch
-
-**Does not access:**
-
-- Worker's detailed execution context (reads Task Logs instead of code)
-- Task-level implementation details unless investigation requires it or User requests it
-
-Multiple instances via Handoff. Each instance continues from where previous left off using Handoff Log and Memory.
-
-### Worker
-
-**Access:**
-
-- Current Task Prompt (includes extracted Spec context, instructions, validation criteria)
-- Rules directly (via platform's agents file)
-- Accumulated working context from prior same-agent tasks in current Stage
-- Specified Task Logs when cross-agent dependencies exist
-
-**Does not reference directly:**
-
-- Spec (receives extracted context via Task Prompt - Manager embeds all necessary content)
-- Plan (receives Task definition via Task Prompt)
-- Tracker, Index, or stage summaries
-- Other Workers' working context unless explicitly provided in Task Prompt
-
-Multiple instances via Handoff. After Handoff, incoming Worker reads current-Stage Task Logs for their Agent to reconstruct working context.
-
----
-
-## Handoff Mechanism
-
-When an Agent's context window approaches limits (70-80% capacity), Handoff transfers working context to a fresh instance. This enables sustained project execution beyond single-instance capacity.
+```text
+.apm/
+├── tracker.md
+├── memory/
+│   ├── index.md
+│   ├── stage-01/
+│   │   ├── task-01-01.log.md
+│   │   ├── task-01-02.log.md
+│   │   └── task-01-03.log.md
+│   ├── stage-02/
+│   │   └── ...
+│   └── handoffs/
+│       ├── manager/
+│       │   └── handoff-01.log.md
+│       └── frontend-agent/
+│           └── handoff-01.log.md
+```
+
+Each Stage gets its own directory under `memory/`. Workers write Task Logs directly into the Stage directory for the Task they completed - the Manager provides the exact path in each Task Prompt. Handoff Logs are organized per Agent under `memory/handoffs/`.
+
+Task Logs are the context bridge between Workers and the Manager. The Manager reads logs to understand what happened and make coordination decisions without reviewing code directly. Workers flag findings that might affect the broader project - the Manager interprets these with full project awareness during Task Review.
+
+Task Logs also serve Handoff continuity. Incoming Agents read relevant logs to reconstruct what was accomplished.
+
+## Handoff and Continuity
+
+When an Agent's context window fills up, a Handoff transfers working knowledge to a fresh instance. Rather than losing accumulated context to compaction, the outgoing Agent captures it in structured artifacts that the incoming Agent reads to resume where the previous left off.
 
 ### Why Handoff Works
 
-Traditional context compaction accumulates noise - debugging attempts, trial-and-error, intermediate reasoning. Handoff filters this noise through structured artifacts:
+Normal context compaction accumulates noise - debugging attempts, trial-and-error, abandoned approaches. Handoff filters this through two structured artifacts, each with a distinct purpose:
 
-- **Memory** (Tracker, Index, Task Logs) preserves execution outcomes and coordination state
-- **Handoff Log** preserves working knowledge and undocumented insights
+- **Handoff Log** - Past tense. What was done, what was decided, what was observed. Working knowledge not captured in Task Logs. Stored persistently in Memory.
+- **Handoff Prompt** - Present tense. Current state, outstanding work, and specific instructions for the incoming Agent on how to reconstruct context. Written to the Handoff Bus and cleared after the incoming Agent processes it.
 
-The Incoming Agent inherits clean context without noise, enabling multiple consecutive handoffs without degradation.
+The incoming Agent inherits clean, structured context rather than a compressed conversation history.
 
-### Handoff Eligibility
+### Manager vs Worker Handoff
 
-**Manager:**
+A **Manager Handoff** must describe outstanding Tasks in full within the handoff prompt, since the original Task Prompts may no longer be available in the bus files.
 
-- May Handoff at any point as long as the Handoff Prompt captures comprehensive current state
-- Documentation completeness is the requirement, not workflow stage
-
-**Worker:**
-
-- May Handoff between tasks or mid-task
-- Must document current execution context in detail in Handoff Log if mid-task
-
-### Two-Artifact Handoff System
-
-**Handoff Log**
-
-- Created by outgoing Agent
-- Captures uncommitted knowledge not in formal logs
-- Includes working patterns, User preferences, undocumented state, current execution context (if Worker), version control state (if Manager)
-
-**Handoff Prompt**
-
-- Created by outgoing Agent, written to Handoff Bus
-- Instructs incoming Agent on context reconstruction
-- Specifies which artifacts to read (Handoff Log, relevant Task Logs)
-- Includes verification step before resuming operations
+A **Worker Handoff** mid-Task can reference the original Task Prompt directly since it's still in the bus. A Worker Handoff between Tasks simply notes readiness to receive the next assignment.
 
 ### Context Reconstruction
 
-**Incoming Manager reads:**
+An incoming **Manager** reads: planning documents, the Tracker, the Index (Memory notes and Stage summaries), the Handoff Log, and relevant recent Task Logs.
 
-- All planning documents
-- Tracker (task tracking, agent tracking, working notes)
-- Index (memory notes, stage summaries)
-- Handoff Log
-- Relevant recent Task Logs
+An incoming **Worker** reads: the Rules, the Handoff Log, and their own current-Stage Task Logs.
 
-**Incoming Worker reads:**
-
-- Rules (via platform's agents file)
-- Current-Stage Task Logs for their agent
-- Handoff Log
-
-Previous-Stage logs are not loaded for efficiency — the Manager accounts for this by treating previous-Stage same-agent dependencies as cross-agent dependencies (providing file reading instructions in Task Prompts). These cross-agent overrides are recorded in the Tracker so the Manager can reference them during future Task Assignments.
+Workers load less context by design - the Manager compensates by providing richer dependency context in future Task Prompts.
 
 ### Recovery
 
-Recovery reconstructs working context without creating a new instance. It applies after auto-compaction or when an initiated Agent needs to resume after a cleared session. The Agent determines its role from the command argument, conversation context, or by asking the User, then re-reads its initiation command and explores project artifacts to reconstruct operational state. Unlike Handoff, recovery does not increment the instance number and does not produce Handoff artifacts.
+If a platform auto-compacts an Agent's context and behavior degrades - forgetting constraints, repeating questions, losing track of state - use the recovery command:
 
----
+```markdown
+/apm-9-recover manager          # recover the Manager
+/apm-9-recover frontend-agent   # recover a Worker
+```
 
-**Next Steps:**
+Recovery is not a Handoff. The Agent re-reads its procedural documents and explores project artifacts to rebuild working context, continuing as the same instance without incrementing the instance number.
 
-- See orchestration in action in [Getting Started](Getting_Started.md)
-- Understand workflow mechanics in [Workflow Overview](Workflow_Overview.md)
-- Learn about Agent responsibilities in [Agent Types](Agent_Types.md)
+## Next Steps
+
+- [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure in both phases
+- [Getting Started](Getting_Started.md) - See orchestration in action with your first APM session
+- [CLI Guide](CLI.md) - Session management, archival, and custom installations

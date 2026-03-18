@@ -215,13 +215,12 @@ body {
 }
 
 .markdown h3 {
-  color: var(--apm-accent);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  margin-top: 28px;
+  font-size: 1.05rem;
+  letter-spacing: -0.2px;
+  font-weight: 500;
+  margin-top: 32px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--apm-border);
 }
 
 .markdown h1,
