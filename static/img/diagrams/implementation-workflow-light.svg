@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 290" fill="none">
+  <defs>
+    <marker id="ah" viewBox="0 0 8 6" refX="7.5" refY="3" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#9090a0"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="520" height="290" fill="#f5f5f7"/>
+
+  <!-- Header -->
+  <text x="260" y="16" font-family="'JetBrains Mono', monospace" font-size="9" fill="#5a5a6a" letter-spacing="1.5" text-anchor="middle">IMPLEMENTATION PHASE</text>
+
+  <!-- Task cycles subgraph -->
+  <rect x="10" y="30" width="500" height="158" rx="2" stroke="#9090a0" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="260" y="44" font-family="'JetBrains Mono', monospace" font-size="8" fill="#5a5a6a" letter-spacing="1.0" text-anchor="middle">TASK CYCLES</text>
+
+  <!-- TASK ASSIGNMENT box -->
+  <rect x="24" y="56" width="100" height="36" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="74" y="72" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">TASK</text>
+  <text x="74" y="83" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">ASSIGNMENT</text>
+
+  <!-- TASK EXECUTION box -->
+  <rect x="148" y="56" width="100" height="36" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="198" y="72" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">TASK</text>
+  <text x="198" y="83" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">EXECUTION</text>
+
+  <!-- TASK LOGGING box -->
+  <rect x="272" y="56" width="100" height="36" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="322" y="72" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">TASK</text>
+  <text x="322" y="83" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">LOGGING</text>
+
+  <!-- TASK REVIEW box -->
+  <rect x="396" y="56" width="100" height="36" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="446" y="72" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">TASK</text>
+  <text x="446" y="83" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">REVIEW</text>
+
+  <!-- Horizontal arrows between procedures (centered at y=74) -->
+  <path d="M 124,74 L 148,74" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 248,74 L 272,74" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 372,74 L 396,74" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Role labels below boxes -->
+  <text x="74" y="102" font-family="'JetBrains Mono', monospace" font-size="6" fill="#5a5a6a" letter-spacing="0.4" text-anchor="middle">Manager</text>
+  <text x="198" y="102" font-family="'JetBrains Mono', monospace" font-size="6" fill="#5a5a6a" letter-spacing="0.4" text-anchor="middle">Worker</text>
+  <text x="322" y="102" font-family="'JetBrains Mono', monospace" font-size="6" fill="#5a5a6a" letter-spacing="0.4" text-anchor="middle">Worker</text>
+  <text x="446" y="102" font-family="'JetBrains Mono', monospace" font-size="6" fill="#5a5a6a" letter-spacing="0.4" text-anchor="middle">Manager</text>
+
+  <!-- Review outcome node (gray border, no fill) -->
+  <rect x="160" y="130" width="200" height="26" rx="2" stroke="#9090a0" stroke-width="1" fill="none"/>
+  <text x="260" y="145" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">proceed · follow-up · modify docs</text>
+
+  <!-- Manager label below outcome node -->
+  <text x="260" y="166" font-family="'JetBrains Mono', monospace" font-size="6" fill="#5a5a6a" letter-spacing="0.4" text-anchor="middle">Manager</text>
+
+  <!-- Arrow from TASK REVIEW: starts below Manager label, enters outcome node right edge -->
+  <path d="M 446,110 L 446,136 Q 446,143 439,143 L 360,143" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Loop arrow from outcome back to TASK ASSIGNMENT: ends above Manager label with padding (y=110) -->
+  <path d="M 160,143 L 82,143 Q 74,143 74,135 L 74,110" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <text x="112" y="138" font-family="'JetBrains Mono', monospace" font-size="6" fill="#5a5a6a" letter-spacing="0.4" text-anchor="middle">next Task</text>
+
+  <!-- Stage progression section -->
+  <rect x="10" y="204" width="500" height="56" rx="2" stroke="#9090a0" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="260" y="218" font-family="'JetBrains Mono', monospace" font-size="8" fill="#5a5a6a" letter-spacing="1.0" text-anchor="middle">STAGE PROGRESSION</text>
+
+  <!-- Stage boxes (gray border, no fill) -->
+  <rect x="30" y="228" width="80" height="22" rx="2" stroke="#9090a0" stroke-width="1" fill="none"/>
+  <text x="70" y="241" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">STAGE 1</text>
+
+  <rect x="148" y="228" width="80" height="22" rx="2" stroke="#9090a0" stroke-width="1" fill="none"/>
+  <text x="188" y="241" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">STAGE 2</text>
+
+  <rect x="266" y="228" width="80" height="22" rx="2" stroke="#9090a0" stroke-width="1" fill="none"/>
+  <text x="306" y="241" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">STAGE N</text>
+
+  <rect x="398" y="228" width="94" height="22" rx="2" stroke="#2a8d86" stroke-width="1"/>
+  <text x="445" y="241" font-family="'JetBrains Mono', monospace" font-size="7" fill="#1a1a20" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">COMPLETE</text>
+
+  <!-- Stage arrows -->
+  <path d="M 110,239 L 148,239" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 228,239 L 250,239" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <text x="248" y="234" font-family="'JetBrains Mono', monospace" font-size="7" fill="#5a5a6a" letter-spacing="0.4" text-anchor="middle">...</text>
+  <path d="M 346,239 L 398,239" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Arrow from task cycles down to stage progression -->
+  <path d="M 260,188 L 260,204" stroke="#9090a0" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Footer -->
+  <text x="260" y="282" font-family="'JetBrains Mono', monospace" font-size="8" fill="#5a5a6a" letter-spacing="0.5" text-anchor="middle">the User triggers each step</text>
+</svg>

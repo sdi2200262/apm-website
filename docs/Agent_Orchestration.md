@@ -7,7 +7,7 @@ sidebar_position: 4
 
 # Agent Orchestration
 
-APM coordinates Agents through planning documents, file-based communication, and structured memory. No Agent communicates with another directly - you mediate every exchange by running commands in the appropriate conversation. This keeps the workflow platform-agnostic and every interaction visible to you.
+APM coordinates Agents through planning documents, file-based communication, and structured memory. No Agent communicates with another directly - the User mediates every exchange by running commands in the appropriate conversation. This keeps the workflow platform-agnostic and every interaction visible.
 
 This doc covers the coordination mechanisms that connect the Agent roles described in [Agent Types](Agent_Types.md). Together, these two docs provide the foundation for understanding the full [Workflow Overview](Workflow_Overview.md).
 
@@ -17,11 +17,11 @@ Three documents created during the Planning Phase form the coordination foundati
 
 The **Spec** captures design decisions and constraints - what is being built. The Manager reads it directly and extracts relevant content into Task Prompts so that each Worker receives only the design context it needs. Workers never reference the Spec.
 
-The **Plan** defines how work is organized - Stages, Tasks, Worker assignments, dependencies, and a Dependency Graph. During Work Breakdown, the Planner identifies logical work domains from your project's requirements and maps each domain to a Worker (e.g. Frontend Agent, Backend Agent, API Agent). The Dependency Graph visualizes which Tasks can run in parallel, which form chains, and where one Worker's output feeds into another's. The Manager uses the Plan for dispatch decisions and progress tracking. Workers never reference the Plan.
+The **Plan** defines how work is organized - Stages, Tasks, Worker assignments, dependencies, and a Dependency Graph. The Planner identifies logical work domains from the project's requirements and maps each domain to a Worker (e.g. Frontend Agent, Backend Agent, API Agent). The Dependency Graph visualizes which Tasks can run in parallel, which form chains, and where one Worker's output feeds into another's. The Manager uses the Plan for dispatch decisions and progress tracking. Workers never reference the Plan.
 
 The **Rules** define how work is performed - universal execution patterns that apply to every Worker regardless of domain. This is the one document all Agents access directly. Because all Workers read the same file, only genuinely universal patterns belong here - domain-specific guidance goes into Task Prompts via Spec extraction instead.
 
-The flow between phases is direct: the Planner creates all three documents with your approval, then the Manager reads them and uses them to coordinate Workers throughout the Implementation Phase. Both the Manager and Workers may update these documents when execution findings warrant it - the Spec and Plan when design decisions or task definitions need adjustment, the Rules when new universal patterns emerge.
+The flow between phases is direct: the Planner creates all three documents with User approval, then the Manager reads them and uses them to coordinate Workers throughout the Implementation Phase. Both the Manager and Workers may update these documents when execution findings warrant it - the Spec and Plan when design decisions or task definitions need adjustment, the Rules when new universal patterns emerge.
 
 ## The Message Bus
 
@@ -29,19 +29,11 @@ Agents communicate through a file-based Message Bus in `.apm/bus/`. The Planner 
 
 Each Worker's directory contains three bus files:
 
-- **Task Bus** (`task.md`) - Manager writes Task Prompts here. The Worker reads them when you run `/apm-4-check-tasks` in the Worker's conversation.
-- **Report Bus** (`report.md`) - Worker writes Task Reports here. The Manager reads them when you run `/apm-5-check-reports` in the Manager's conversation.
+- **Task Bus** (`task.md`) - Manager writes Task Prompts here. The Worker reads them when the User runs `/apm-4-check-tasks` in the Worker's conversation.
+- **Report Bus** (`report.md`) - Worker writes Task Reports here. The Manager reads them when the User runs `/apm-5-check-reports` in the Manager's conversation.
 - **Handoff Bus** (`handoff.md`) - An outgoing Agent writes its handoff prompt here. The incoming Agent reads it during initialization.
 
-The communication cycle works like this:
-
-1. Manager writes a Task Prompt to a Worker's Task Bus and tells you where to go next.
-2. You deliver the assignment by running `/apm-4-check-tasks` in the Worker's conversation.
-3. The Worker executes the Task, logs the outcome, writes a Task Report to its Report Bus, and tells you to carry it back.
-4. You deliver the report by running `/apm-5-check-reports` in the Manager's conversation.
-5. The Manager reviews the report and Task Log, then determines the next step.
-
-You are the trigger at every boundary. Each Agent provides specific guidance covering only its end of the exchange - the Manager tells you which Worker to go to, the Worker tells you to return to the Manager.
+The Manager writes to a Worker's Task Bus, the Worker reads it and later writes back to its Report Bus, and the Manager reads the report. The User mediates every exchange by running `/apm-4-check-tasks` to deliver assignments and `/apm-5-check-reports` to deliver reports. Each Agent provides specific guidance covering only its end of the exchange. See [Task Cycles](Workflow_Overview.md#task-cycles) for the full procedural walkthrough.
 
 ## Task Prompts and Dispatch
 
@@ -77,7 +69,7 @@ The Manager assesses all ready Tasks before each dispatch and determines the mos
 
 **Parallel dispatch** - Tasks to different Workers simultaneously when no unresolved cross-Worker dependencies exist. Requires version control - each dispatch unit operates on its own branch, and the Manager coordinates all merges. Workers commit to their assigned branch but never merge.
 
-Before dispatching, the Manager also considers intelligent waiting - if a pending report would unlock Tasks that combine well with what's currently ready, waiting briefly may produce a more efficient dispatch.
+Before dispatching, the Manager may wait if a pending report would unlock Tasks that combine well with what's currently ready - waiting briefly can produce a more efficient dispatch.
 
 ## Memory and Project State
 
@@ -125,7 +117,7 @@ Memory is organized as a file hierarchy under `.apm/`:
 
 Each Stage gets its own directory under `memory/`. Workers write Task Logs directly into the Stage directory for the Task they completed - the Manager provides the exact path in each Task Prompt. Handoff Logs are organized per Agent under `memory/handoffs/`.
 
-Task Logs are the context bridge between Workers and the Manager. The Manager reads logs to understand what happened and make coordination decisions without reviewing code directly. Workers flag findings that might affect the broader project - the Manager interprets these with full project awareness during Task Review.
+Task Logs are the context bridge between Workers and the Manager. The Manager reads logs to understand what happened and make coordination decisions without reviewing code directly. Workers flag findings that might affect the broader project - the Manager interprets these with full project awareness during [Task Review](Workflow_Overview.md#task-review).
 
 Task Logs also serve Handoff continuity. Incoming Agents read relevant logs to reconstruct what was accomplished.
 
@@ -158,7 +150,7 @@ Workers load less context by design - the Manager compensates by providing riche
 
 ### Recovery
 
-If a platform auto-compacts an Agent's context and behavior degrades - forgetting constraints, repeating questions, losing track of state - use the recovery command:
+If a platform auto-compacts an Agent's context and behavior degrades - forgetting constraints, repeating questions, losing track of state - the User runs the recovery command:
 
 ```markdown
 /apm-9-recover manager          # recover the Manager
@@ -170,5 +162,5 @@ Recovery is not a Handoff. The Agent re-reads its procedural documents and explo
 ## Next Steps
 
 - [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure in both phases
-- [Getting Started](Getting_Started.md) - See orchestration in action with your first APM session
+- [Context & Prompt Engineering](Context_and_Prompt_Engineering.md) - How APM's templates and context management work under the hood
 - [CLI Guide](CLI.md) - Session management, archival, and custom installations

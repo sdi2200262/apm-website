@@ -2,304 +2,161 @@
 id: workflow-overview
 slug: /workflow-overview
 sidebar_label: Workflow Overview
-sidebar_position: 6
+sidebar_position: 5
 ---
+
+import ThemedImage from '@theme/ThemedImage';
 
 # Workflow Overview
 
-APM operates through two distinct phases: the Planning Phase establishes project structure through planning documents, and the Implementation Phase executes the plan through repeating assignment-execution-review cycles. Each phase has specific procedures, agents, and outcomes that build toward project completion.
-
----
+This doc walks through every procedure in both phases of an APM session - what happens, in what order. It builds on two preceding docs: [Agent Types](Agent_Types.md) covers each Agent's role and responsibilities, and [Agent Orchestration](Agent_Orchestration.md) covers the coordination mechanisms (planning documents, the Message Bus, Task Prompt construction, Memory, and Handoff). Where this doc touches on those topics, it references back rather than repeating them.
 
 ## Planning Phase
 
-The Planning Phase transforms User requirements into planning documents that guide all subsequent work. The Planner operates once at project start, conducting structured discovery and decomposing gathered context into actionable documents.
+The Planning Phase produces the planning documents that guide all subsequent work. The [Planner](Agent_Types.md#planner) runs once at project start through two sequential procedures: Context Gathering, then Work Breakdown.
 
-```mermaid
-graph LR
-    A[User Initiates<br/>Planner] --> B[Context<br/>Gathering]
-    B --> C[Work<br/>Breakdown]
-    C --> D[Planning<br/>Documents Complete]
-
-    classDef default fill:#434343,stroke:#888888,stroke-width:2px,color:#ffffff
-    linkStyle default stroke:#9A9A9A,stroke-width:2px
-```
+<ThemedImage
+  alt="Planning Phase - Context Gathering through three rounds produces an understanding summary, Work Breakdown creates Spec, Plan, and Rules"
+  sources={{
+    light: '/img/diagrams/planning-workflow-light.svg',
+    dark: '/img/diagrams/planning-workflow-dark.svg',
+  }}
+  style={{margin: '1.5rem 0'}}
+/>
 
 ### Context Gathering
 
-The Planner conducts structured discovery through three Question Rounds, each focused on progressive refinement. Before starting question rounds, the Planner checks for archived sessions in `.apm/archives/`.
+The Planner conducts structured discovery through three progressive question rounds, each building on the previous. The goal is to gather enough context to create accurate planning documents - not to interrogate exhaustively.
 
-**Archive Detection**
+Before starting, the Planner checks for archived APM sessions in `.apm/archives/`. If archives exist, it presents them and asks about relevance. Relevant archives are examined via the `apm-archive-explorer` subagent, with findings verified against the current codebase before integration into question rounds.
 
-If archived APM sessions exist, the Planner presents them to the User and asks about relevance. When indicated archives are relevant, the Planner spawns the `apm-archive-explorer` custom subagent to examine them, then verifies findings against the current codebase before integrating into question rounds. This enables iterative development where each session builds on prior work.
+**Round 1 - Existing Materials and Vision.** Project type, problem and purpose, essential features and scope, existing documentation and materials, current plan or vision, previous work and codebase context.
 
-**Question Round 1: Existing Materials and Vision**
+**Round 2 - Technical Requirements.** Design decisions and constraints, work structure and dependencies, technical and resource requirements, complexity and risk assessment, validation criteria.
 
-- Project type, problem statement, and scope
-- Existing documentation, PRDs, or codebase
-- High-level goals and success criteria
+**Round 3 - Implementation Approach and Quality.** Technical constraints and preferences, workflow patterns and quality standards, coordination and approval requirements, domain organization, finalizing design decisions.
 
-**Question Round 2: Technical Requirements**
+After each round, the Planner assesses gaps and follows up before advancing. When User responses reference codebase elements, the Planner explores proactively - using subagents for substantial research to preserve its own context for Work Breakdown. Each round ends with a completion summary covering what was gathered, which planning documents the findings inform, and why the round is ready to advance.
 
-- Work structure and dependencies
-- Technical requirements and constraints
-- Validation criteria for each requirement
-- Design decisions and constraints
-
-**Question Round 3: Implementation Approach and Quality**
-
-- Technical constraints and preferences
-- Workflow patterns and quality standards
-- Domain organization and coordination needs
-- Finalizing the Spec and Rules
-
-After each round, the Planner iterates on gaps and unclear areas before advancing. When User responses reference codebase elements or documentation, the Planner explores proactively to gather concrete information. Research Subagents may be spawned to avoid consuming the Planner's context during exploration.
-
-After all rounds complete, the Planner presents an Understanding Summary for User review. Modifications loop back through targeted follow-ups until User approval triggers transition to Work Breakdown.
+After all three rounds, the Planner presents a consolidated **understanding summary** for User review. The User verifies that the Planner accurately understands the project before planning documents are created. Modifications loop through targeted follow-ups until the User approves.
 
 ### Work Breakdown
 
-The Planner decomposes gathered context into three planning documents through visible reasoning - reasoning is presented in chat before file output.
+The Planner decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) through visible reasoning - presenting its thinking in chat before writing to files. This makes decomposition decisions visible and allows the User to redirect before artifacts are committed.
 
-**Spec Creation**
+**Spec.** The Planner analyzes design decisions from gathered context and writes the Spec. The User reviews and approves before it moves on.
 
-- Surfaces design decisions from gathered context: explicit choices, implicit constraints, and alternatives not taken
-- Writes the Spec with project-specific design decisions; structure follows the decisions identified
-- Presents for User review, iterates on feedback until approval
+**Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages, then breaks each Stage into Tasks. After writing the full Plan, it performs a review pass assessing workload distribution, cross-Agent dependencies, and generates a Dependency Graph. The User reviews and approves.
 
-**Plan Creation**
+**Rules.** The Planner extracts universal execution patterns and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`). The User reviews and approves.
 
-- Identifies logical work domains and defines Workers
-- Identifies all Stages with objectives
-- For each Stage, completes detailed Task breakdown with objectives, outputs, validation criteria, guidance, dependencies, and steps
-- Assesses workload distribution across agents
-- Generates Dependency Graph visualizing Task dependencies and agent assignments
-- Presents for User review, iterates on feedback until approval
-
-**Rules Creation**
-- Extracts universal execution patterns from three sources: Spec decisions with execution implications, recurring patterns across Plan Tasks, and workflow conventions from Context Gathering
-- Writes APM standards block in the platform's agents file
-- Presents for User review, iterates on feedback until approval
-
-After all three planning documents receive User approval, the Planner initializes the bus system for all agents defined in the Plan and the Planning Phase concludes. The User initializes the Manager to begin the Implementation Phase.
-
----
+After all three documents are approved, the Planner initializes the [Message Bus](Agent_Orchestration.md#the-message-bus). The Planning Phase is complete. The User opens a new conversation and initiates the Manager.
 
 ## Implementation Phase
 
-The Implementation Phase executes the Plan through repeating assignment-execution-review cycles. The Manager assigns tasks to Workers, reviews completed work, and maintains project state. Each task executes through its own cycle.
+The Implementation Phase executes the planning documents. The [Manager](Agent_Types.md#manager) coordinates, [Workers](Agent_Types.md#workers) execute Tasks, and the cycle repeats until all Stages complete.
 
-```mermaid
-graph LR
-    A[Task<br/>Assignment] --> B[Task<br/>Execution]
-    B --> C[Task<br/>Review]
-    C --> D{Review<br/>Outcome}
-    D -->|Proceed| E[Next Task]
-    D -->|Follow-up| F[Refined<br/>Task Prompt]
-    D -->|Document<br/>Modification| G[Update<br/>Documents]
-    E --> A
-    F --> A
-    G -->|Then Proceed<br/>or Follow-up| E
+### First Manager Initialization
 
-    classDef default fill:#434343,stroke:#888888,stroke-width:2px,color:#ffffff
-    linkStyle default stroke:#9A9A9A,stroke-width:2px
-```
+The first Manager instance (Manager 1) reads all planning documents and its procedural guides, then:
 
-### Manager Initialization
+- Initializes version control if a git repository exists (detects the base branch, establishes branch conventions)
+- Populates the Tracker with Stage 1 Tasks and all Worker assignments
+- Initializes the Memory Index
+- Presents an understanding summary covering project scope, key design decisions, Workers, and Stage structure
 
-After the Planning Phase, the User creates a new chat for the Manager and runs the initialization command. The Manager:
+The User reviews the summary and authorizes the Manager to proceed. It then assesses which Tasks are ready and begins dispatching work.
 
-- Reads all planning documents
-- Populates the Tracker and initializes the Index
-- Initializes version control if a git repository exists
-- Presents understanding summary for User review
+<ThemedImage
+  alt="Implementation Phase - four-procedure Task cycle (Assignment, Execution, Logging, Review) repeating across sequential Stages until project completion"
+  sources={{
+    light: '/img/diagrams/implementation-workflow-light.svg',
+    dark: '/img/diagrams/implementation-workflow-dark.svg',
+  }}
+  style={{margin: '1.5rem 0'}}
+/>
 
-After User authorization, the Manager begins coordinating task execution through assignment-execution-review cycles.
+### Task Cycles
 
-### Assignment-Execution-Review Cycle
-
-Each task executes through its own assignment-execution-review cycle containing three parts: Task Assignment, Task Execution, and Task Review. When multiple tasks are dispatched (batch or parallel), each task still has its own cycle - they may run sequentially or concurrently, but the per-task structure remains the same.
+Each Task progresses through four procedures: Task Assignment, Task Execution, Task Logging, and Task Review. This cycle repeats for every Task in the project.
 
 #### Task Assignment
 
-The Manager assesses which tasks are ready based on dependency completion and the Tracker. For each ready task:
+The Manager assesses which Tasks are ready based on dependency completion and the Tracker, then determines the [dispatch mode](Agent_Orchestration.md#dispatch-modes) - single, batch, or parallel. The Manager may also wait if a pending report would unlock a more efficient dispatch combination.
 
-1. **Dependency Context Analysis** - Classifies dependencies as same-agent (light context with recall anchors) or cross-agent (comprehensive context with file reading instructions). After Worker Handoff, previous-Stage same-agent dependencies are reclassified as cross-agent.
+For each Task, the Manager [constructs a self-contained Task Prompt](Agent_Orchestration.md#how-task-prompts-are-built) and writes it to the Worker's Task Bus, directing the User to the Worker's conversation.
 
-2. **Spec Extraction** - Extracts relevant design decisions from the Spec for contextual integration into the Task Prompt. Workers do not reference the Spec directly - all necessary context is embedded by the Manager.
-
-3. **Task Prompt Construction** - Assembles a self-contained prompt with task reference, context from dependencies, objective, detailed instructions, expected output, validation criteria, memory logging instructions, and reporting instructions.
-
-4. **Delivery via Task Bus** - Writes the Task Prompt to the Worker's Task Bus file. Directs the User to run `/apm-4-check-tasks` in the Worker's chat.
-
-**Dispatch Modes:**
-
-- **Single Dispatch** - One task to one Worker
-- **Batch Dispatch** - Multiple sequential tasks to the same Worker in a single Task Bus message
-- **Parallel Dispatch** - Tasks to multiple Workers simultaneously when no cross-Worker dependencies exist among them
-
-For parallel dispatch, the Manager initializes version control (feature branches and worktrees) for workspace isolation.
+For uninitialized Workers, the Manager directs the User to create a new conversation and run the initiation command with the Worker's identifier. For batch dispatch, it summarizes what the Worker will receive. For parallel dispatch, it lists each Worker with its required action.
 
 #### Task Execution
 
-The Worker receives the Task Prompt and executes through this loop:
+The Worker receives the Task Prompt via `/apm-4-check-tasks` and begins execution:
 
-1. **Registration** - On first Task Prompt, the Worker binds to the agent identity specified in the prompt. This identity persists across the Implementation Phase for that Worker instance.
+1. **Context integration** - If [dependencies on other Agents' work](Agent_Orchestration.md#dependency-context) exist, the Worker reads the specified files to integrate prior work before starting.
+2. **Execution** - The Worker follows the instructions step by step, applying Rules from the platform's rules file throughout.
+3. **Validation** - Results are validated in a fixed order: automated checks first, then output verification, then User review if specified. The Worker does not request User review until programmatic and artifact validation pass.
+4. **Iteration** - If validation fails, the Worker corrects and re-validates. This continues until success or a stop condition is reached (fixes causing new issues, the issue requires external resolution, or debugging produces diagnosis without resolution). At a stop condition, the Worker spawns a debug subagent for fresh-context resolution.
 
-2. **Context Integration** - If cross-agent dependencies exist, the Worker reads specified files to integrate context from prior tasks by other Workers.
+When the User provides a correction or directive during execution, the Worker complies immediately and continues. At Task completion, the correction is noted in the Task Log as an important finding for the Manager. The Worker then asks whether the correction should become a Rule for all Workers - but only after logging and reporting, so it doesn't block the workflow.
 
-3. **Execution** - Works through task instructions step by step according to the Task Prompt.
+#### Task Logging
 
-4. **Validation** - Validates results per specified criteria in order: Programmatic tests, then Artifact checks, then User review. User validation requires pausing for review before proceeding.
+Once execution is complete, the Worker writes a structured Task Log to Memory documenting:
 
-5. **Correction Loop** - If validation fails, attempts to correct and re-validates. This loop repeats until success or a stop condition.
+- Outcome status (Success, Partial, or Failed)
+- Validation results
+- Deliverables and file changes
+- Flags for Manager attention (important findings, compatibility issues)
 
-6. **Task Logging** - Creates Task Log at specified path documenting outcome, validation results, deliverables, technical decisions, and flags.
+The Worker then writes a brief Task Report to its Report Bus summarizing status and key findings, and directs the User to deliver the report to the Manager.
 
-7. **Task Reporting** - Clears the Task Bus, writes Task Report to Report Bus summarizing completion status and key findings.
-
-The Worker directs the User to run `/apm-5-check-reports` in the Manager's chat.
-
-**Batch Execution:** When receiving a batch, the Worker executes each task sequentially and writes a Task Log immediately after each. If any task results in Blocked or Failed status, the Worker stops execution (fail-fast) and reports partial completion with unstarted tasks listed as "Not started (batch stopped)."
-
-**Subagent Spawning:** Workers may spawn platform-native subagents (Debug Subagent, Research Subagent) for isolated context-heavy work that would pollute the main context. Findings are integrated into the Worker's context after completion.
+For batch execution, the Worker logs each Task immediately after completing it and only writes a consolidated batch report after all Tasks are done (or after stopping on failure).
 
 #### Task Review
 
-The Manager receives the Task Report via Report Bus and reviews the outcome:
+The Manager receives the report via `/apm-5-check-reports` and reviews the outcome:
 
-1. **Report Processing** - Reads the Task Report from Report Bus (triggered by `/apm-5-check-reports`), clears per Clear-on-Return protocol. If Batch Report, processes each task's outcome individually.
+1. **Report processing** - The Manager reads the Task Report and checks for Handoff or recovery indications. For batch reports, each Task's outcome is processed individually.
+2. **Log review** - The Manager reads the Task Log, interprets status and flags, and assesses whether the claimed status is consistent with the log content. Inconsistency between claimed status and actual content is a hallucination indicator.
+3. **Review outcome** - If everything looks good (Success, no flags, content supports the status), the Manager proceeds. If something needs attention, the Manager investigates - self-investigating for small-scope issues, spawning a subagent for larger ones. Three outcomes are possible:
+    - **Proceed** - No issues found. Update the Tracker, dispatch any newly ready Tasks.
+    - **Follow-up** - Worker must retry. The Manager creates a new Task Prompt with refined instructions based on what went wrong. Same log path - the Worker overwrites the previous log.
+    - **Document modification** - Execution revealed issues with the Spec, Plan, or Rules. The Manager assesses cascade implications and determines whether modifications fall within its authority or require User collaboration. After modifications, the Manager proceeds or issues a follow-up.
+4. **Tracker update** - Every outcome path ends with updating the [Tracker](Agent_Orchestration.md#the-tracker).
 
-2. **Log Review** - Reads the Task Log referenced in the Report. Interprets task status (Success, Partial, Failed, Blocked), flags (important_findings, compatibility_issues), and log content.
+After each review, the Manager immediately reassesses readiness and dispatches the next Task in the same turn when one is ready - review and dispatch happen continuously without waiting for User input. The Manager pauses only when no Tasks are ready and Workers are active (wait state), or when a decision requires User collaboration.
 
-3. **Review Outcome** - Determines next action based on review:
-   - **Proceed** - Task successful, no issues detected. Update Tracker, check Stage completion, dispatch next task(s).
-   - **Follow-up** - Task needs retry with refined approach. Create follow-up Task Prompt with different content (refined objective, updated instructions, follow-up context section explaining what went wrong). Same Task Log path - Worker overwrites previous log.
-   - **Document Modification** - Execution revealed issues with planning documents (Spec, Plan, or Rules). Determine authority scope (bounded Manager authority vs User collaboration for significant changes). Modify documents, verify consistency, update Dependency Graph if Plan Task relationships change. Then proceed to next task or issue follow-up as needed.
+### Stage Progression
 
-4. **Tracker Update** - Every outcome path ends with updating the Tracker: completed tasks, readiness changes, merge state.
+Stages are sequential - Stage N+1 begins after Stage N completes. Parallel work across domains happens through parallel Task dispatch within a single Stage, not cross-Stage execution.
 
-5. **Stage Summary** - After all tasks in a Stage complete, the Manager reviews all Task Logs for that Stage and appends a stage summary to the Index capturing Stage-level outcomes and cross-cutting observations.
+After all Tasks in a Stage are Done, the Manager reviews the Stage's Task Logs, distills durable observations from working notes into [Memory notes](Agent_Orchestration.md#the-index), appends a Stage summary to the Index, and proceeds to the next Stage's first dispatch.
 
-**Parallel Report Handling:** During parallel dispatch, Reports arrive asynchronously. The Manager processes each as it arrives, determines the review outcome, merges the completed task's branch, reassesses readiness, and dispatches newly ready tasks if any. When no ready tasks exist but Workers are still active, the Manager communicates what is pending and waits.
+### Project Completion
 
-### Memory
+After all Stages complete, the Manager sets the Tracker status to complete and presents a project completion summary covering: Stages completed, total Tasks executed, Workers involved, Stage outcomes, notable findings, and final deliverables.
 
-Memory resides in `.apm/` and tracks project state and execution history:
-
-- **Tracker** (`tracker.md`) - Live project state containing task tracking (statuses per Stage: Waiting, Ready, Active, Done), agent tracking (instance numbers, notes), version control state, and working notes. Updated by the Manager throughout the Implementation Phase.
-
-- **Index** (`memory/index.md`) - Durable project memory containing memory notes (persistent observations and patterns) and stage summaries (appended after each Stage completion).
-
-- **Task Logs** (`memory/stage-<NN>/task-<NN>-<MM>.log.md`) - Structured logs created by Workers after each task completion. Serve as context abstraction layer between Manager's coordination view and Worker's execution details.
-
-- **Handoff Logs** (`memory/handoffs/<agent>/handoff-<NN>.log.md`) - Logs created during Handoff containing working context not captured elsewhere.
-
-- **Archives** (`.apm/archives/`) - Archived session artifacts preserved for future reference. Each archive is a directory named `session-YYYY-MM-DD-NNN` containing the session's planning documents, Tracker, and Memory. An optional `session-summary.md` provides a pre-built overview. Archives accumulate across sessions and are accessible to future Planners during Context Gathering.
-
-### Bus System
-
-The bus system in `.apm/bus/` enables file-based communication between Agents. The Planner initializes it at the end of the Planning Phase. Each Worker has a bus directory containing three bus files:
-
-- **Task Bus** (`task.md`) - Manager-to-Worker communication containing Task Prompts
-- **Report Bus** (`report.md`) - Worker-to-Manager communication containing Task Reports
-- **Handoff Bus** (`handoff.md`) - Outgoing-to-incoming Agent communication containing handoff prompts
-
-The User triggers bus checks using commands (`/apm-4-check-tasks`, `/apm-5-check-reports`) — there is no direct Manager-Worker communication. Before writing to an outgoing bus file, an Agent clears its incoming bus file, preventing stale messages.
-
----
+The Manager recommends running `/apm-8-summarize-session` in a new conversation to produce a session summary and optionally archive the APM session.
 
 ## Handoff
 
-When an Agent's context window approaches limits (70-80% capacity), a Handoff transfers context to a fresh instance of the same Agent. Handoff applies to Manager and Workers only - the Planner operates in a single instance.
+When an Agent's context window approaches its limits, a Handoff transfers working knowledge to a fresh instance. The mechanics of Handoff - the two-artifact system, context reconstruction, and how it affects dependency context - are covered in [Agent Orchestration](Agent_Orchestration.md). This section describes how Handoff fits into the workflow.
 
-```mermaid
-graph LR
-    A[Context Limits<br/>Approaching] --> B[Outgoing Agent<br/>Creates Artifacts]
-    B --> C[User Opens<br/>New Chat]
-    C --> D[Incoming Agent<br/>Reconstructs Context]
-    D --> E{Understanding<br/>Verified?}
-    E -->|No| F[Clarify]
-    F --> D
-    E -->|Yes| G[Resume<br/>Operations]
+Handoff can happen at any point during the Implementation Phase. The Manager or Worker signals context pressure, or the User notices signs of degradation (repeating questions, forgetting constraints, reduced quality). The User triggers the Handoff by running `/apm-6-handoff-manager` or `/apm-7-handoff-worker`. The outgoing Agent creates its artifacts, the User opens a new conversation for the same role, and the incoming Agent auto-detects the handoff prompt during initialization.
 
-    classDef default fill:#434343,stroke:#888888,stroke-width:2px,color:#ffffff
-    linkStyle default stroke:#9A9A9A,stroke-width:2px
-```
-
-### Handoff Process
-
-**Eligibility**
-
-- Manager may Handoff at any point as long as the Handoff Prompt captures comprehensive current state
-- Workers may Handoff between tasks or mid-task; must include current execution context in detail in their Handoff Log
-
-**Outgoing Agent**
-
-1. Creates Handoff Log capturing working context not recorded elsewhere (effective patterns, User preferences, undocumented insights, current execution context if mid-task, version control state if applicable)
-2. Writes handoff prompt to Handoff Bus instructing the incoming Agent on context reconstruction
-3. Directs User to start a new chat and run the initialization command — the incoming Agent auto-detects the handoff prompt
-
-**Incoming Agent**
-
-1. User creates a new chat for the same agent role (e.g., "Manager 2" or "Frontend Agent 2")
-2. User runs initialization command (`/apm-2-initiate-manager` or `/apm-3-initiate-worker`)
-3. Agent auto-detects handoff prompt from Handoff Bus, follows instructions to read Handoff Log and relevant Task Logs
-4. Agent reconstructs working context and presents understanding summary
-5. User verifies accuracy and authorizes Agent to resume from where Outgoing Agent left off
-
-**Context Reconstruction Scope**
-
-- Incoming Manager reads the Handoff Log, Tracker, Index (stage summaries and memory notes), and relevant recent Task Logs
-- Incoming Worker reads the Handoff Log and current-Stage Task Logs for their agent. Previous-Stage logs are not loaded for efficiency — the Manager accounts for this when constructing future Task Prompts by treating previous-Stage same-agent dependencies as cross-agent dependencies. These **cross-agent overrides** are recorded in the Tracker so the Manager can look them up during future Task Assignments and provide comprehensive dependency context where a light recall anchor would otherwise be insufficient.
-
-### Recovery
-
-Recovery reconstructs working context without creating a new instance — the Agent continues as the same instance. It applies after auto-compaction or when an initiated Agent needs to resume after a cleared session. The Agent determines its role from the command argument, conversation context, or by asking the User, then re-reads its initiation command and explores project artifacts (Tracker, bus files, Task Logs) to reconstruct operational state. When gaps remain, the Agent asks the User for brief context.
-
-```markdown
-/apm-9-recover manager
-/apm-9-recover frontend-agent
-```
-
-Unlike Handoff, recovery does not increment the instance number and does not produce Handoff artifacts.
-
----
+If auto-compaction happens instead and the Agent starts acting inconsistently, the User runs `/apm-9-recover` to reconstruct working context without a full Handoff.
 
 ## Session Continuation
 
-After a session completes, Session Continuation archives the current session's artifacts for future reference. After archival, run `apm init` to begin a new session with fresh templates while preserving access to previous work.
+When an APM session ends - whether through project completion, a decision to pause, or a shift in direction - the User can archive the session and start fresh.
 
-### Archive Structure
+1. **Summarize** - The User runs `/apm-8-summarize-session` in a new conversation. The summarization Agent reads `.apm/` artifacts, validates them against the current codebase, and produces a session summary.
+2. **Archive** - The User runs `apm archive` (or `apm archive --name custom-name`). This snapshots `.apm/` artifacts to `.apm/archives/`, removes installed assistant files, and clears installation metadata.
+3. **Continue** - The User runs `apm init` to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance - so each APM session can build on what came before.
 
-Archived sessions reside in `.apm/archives/`. Each archive is a directory named `session-YYYY-MM-DD-NNN` (zero-padded daily counter) containing the session's planning documents, Tracker, and Memory. The bus directory is not archived — bus state is ephemeral and session-specific.
+## Next Steps
 
-```text
-.apm/archives/
-├── index.md
-├── session-2026-03-04-001/
-│   ├── metadata.json
-│   ├── plan.md
-│   ├── spec.md
-│   ├── tracker.md
-│   ├── session-summary.md     # optional
-│   └── memory/
-└── session-2026-03-05-001/
-    └── ...
-```
-
-### Workflow
-
-1. **Summarize** - After project completion, run `/apm-8-summarize-session` in a new chat. The summarization agent reads `.apm/` artifacts, produces a session summary, and offers to archive.
-
-2. **Archive** - Archival moves current `.apm/` artifacts to `.apm/archives/session-YYYY-MM-DD-NNN/`, removes installed assistant files and metadata, and updates `.apm/archives/index.md`. Can also be triggered directly via `apm archive` CLI command. After archival, run `apm init` to begin a new session with fresh templates.
-
-3. **Continue** - When a new Planner starts, Context Gathering detects existing archives and offers to explore them using the `apm-archive-explorer` custom subagent, integrating relevant findings into question rounds.
-
----
-
-**Next Steps:**
-
-- See the complete workflow mechanics in [Getting Started](Getting_Started.md)
-- Understand Agent responsibilities in [Agent Types](Agent_Types.md)
-- Learn about Agent communication and memory in [Agent Orchestration](Agent_Orchestration.md)
+- [Context & Prompt Engineering](Context_and_Prompt_Engineering.md) - How APM's templates and context management work under the hood
+- [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
+- [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
+- [CLI Guide](CLI.md) - All CLI commands, archival, and custom installations

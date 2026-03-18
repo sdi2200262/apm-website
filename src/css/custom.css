@@ -224,10 +224,24 @@ body {
 }
 
 .markdown h1,
-.markdown h2,
-.markdown h4 {
+.markdown h2 {
   font-family: 'Inter', system-ui, sans-serif;
   letter-spacing: -0.3px;
+}
+
+.markdown h4 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  margin-top: 20px;
+  margin-bottom: 16px;
+  color: var(--ifm-heading-color);
+  text-decoration: underline;
+  text-decoration-color: var(--apm-border);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  display: inline-block;
 }
 
 .markdown p {

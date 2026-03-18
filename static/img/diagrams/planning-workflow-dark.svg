@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 148" fill="none">
+  <defs>
+    <marker id="ah" viewBox="0 0 8 6" refX="7.5" refY="3" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4a4a5c"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="480" height="148" fill="#0e0e11"/>
+
+  <!-- Header -->
+  <text x="240" y="14" font-family="'JetBrains Mono', monospace" font-size="9" fill="#888899" letter-spacing="1.5" text-anchor="middle">PLANNING PHASE</text>
+
+  <!-- CONTEXT GATHERING frame -->
+  <rect x="10" y="26" width="214" height="94" rx="2" stroke="#4a4a5c" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="117" y="40" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="1.0" text-anchor="middle">CONTEXT GATHERING</text>
+
+  <!-- Round boxes -->
+  <rect x="20" y="50" width="56" height="22" rx="2" stroke="#3aada5" stroke-width="1"/>
+  <text x="48" y="63" font-family="'JetBrains Mono', monospace" font-size="7" fill="#e2e2e8" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">ROUND 1</text>
+
+  <rect x="89" y="50" width="56" height="22" rx="2" stroke="#3aada5" stroke-width="1"/>
+  <text x="117" y="63" font-family="'JetBrains Mono', monospace" font-size="7" fill="#e2e2e8" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">ROUND 2</text>
+
+  <rect x="158" y="50" width="56" height="22" rx="2" stroke="#3aada5" stroke-width="1"/>
+  <text x="186" y="63" font-family="'JetBrains Mono', monospace" font-size="7" fill="#e2e2e8" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">ROUND 3</text>
+
+  <!-- Round arrows -->
+  <path d="M 76,61 L 89,61" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 145,61 L 158,61" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Understanding Summary node (gray border, no fill) -->
+  <rect x="30" y="86" width="174" height="22" rx="2" stroke="#4a4a5c" stroke-width="1" fill="none"/>
+  <text x="117" y="99" font-family="'JetBrains Mono', monospace" font-size="7" fill="#888899" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">UNDERSTANDING SUMMARY</text>
+
+  <!-- Arrow from Round 3 curving down to Understanding Summary -->
+  <path d="M 186,72 L 186,78 Q 186,83 178,84 L 170,86" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Arrow from Context Gathering to Work Breakdown -->
+  <path d="M 224,73 L 256,73" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- WORK BREAKDOWN frame -->
+  <rect x="256" y="26" width="214" height="94" rx="2" stroke="#4a4a5c" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="363" y="40" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="1.0" text-anchor="middle">WORK BREAKDOWN</text>
+
+  <!-- Document boxes -->
+  <rect x="266" y="50" width="56" height="22" rx="2" stroke="#3aada5" stroke-width="1"/>
+  <text x="294" y="63" font-family="'JetBrains Mono', monospace" font-size="7" fill="#e2e2e8" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">SPEC</text>
+
+  <rect x="335" y="50" width="56" height="22" rx="2" stroke="#3aada5" stroke-width="1"/>
+  <text x="363" y="63" font-family="'JetBrains Mono', monospace" font-size="7" fill="#e2e2e8" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">PLAN</text>
+
+  <rect x="404" y="50" width="56" height="22" rx="2" stroke="#3aada5" stroke-width="1"/>
+  <text x="432" y="63" font-family="'JetBrains Mono', monospace" font-size="7" fill="#e2e2e8" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">RULES</text>
+
+  <!-- Document arrows -->
+  <path d="M 322,61 L 335,61" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 391,61 L 404,61" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Message Bus Init node (gray border, no fill, centered) -->
+  <rect x="296" y="86" width="138" height="22" rx="2" stroke="#4a4a5c" stroke-width="1" fill="none"/>
+  <text x="365" y="99" font-family="'JetBrains Mono', monospace" font-size="7" fill="#888899" letter-spacing="0.6" text-anchor="middle" dominant-baseline="middle">MESSAGE BUS INIT</text>
+
+  <!-- Arrow from Rules curving down to Message Bus Init -->
+  <path d="M 432,72 L 432,78 Q 432,83 424,84 L 416,86" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+
+  <!-- Footer -->
+  <text x="240" y="140" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.5" text-anchor="middle">the User reviews and approves at every step</text>
+</svg>
