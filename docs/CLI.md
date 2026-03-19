@@ -2,28 +2,36 @@
 id: cli
 slug: /cli
 sidebar_label: CLI Guide
-sidebar_position: 5
+sidebar_position: 8
 ---
 
-# APM CLI Guide
+# CLI Guide
 
-The APM CLI (`agentic-pm`) manages installation, updates, and session lifecycle for the APM framework. It scaffolds commands, guides, skills, and agents into your project workspace and handles session archival for multi-session workflows.
+The `agentic-pm` CLI manages APM installations, assistant configuration, template updates, and session archival. This doc covers every command, its options, and the directory structure the CLI creates.
 
 ## Installation
 
-The CLI requires Node.js v18 or higher.
+Requires Node.js v18 or higher.
+
+**Global install (recommended):**
 
 ```bash
 npm install -g agentic-pm
 ```
 
----
+**Local install:**
+
+```bash
+npm install agentic-pm
+```
+
+After installing, navigate to the project directory and run `apm init` to initialize APM.
 
 ## Commands
 
-### `apm init`
+### apm init
 
-Initializes APM with official releases. Prompts for AI assistant selection, fetches the latest compatible release, and installs all files.
+Initializes APM with official releases. Fresh installs only. If APM is already initialized, shows the current state and suggests `apm add`, `apm update`, or `apm archive`.
 
 ```bash
 apm init
@@ -31,47 +39,40 @@ apm init -a claude
 apm init -a claude copilot -t v1.0.0
 ```
 
-**Options:**
-
 | Flag | Description |
 | :--- | :--- |
 | `-t, --tag <tag>` | Install a specific release version |
-| `-a, --assistant <id...>` | Assistant(s) to install (variadic) |
+| `-a, --assistant <id...>` | Pre-select assistant(s) to install |
 
-**What it does:**
+The command fetches the latest compatible release from GitHub, prompts for assistant selection (unless `--assistant` is provided), downloads the assistant bundle, and installs:
 
-1. Prompts for AI assistant selection (or uses `--assistant`)
-2. Fetches the latest compatible release from GitHub
-3. Creates `.apm/` with project artifact templates (`spec.md`, `plan.md`, `tracker.md`, `memory/index.md`, `metadata.json`)
-4. Installs commands, guides, skills, and agents into platform-specific directories
+- `.apm/` directory with project artifact templates (Spec, Plan, Tracker, Memory Index, metadata)
+- Commands, guides, skills, and Agent files into the platform-specific directory (e.g. `.claude/`, `.cursor/`, `.github/`)
 
-If APM is already initialized, it shows the current installation state and suggests using `apm add`, `apm update`, or `apm archive`.
+### apm custom
 
-### `apm custom`
-
-Installs APM from a custom repository instead of the official releases. Also manages saved custom repositories.
+Installs APM from a custom or third-party repository instead of the official releases. Also manages saved custom repositories.
 
 ```bash
 apm custom
-apm custom -r owner/repo -t v1.0.0
-apm custom -r owner/repo -a claude copilot
+apm custom -r owner/repo
+apm custom -r owner/repo -t v1.0.0 -a claude
 ```
-
-**Options:**
 
 | Flag | Description |
 | :--- | :--- |
 | `-r, --repo <repo>` | Repository in `owner/repo` format |
 | `-t, --tag <tag>` | Install specific release version (requires `--repo`) |
-| `-a, --assistant <id...>` | Assistant(s) to install (variadic) |
-| `--add-repo <repos...>` | Save custom repository(ies) |
+| `-a, --assistant <id...>` | Pre-select assistant(s) to install |
+| `--add-repo <repos...>` | Save custom repository(ies) for future use |
 | `--remove-repo <repos...>` | Remove saved repository(ies) |
 | `--list` | List saved custom repositories |
 | `--clear` | Clear all saved custom repositories |
+| `-f, --force` | Skip confirmation prompts |
 
-Without `--repo`, offers to select from saved custom repositories (managed via `--add-repo`/`--remove-repo`). If already initialized, shows info and suggests `apm add`/`apm update`/`apm archive`.
+Without `--repo`, the CLI offers selection from saved repositories (managed via `--add-repo` and `--remove-repo`). Custom repositories show a security disclaimer on first use, which can be skipped for saved repositories.
 
-**Repository management examples:**
+**Repository management:**
 
 ```bash
 apm custom --add-repo owner/repo
@@ -80,69 +81,68 @@ apm custom --list
 apm custom --clear
 ```
 
-### `apm update`
+### apm update
 
-Updates installed assistant templates to the latest compatible version.
+Updates installed assistant templates to the latest compatible version. Archives the current session before updating.
 
 ```bash
 apm update
-apm update --force
+apm update -f
+apm update -n pre-update-backup
 ```
-
-**Options:**
 
 | Flag | Description |
 | :--- | :--- |
 | `-f, --force` | Skip confirmation prompt |
+| `-n, --name <name>` | Custom archive name for the pre-update snapshot |
 
-**What it does:**
+The update process:
 
-1. Archives the current session to `.apm/archives/`
+1. Archives the current `.apm/` artifacts to `.apm/archives/`
 2. Removes all tracked assistant files
 3. Downloads and installs the latest compatible release
 4. Writes fresh metadata
 
-For official installations, prefers stable releases over pre-releases. If currently on a pre-release and no stable update exists, checks for a newer pre-release with the same label. For custom installations, lets you select from available releases.
+For official installations, the CLI prefers stable releases. If currently on a pre-release, it offers both the latest stable and the latest pre-release as options. For custom installations, the User selects from available releases newer than the current version.
 
-**Update scope:**
-
-| Component | Behavior |
+| Component | Behavior on update |
 | :--- | :--- |
-| Commands, guides, skills, agents | Updated to latest |
-| `.apm/` project artifacts | Archived before update |
+| Commands, guides, skills, agents | Replaced with latest version |
+| `.apm/` project artifacts | Archived before replacement |
 | `.apm/archives/` | Preserved |
 
-### `apm archive`
+### apm archive
 
-Archives the current session and removes the installation.
+Archives the current APM session or manages existing archives.
 
 ```bash
 apm archive
-apm archive --force
-apm archive --list
+apm archive -n my-feature-v1
+apm archive -l
+apm archive --delete session-2026-03-04-001
+apm archive --clear
 ```
-
-**Options:**
 
 | Flag | Description |
 | :--- | :--- |
-| `-l, --list` | List archived sessions |
 | `-f, --force` | Skip confirmation prompt |
+| `-n, --name <name>` | Custom archive directory name |
+| `-l, --list` | List archived sessions with metadata |
+| `--delete <name>` | Delete a specific archive |
+| `--clear` | Delete all archives |
 
-**What it does:**
+When creating an archive, the CLI:
 
-1. Moves current `.apm/` artifacts (spec, plan, tracker, memory, session summary) to `.apm/archives/session-YYYY-MM-DD-NNN/`
-2. Writes `metadata.json` to the archive with archival timestamp
+1. Snapshots `.apm/` artifacts (Spec, Plan, Tracker, Memory, session summary if present) to `.apm/archives/session-YYYY-MM-DD-NNN/`
+2. Writes `metadata.json` to the archive with the archival timestamp
 3. Removes all tracked assistant files
 4. Deletes installation metadata
 
-After archival, the project is uninitialized. Run `apm init` to begin a new session with fresh templates. Archives remain accessible in `.apm/archives/`.
+After archival, the project is uninitialized. The User runs `apm init` to begin a new APM session with fresh templates. Archives remain accessible in `.apm/archives/` and are detected by the Planner during Context Gathering in subsequent sessions.
 
-> For workflow context on Session Continuation, see [Workflow Overview](Workflow_Overview.md).
+### apm add
 
-### `apm add`
-
-Adds assistant(s) to an existing installation.
+Adds assistant(s) to an existing installation without affecting the current APM session.
 
 ```bash
 apm add
@@ -150,33 +150,30 @@ apm add -a copilot
 apm add -a copilot opencode cursor
 ```
 
-**Options:**
-
 | Flag | Description |
 | :--- | :--- |
-| `-a, --assistant <id...>` | Assistant(s) to add (variadic) |
+| `-a, --assistant <id...>` | Assistant(s) to add |
 
 Fetches the same release version currently installed and shows only uninstalled assistants. Without `--assistant`, prompts for selection.
 
-### `apm remove`
+### apm remove
 
 Removes assistant(s) from the installation.
 
 ```bash
 apm remove
 apm remove -a copilot
-apm remove -a copilot opencode
+apm remove -a copilot opencode -f
 ```
-
-**Options:**
 
 | Flag | Description |
 | :--- | :--- |
-| `-a, --assistant <id...>` | Assistant(s) to remove (variadic) |
+| `-a, --assistant <id...>` | Assistant(s) to remove |
+| `-f, --force` | Skip confirmation prompt |
 
-Removes tracked files for the specified assistant(s) and updates metadata. Without `--assistant`, prompts for selection. Warns when removing all assistants.
+Removes tracked files for the specified assistant(s) and updates metadata. Warns when removing all assistants. The `.apm/` project artifacts are preserved.
 
-### `apm status`
+### apm status
 
 Shows the current installation state.
 
@@ -184,54 +181,75 @@ Shows the current installation state.
 apm status
 ```
 
-Displays source, repository, version, CLI version, installed assistants with file counts, and archive count. If not initialized, shows archive count (if any) or suggests `apm init`.
-
----
+Displays: source (official or custom), repository, release version, CLI version, install date, installed assistants with file counts, and archive count. If APM is not initialized, shows archive count if any exist or suggests `apm init`.
 
 ## Directory Structure
 
-A fully initialized APM project follows this structure (using Cursor as example):
+After initialization, APM creates the following structure (paths shown for Cursor, other platforms use their own directories):
 
 ```text
-MyProject/
+project/
 ├── .apm/
 │   ├── spec.md                # Design decisions and constraints
 │   ├── plan.md                # Stages, Tasks, dependencies
 │   ├── tracker.md             # Live project state
 │   ├── memory/
 │   │   └── index.md           # Durable project memory
-│   ├── bus/                   # Agent communication (created by Planner)
+│   ├── bus/                   # Message Bus (created by Planner)
 │   ├── archives/              # Archived sessions (created by apm archive)
 │   └── metadata.json          # Installation metadata
 ├── .cursor/
-│   ├── commands/              # APM commands (init, handoff, utility)
-│   ├── apm-guides/            # Procedure guides for Agents
+│   ├── commands/              # APM commands
+│   ├── apm-guides/            # Procedure guides
 │   ├── skills/                # Shared procedural skills
-│   └── agents/                # Custom subagent configurations
+│   └── agents/                # Subagent configurations
 └── ...
 ```
 
-Platform-specific directories vary by assistant (`.claude/`, `.github/`, `.gemini/`, `.opencode/`).
-
----
+Platform-specific directories: `.claude/` for Claude Code, `.github/` for GitHub Copilot, `.gemini/` for Gemini CLI, `.opencode/` for OpenCode.
 
 ## Versioning
 
-CLI and templates version independently but share major version for compatibility:
+The CLI and template releases version independently but share major version for compatibility.
 
-- **CLI** follows semver on npm. Update with `npm update -g agentic-pm`.
-- **Template releases** are GitHub releases with auto-incrementing patch versions. Update via `apm update`.
-- CLI v1.x only fetches v1.x.x template releases.
+| Track | Distribution | Update method |
+| :--- | :--- | :--- |
+| **CLI** (`agentic-pm`) | npm, follows semver | `npm update -g agentic-pm` |
+| **Template releases** | GitHub Releases, auto-incrementing patches | `apm update` |
 
----
+CLI v1.x fetches only v1.x.x template releases from the official repository. Custom repositories have no version filtering, allowing access to any available release.
 
-## Troubleshooting
+## Global Configuration
 
-**CLI is outdated:** If `apm update` detects that new templates require a newer CLI version, it aborts to prevent incompatibility. Update the CLI first:
+The CLI stores global settings in `~/.apm/config.json`, including saved custom repositories with per-repository settings (such as whether to skip the security disclaimer). This file is managed automatically by `apm custom --add-repo` and related flags.
 
-```bash
-npm update -g agentic-pm
-apm update
-```
+## Workspace Metadata
 
-**Already initialized:** Running `apm init` when APM is already initialized shows the current state and suggests `apm add`, `apm update`, or `apm archive`. Use `apm archive` first to start fresh.
+Each initialized project has `.apm/metadata.json` tracking the current installation. This file is used by `apm update`, `apm add`, `apm remove`, and `apm archive` to know the current state.
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `source` | string | `"official"` or `"custom"` |
+| `repository` | string | Repository in `owner/repo` format |
+| `releaseVersion` | string | Release tag (e.g. `"v1.0.0"`) |
+| `cliVersion` | string | CLI version that performed the installation |
+| `assistants` | string[] | Installed assistant IDs (e.g. `["cursor", "claude"]`) |
+| `installedFiles` | object | Map of assistant ID to array of installed file paths |
+| `installedAt` | string | ISO 8601 timestamp of installation |
+
+### Archive Metadata
+
+Each archive in `.apm/archives/` contains its own `metadata.json` with the same fields as the workspace metadata plus:
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `archivedAt` | string | ISO 8601 timestamp of archival |
+| `reason` | string | Why the archive was created (e.g. `"archive"`, `"update"`, `"migration"`) |
+
+The `apm archive --list` command reads these fields to display archive information.
+
+## Next Steps
+
+- [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
+- [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
+- [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
