@@ -86,7 +86,7 @@ An incoming Manager after Handoff reads the Index first (Memory notes and Stage 
 
 When an APM session is archived, the entire `.apm/` state (planning documents, Tracker, Memory) is snapshot into `.apm/archives/`. This archive is a contextual snapshot of the project at that point in time. When a new Planner starts a subsequent session, it can examine relevant archives to understand what was previously built, what was decided, and what issues remain. The Planner validates archived findings against the current state of the codebase, since the archive is a snapshot and code may have changed since it was created. This enables iterative development across sessions without starting from zero context each time.
 
-## Next Steps
+## Related Docs
 
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization

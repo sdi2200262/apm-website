@@ -171,8 +171,8 @@ For other platforms, see the [standalone skills README](https://github.com/sdi22
 
 After installing, reference the skill in the assistant's chat to begin the migration. The Agent will assess the current state, propose a plan, and execute after approval.
 
-## Next Steps
+## Related Docs
 
 - [CLI Guide](CLI.md) - All CLI commands and options
 - [Modifying APM](Modifying_APM.md) - Local edits and custom repositories
-- [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

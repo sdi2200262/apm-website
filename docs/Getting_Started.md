@@ -17,7 +17,7 @@ Before starting, ensure you have:
 - **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Gemini CLI, or OpenCode
 - **Project Workspace** - A directory for your project
 
-**Model selection:** APM Agents perform best with capable reasoning models. Use Claude Opus 4.6 or Claude Sonnet 4.6 for the Planner and Manager. Workers are more flexible since their context is tightly scoped - cost-effective models work well. For detailed model guidance, see [Token Consumption Tips](Token_Consumption_Tips.md).
+**Model selection:** For best performance, use **Claude Opus 4.6** or **GPT-5.2+** throughout all Agent roles. For a budget-friendlier alternative, **Claude Sonnet 4.6** throughout delivers strong results. Workers can also use GPT-5.4, GPT-5.3-Codex, or Gemini 3.1 Pro. For the full model matrix, see [Tips and Tricks](Tips_and_Tricks.md).
 
 ## Installation
 
@@ -225,4 +225,4 @@ Archival snapshots the current `.apm/` artifacts to `.apm/archives/`, removes in
 - [Agent Orchestration](Agent_Orchestration.md) - Communication, Memory, dispatch, and Handoff mechanics
 - [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure
 - [CLI Guide](CLI.md) - All CLI commands, archival, and custom installations
-- [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

@@ -159,5 +159,5 @@ When an APM session ends, whether through project completion, a decision to paus
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's prompts are designed and structured
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
 - [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
-- [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
 - [CLI Guide](CLI.md) - All CLI commands, archival, and custom installations

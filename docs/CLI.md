@@ -248,8 +248,8 @@ Each archive in `.apm/archives/` contains its own `metadata.json` with the same 
 
 The `apm archive --list` command reads these fields to display archive information.
 
-## Next Steps
+## Related Docs
 
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
 - [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
-- [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

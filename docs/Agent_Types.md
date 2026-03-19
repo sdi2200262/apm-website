@@ -82,4 +82,4 @@ Workers operate through multiple instances via [Handoff](Agent_Orchestration.md#
 
 - [Agent Orchestration](Agent_Orchestration.md) - Communication, Memory, dispatch, and Handoff mechanics
 - [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure
-- [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

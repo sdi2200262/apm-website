@@ -91,7 +91,7 @@ APM defines a formal vocabulary used consistently across all files. Terms like T
 
 This matters because consistent terminology produces consistent Agent behavior. When every file uses "Task" to mean a specific work unit with defined lifecycle states, Agents inherit that precision and use it in their own communication. Ambiguity in terminology leads to ambiguity in execution.
 
-## Next Steps
+## Related Docs
 
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
 - [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
