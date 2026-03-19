@@ -17,7 +17,7 @@ const sidebars = {
       type: 'category',
       label: 'Advanced Topics',
       collapsed: true,
-      items: ['context-and-prompt-engineering'],
+      items: ['prompt-engineering', 'context-engineering'],
     },
     {
       type: 'category',

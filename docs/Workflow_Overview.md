@@ -9,7 +9,7 @@ import ThemedImage from '@theme/ThemedImage';
 
 # Workflow Overview
 
-This doc walks through every procedure in both phases of an APM session - what happens, in what order. It builds on two preceding docs: [Agent Types](Agent_Types.md) covers each Agent's role and responsibilities, and [Agent Orchestration](Agent_Orchestration.md) covers the coordination mechanisms (planning documents, the Message Bus, Task Prompt construction, Memory, and Handoff). Where this doc touches on those topics, it references back rather than repeating them.
+This doc walks through every procedure in both phases of an APM session, covering what happens and in what order. It builds on two preceding docs: [Agent Types](Agent_Types.md) covers each Agent's role and responsibilities, and [Agent Orchestration](Agent_Orchestration.md) covers the coordination mechanisms (planning documents, the Message Bus, Task Prompt construction, Memory, and Handoff). Where this doc touches on those topics, it references back rather than repeating them.
 
 ## Planning Phase
 
@@ -26,7 +26,7 @@ The Planning Phase produces the planning documents that guide all subsequent wor
 
 ### Context Gathering
 
-The Planner conducts structured discovery through three progressive question rounds, each building on the previous. The goal is to gather enough context to create accurate planning documents - not to interrogate exhaustively.
+The Planner conducts structured discovery through three progressive question rounds, each building on the previous. The goal is to gather enough context to create accurate planning documents without interrogating exhaustively.
 
 Before starting, the Planner checks for archived APM sessions in `.apm/archives/`. If archives exist, it presents them and asks about relevance. Relevant archives are examined via the `apm-archive-explorer` subagent, with findings verified against the current codebase before integration into question rounds.
 
@@ -42,7 +42,7 @@ After all three rounds, the Planner presents a consolidated **understanding summ
 
 ### Work Breakdown
 
-The Planner decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) through visible reasoning - presenting its thinking in chat before writing to files. This makes decomposition decisions visible and allows the User to redirect before artifacts are committed.
+The Planner decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) through visible reasoning, presenting its thinking in chat before writing to files. This makes decomposition decisions visible and allows the User to redirect before artifacts are committed.
 
 **Spec.** The Planner analyzes design decisions from gathered context and writes the Spec. The User reviews and approves before it moves on.
 
@@ -97,7 +97,7 @@ The Worker receives the Task Prompt via `/apm-4-check-tasks` and begins executio
 3. **Validation** - Results are validated in a fixed order: automated checks first, then output verification, then User review if specified. The Worker does not request User review until programmatic and artifact validation pass.
 4. **Iteration** - If validation fails, the Worker corrects and re-validates. This continues until success or a stop condition is reached (fixes causing new issues, the issue requires external resolution, or debugging produces diagnosis without resolution). At a stop condition, the Worker spawns a debug subagent for fresh-context resolution.
 
-When the User provides a correction or directive during execution, the Worker complies immediately and continues. At Task completion, the correction is noted in the Task Log as an important finding for the Manager. The Worker then asks whether the correction should become a Rule for all Workers - but only after logging and reporting, so it doesn't block the workflow.
+When the User provides a correction or directive during execution, the Worker complies immediately and continues. At Task completion, the correction is noted in the Task Log as an important finding for the Manager. The Worker then asks whether the correction should become a Rule for all Workers, but only after logging and reporting so it does not block the workflow.
 
 #### Task Logging
 
@@ -124,11 +124,11 @@ The Manager receives the report via `/apm-5-check-reports` and reviews the outco
     - **Document modification** - Execution revealed issues with the Spec, Plan, or Rules. The Manager assesses cascade implications and determines whether modifications fall within its authority or require User collaboration. After modifications, the Manager proceeds or issues a follow-up.
 4. **Tracker update** - Every outcome path ends with updating the [Tracker](Agent_Orchestration.md#the-tracker).
 
-After each review, the Manager immediately reassesses readiness and dispatches the next Task in the same turn when one is ready - review and dispatch happen continuously without waiting for User input. The Manager pauses only when no Tasks are ready and Workers are active (wait state), or when a decision requires User collaboration.
+After each review, the Manager immediately reassesses readiness and dispatches the next Task in the same turn when one is ready. Review and dispatch happen continuously without waiting for User input. The Manager pauses only when no Tasks are ready and Workers are active (wait state), or when a decision requires User collaboration.
 
 ### Stage Progression
 
-Stages are sequential - Stage N+1 begins after Stage N completes. Parallel work across domains happens through parallel Task dispatch within a single Stage, not cross-Stage execution.
+Stages are sequential. Stage N+1 begins after Stage N completes. Parallel work across domains happens through parallel Task dispatch within a single Stage, not cross-Stage execution.
 
 After all Tasks in a Stage are Done, the Manager reviews the Stage's Task Logs, distills durable observations from working notes into [Memory notes](Agent_Orchestration.md#the-index), appends a Stage summary to the Index, and proceeds to the next Stage's first dispatch.
 
@@ -148,7 +148,7 @@ If auto-compaction happens instead and the Agent starts acting inconsistently, t
 
 ## Session Continuation
 
-When an APM session ends - whether through project completion, a decision to pause, or a shift in direction - the User can archive the session and start fresh.
+When an APM session ends, whether through project completion, a decision to pause, or a shift in direction, the User can archive the session and start fresh.
 
 1. **Summarize** - The User runs `/apm-8-summarize-session` in a new conversation. The summarization Agent reads `.apm/` artifacts, validates them against the current codebase, and produces a session summary.
 2. **Archive** - The User runs `apm archive` (or `apm archive --name custom-name`). This snapshots `.apm/` artifacts to `.apm/archives/`, removes installed assistant files, and clears installation metadata.
@@ -156,7 +156,8 @@ When an APM session ends - whether through project completion, a decision to pau
 
 ## Next Steps
 
-- [Context & Prompt Engineering](Context_and_Prompt_Engineering.md) - How APM's templates and context management work under the hood
+- [Prompt Engineering](Prompt_Engineering.md) - How APM's prompts are designed and structured
+- [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
 - [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
 - [Token Consumption Tips](Token_Consumption_Tips.md) - Model selection and cost optimization
 - [CLI Guide](CLI.md) - All CLI commands, archival, and custom installations

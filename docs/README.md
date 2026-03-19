@@ -25,7 +25,8 @@ This documentation suite is currently in transition. Core docs reflect the **cur
 - [Token Consumption Tips](Token_Consumption_Tips.md)
 - [Modifying APM](Modifying_APM.md)
 - [Troubleshooting Guide](Troubleshooting_Guide.md)
-- [Context and Prompt Engineering](Context_and_Prompt_Engineering.md)
+- [Prompt Engineering](Prompt_Engineering.md)
+- [Context Engineering](Context_Engineering.md)
 
 > **Note:** Documentation is under active development. v1.0 preview docs are aligned with the current testing branch but may drift as the development branch evolves.
 

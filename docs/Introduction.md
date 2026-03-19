@@ -105,4 +105,5 @@ Each doc builds on the ones before it:
 2. [Agent Types](Agent_Types.md) - What each Agent role does and how their context is scoped
 3. [Agent Orchestration](Agent_Orchestration.md) - How Agents coordinate through planning documents, the Message Bus, Memory, and Handoff
 4. [Workflow Overview](Workflow_Overview.md) - The full procedural walkthrough of both phases, referencing Agent Types and Agent Orchestration throughout
-5. [Context & Prompt Engineering](Context_and_Prompt_Engineering.md) - How APM's templates and context management work under the hood
+5. [Prompt Engineering](Prompt_Engineering.md) - How APM's prompts are designed and structured
+6. [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why

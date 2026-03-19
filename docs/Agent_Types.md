@@ -9,7 +9,7 @@ sidebar_position: 3
 
 APM coordinates three specialized Agent types that work together to execute a project. Each Agent has a distinct role with carefully scoped context designed for its responsibilities.
 
-The framework achieves specialization through context scoping rather than access control. Each Agent sees only the information relevant to its role - not because it can't read other files, but because Task Prompts are designed to be self-contained so there's no reason to look beyond them.
+The framework achieves specialization through context scoping rather than access control. Each Agent sees only the information relevant to its role. Task Prompts are designed to be self-contained, so Agents have no reason to look beyond them.
 
 ## Context Scoping
 
@@ -45,7 +45,7 @@ The Planner operates once at project start to transform requirements into planni
 
 The Manager coordinates execution using the three planning documents and the Tracker, noting progression in the Memory Index. It operates throughout the project, assigning Tasks to Workers based on the Plan, extracting context from the Spec into Task assignments, and reviewing completed work.
 
-**Operational Context:** Sees all planning documents, the Tracker, the Index, and the Message Bus. Maintains coordination-level perspective without diving into code, unless investigation requires it or the User requests it.
+**Operational Context:** Sees all planning documents, the Tracker, the Index, and the Message Bus. Maintains a coordination-level perspective, going deeper into implementation detail when investigation requires it or the User requests it.
 
 **Core Responsibilities:**
 
@@ -66,7 +66,7 @@ The Manager operates through multiple instances via [Handoff](Agent_Orchestratio
 
 Workers execute Tasks assigned by the Manager. Each Worker is defined in the Plan with a specific domain (frontend, backend, API, infrastructure, etc.) and follows the Rules during execution. Multiple Workers operate in parallel when dependencies allow.
 
-**Operational Context:** Sees the current Task Prompt (including extracted Spec context, instructions, validation criteria), accumulated working context from prior Tasks in the current instance, and the Rules. No visibility into full project scope, other Agents' work, or planning documents unless the Manager explicitly provides context in a Task Prompt.
+**Operational Context:** Sees the current Task Prompt (including extracted Spec context, instructions, validation criteria), accumulated working context from prior Tasks in the current instance, and the Rules. Visibility into other Agents' work or planning documents only when the Manager explicitly provides that context in a Task Prompt.
 
 **Core Responsibilities:**
 
