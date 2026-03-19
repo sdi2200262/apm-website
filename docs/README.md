@@ -23,7 +23,7 @@ This documentation suite is currently in transition. Core docs reflect the **cur
 
 **v0.5.x Documentation (To Be Updated):**
 - [Token Consumption Tips](Tips_and_Tricks.md)
-- [Modifying APM](Modifying_APM.md)
+- [Customization Guide](Customization_Guide.md)
 - [Troubleshooting Guide](Troubleshooting_Guide.md)
 - [Prompt Engineering](Prompt_Engineering.md)
 - [Context Engineering](Context_Engineering.md)
@@ -37,4 +37,4 @@ This documentation suite is currently in transition. Core docs reflect the **cur
 3. Review **[Agent Types](Agent_Types.md)** and **[Workflow Overview](Workflow_Overview.md)** to understand roles and mechanics
 4. Explore **[Agent Orchestration](Agent_Orchestration.md)** for communication and memory architecture
 5. Read the **[CLI Guide](CLI.md)** for installation and session management commands
-6. Consult supporting docs as needed: **[Token Consumption Tips](Tips_and_Tricks.md)**, **[Modifying APM](Modifying_APM.md)**, **[Troubleshooting Guide](Troubleshooting_Guide.md)**
+6. Consult supporting docs as needed: **[Token Consumption Tips](Tips_and_Tricks.md)**, **[Customization Guide](Customization_Guide.md)**, **[Troubleshooting Guide](Troubleshooting_Guide.md)**

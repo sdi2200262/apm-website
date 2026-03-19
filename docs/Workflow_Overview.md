@@ -159,4 +159,4 @@ When an APM session ends, whether through project completion, a decision to paus
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
+- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization

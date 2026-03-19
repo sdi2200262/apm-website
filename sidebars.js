@@ -23,7 +23,7 @@ const sidebars = {
       type: 'category',
       label: 'Reference & Guides',
       collapsed: true,
-      items: ['cli', 'troubleshooting-guide', 'modifying-apm', 'tips-and-tricks'],
+      items: ['cli', 'troubleshooting-guide', 'customization-guide', 'tips-and-tricks'],
     },
   ],
 };

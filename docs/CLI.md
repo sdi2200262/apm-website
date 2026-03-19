@@ -251,5 +251,5 @@ The `apm archive --list` command reads these fields to display archive informati
 ## Related Docs
 
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
+- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

@@ -94,5 +94,5 @@ This matters because consistent terminology produces consistent Agent behavior. 
 ## Related Docs
 
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
-- [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
-- [CLI Guide](CLI.md) - All CLI commands, archival, and custom installations
+- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [CLI Guide](CLI.md) - All CLI commands and options

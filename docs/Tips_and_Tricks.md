@@ -113,4 +113,4 @@ For large projects, splitting work across multiple APM sessions and archiving be
 
 - [CLI Guide](CLI.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Modifying APM](Modifying_APM.md) - Local edits and custom repositories
+- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization

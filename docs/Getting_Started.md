@@ -224,6 +224,6 @@ Archival snapshots the current `.apm/` artifacts to `.apm/archives/`, removes in
 - [Agent Types](Agent_Types.md) - How Planner, Manager, and Worker roles work in depth
 - [Agent Orchestration](Agent_Orchestration.md) - Communication, Memory, dispatch, and Handoff mechanics
 - [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure
-- [CLI Guide](CLI.md) - All CLI commands, archival, and custom installations
+- [CLI Guide](CLI.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

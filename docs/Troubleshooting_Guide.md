@@ -157,7 +157,7 @@ apm update
 
 Projects using APM v0.5.x or earlier have a different file structure, metadata format, and CLI than v1.0.0+. The `agentic-pm` CLI v1.0.0+ cannot directly manage v0.5.x installations.
 
-APM provides a standalone **migration skill** that teaches an AI agent to assess the old installation, explain the differences, archive the existing session with proper metadata conversion, clean up old files, and prepare the project for `apm init` with the current `agentic-pm` CLI.
+APM provides an optional **migration skill** that can guide an AI agent through the migration process: assessing the old installation, explaining the differences, archiving the existing session with proper metadata conversion, cleaning up old files, and preparing the project for `apm init` with the current `agentic-pm` CLI.
 
 **Installation (Claude Code example):**
 
@@ -174,5 +174,5 @@ After installing, reference the skill in the assistant's chat to begin the migra
 ## Related Docs
 
 - [CLI Guide](CLI.md) - All CLI commands and options
-- [Modifying APM](Modifying_APM.md) - Local edits and custom repositories
+- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

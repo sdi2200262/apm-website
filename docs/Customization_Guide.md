@@ -1,0 +1,128 @@
+---
+id: customization-guide
+slug: /customization-guide
+sidebar_label: Customization Guide
+sidebar_position: 11
+---
+
+# Customization Guide
+
+APM supports customization through custom repositories. By forking or templating the official repository, Users can modify APM's templates, add new capabilities, and publish releases that install via `apm custom`.
+
+## How Custom Repositories Work
+
+The official APM repository contains source templates that the build system processes into platform-specific bundles. A custom repository is a copy of this codebase where the User modifies the templates to fit their needs.
+
+The workflow:
+
+1. Fork or use the "Use this template" button on the [APM repository](https://github.com/sdi2200262/agentic-project-management) to create a copy
+2. Make changes to templates, add new skills, adjust procedures
+3. Build locally with `npm run build:release` to produce bundles in `dist/`
+4. Create a GitHub Release and attach the build artifacts
+5. Install with `apm custom -r owner/repo`
+
+The `agentic-pm` CLI treats custom repositories the same as the official one. It fetches the release manifest, presents available assistants, downloads the bundle, and extracts it into the project.
+
+## The Customization Skill
+
+The APM repository includes an optional customization skill at `skills/apm-customization/SKILL.md`. Since the skill lives in the repository itself, it is available in any fork or template without needing separate installation.
+
+The skill guides an AI agent through navigating the repository structure, understanding the conventions, making changes, building, and releasing.
+
+## What Can Be Customized
+
+### Procedures
+
+APM's procedures (Context Gathering, Work Breakdown, Task Assignment, Task Execution, Task Review, Task Logging) are defined in guide files under `templates/guides/`. Each guide follows a structured pattern with operational standards, step-by-step actions, and output specifications. Modifying a guide changes how that procedure behaves for all Agents that read it.
+
+### Agent Behavior
+
+Initiation commands under `templates/commands/` define each Agent's role, what documents it reads, and its procedural flow. Changes here affect how Agents initialize, what they load into context, and how they structure their work.
+
+### Communication and Coordination
+
+The Communication Skill under `templates/skills/apm-communication/` defines the Message Bus protocol, Agent-to-User communication standards, and terminology boundaries. Custom repositories can modify these to change how Agents communicate.
+
+### Planning Document Structure
+
+Artifact templates under `templates/apm/` define the initial structure of the Spec, Plan, Tracker, and Memory Index. Custom repositories can adjust these templates to match specific project needs.
+
+### New Skills
+
+Custom skills can be added under `templates/skills/`. Each skill lives in its own directory with a `SKILL.md` file. Skills are loaded at initialization and are available to all Agents that reference them.
+
+### New Subagent Configurations
+
+Custom subagent configurations can be added under `templates/agents/`. These define specialized subagents that Agents can spawn during the workflow.
+
+## Using `apm custom`
+
+The `apm custom` command handles installation from custom repositories. See the [CLI Guide](CLI.md#apm-custom) for full details.
+
+Common workflows:
+
+**First-time install from a custom repo:**
+
+```bash
+apm custom -r owner/repo
+```
+
+The CLI fetches available releases, presents a security disclaimer (first time only), and prompts for assistant selection.
+
+**Install a specific version:**
+
+```bash
+apm custom -r owner/repo -t v1.0.0
+```
+
+**Save a custom repo for future use:**
+
+```bash
+apm custom --add-repo owner/repo
+```
+
+Saved repositories appear as options when running `apm custom` without `--repo`, and can skip the security disclaimer on subsequent use.
+
+**Update a custom installation:**
+
+```bash
+apm update
+```
+
+When an installation comes from a custom repository, `apm update` fetches newer releases from that same repository.
+
+:::warning[Security]
+Custom repositories can contain arbitrary prompts and procedural files that AI Agents read and follow. The `agentic-pm` CLI shows a security disclaimer the first time a custom repository is used, warning that the content has not been reviewed by the APM maintainers. Review the repository contents before installing, particularly commands and guides that define Agent behavior. Saved repositories can skip the disclaimer on subsequent use.
+:::
+
+## Examples
+
+### Domain-Specific APM
+
+A team building data pipelines forks APM and adds domain-specific Workers and procedures:
+
+- `templates/guides/data-validation.md` - A new guide for a Data Validation Worker with pipeline-specific validation steps
+- `templates/skills/apm-data-quality/SKILL.md` - A shared skill defining data quality standards all Workers follow
+- Modified `templates/guides/work-breakdown.md` - Adjusted decomposition principles to favor stage-based pipeline architecture
+- Modified `templates/_standards/WORKFLOW.md` - Updated to reflect the new data validation procedure
+
+### Stricter Review Process
+
+An enterprise team forks APM to enforce additional review gates:
+
+- Modified `templates/guides/task-review.md` - Added mandatory security review steps to the Task Review procedure, requiring the Manager to spawn a security subagent for Tasks touching authentication or payment code
+- `templates/agents/apm-security-reviewer.md` - A custom subagent configuration for automated security review
+- Modified `templates/_standards/WORKFLOW.md` - Updated Task Review specification to include the security review step
+
+## Sharing Customizations
+
+Custom repositories can be shared with teams or the community. Anyone with access to the repository can install from it using `apm custom -r owner/repo`. For private repositories, the User needs a GitHub token configured for access.
+
+When sharing a custom repository, document what was changed and why in the repository's README. If the customization adds new commands or skills, note their purpose and usage. If it modifies existing procedures, describe how the behavior differs from the official release.
+
+## Related Docs
+
+- [CLI Guide](CLI.md) - All CLI commands and options
+- [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
+- [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
