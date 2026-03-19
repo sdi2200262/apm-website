@@ -19,7 +19,7 @@ Each Agent role operates with a deliberately limited view of the project. The sc
 
 The Planner dedicates its entire context window to planning. No execution history competes for space because the Planner does not participate in implementation. This is why APM separates planning from execution into distinct phases rather than having one Agent do both.
 
-Having an entire conversation's context budget available for planning allows the Planner to explore the codebase for deep understanding, conduct thorough context gathering across multiple question rounds, and cross-check findings against what actually exists in the workspace. Every interaction in the Planning Phase is deliberately designed to be thorough - the Planner iterates on gaps, follows up on ambiguities, proactively investigates when responses reference existing code or documentation, and decomposes gathered context through structured procedures into planning documents. The result is high-quality planning documents, which in turn determine the quality of everything that follows in the Implementation Phase.
+Having an entire conversation's context budget available allows the Planner to explore the codebase for deep understanding, conduct thorough context gathering across multiple question rounds, and cross-check findings against what actually exists in the workspace. The Planner iterates on gaps, follows up on ambiguities, proactively investigates when responses reference existing code or documentation, and decomposes gathered context through structured procedures into planning documents. The quality of these documents determines the quality of everything that follows in the Implementation Phase.
 
 ### Manager
 
@@ -27,17 +27,9 @@ The Manager operates one layer above implementation detail. Its default context 
 
 ### Workers
 
-Workers receive Task Prompts from the Manager one at a time (or in batches) and accumulate working context as they execute. A Worker assigned seven Tasks across a project does not receive all seven at once - it receives each when the Manager determines the Task is ready, building familiarity with the domain as it progresses. If the Worker's context fills up mid-project, it Hands off to a fresh instance that continues from where the previous left off.
+Workers receive Task Prompts from the Manager one at a time (or in batches) and accumulate working context as they execute. A Worker assigned seven Tasks across a project receives each when the Manager determines the Task is ready, building familiarity with the domain as it progresses. If the Worker's context fills up mid-project, it Hands off to a fresh instance that continues from where the previous left off.
 
-Each Task Prompt functions as a complete execution plan. Rather than a simple todo item or a native-platform task, it is a composed document containing:
-
-- Dependency context from prior Tasks (calibrated by familiarity)
-- Design decisions and constraints extracted from the Spec
-- Step-by-step instructions with expected outputs
-- Validation criteria for verifying results
-- Logging and reporting instructions
-
-A Worker receiving a Task Prompt has everything needed to execute that Task end-to-end without referencing the Plan, the Spec, or the Tracker. It does not track overall project progress or what other Workers are doing. Every piece of coordination-level context the Worker does not carry is space available for the actual work: reading code, writing implementations, debugging, running validation.
+Each [Task Prompt](Agent_Orchestration.md#how-task-prompts-are-built) functions as a complete execution plan, composed of dependency context, Spec content, and Plan Task fields synthesized into a single self-contained document. A Worker receiving a Task Prompt has everything needed to execute that Task end-to-end without referencing the Plan, the Spec, or the Tracker. Every piece of coordination-level context the Worker does not carry is space available for the actual work: reading code, writing implementations, debugging, running validation.
 
 ## Context During Implementation
 
@@ -89,5 +81,5 @@ When an APM session is archived, the entire `.apm/` state (planning documents, T
 ## Related Docs
 
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
 - [CLI Guide](CLI.md) - All CLI commands and options
+- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization

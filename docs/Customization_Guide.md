@@ -2,7 +2,7 @@
 id: customization-guide
 slug: /customization-guide
 sidebar_label: Customization Guide
-sidebar_position: 11
+sidebar_position: 10
 ---
 
 # Customization Guide
@@ -122,7 +122,7 @@ When sharing a custom repository, document what was changed and why in the repos
 
 ## Related Docs
 
-- [CLI Guide](CLI.md) - All CLI commands and options
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
+- [CLI Guide](CLI.md) - All CLI commands and options
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

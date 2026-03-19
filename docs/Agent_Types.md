@@ -53,7 +53,7 @@ The Manager coordinates execution using the three planning documents and the Tra
 
 - **Task Review** - Reviews completed work from Task Reports and Task Logs, determining whether to proceed, issue follow-ups, or modify planning documents. See [Task Review](Workflow_Overview.md#task-review) for the full procedure.
 
-- **Planning Document Maintenance** - Updates the Spec, Plan, or Rules when execution reveals issues with initial design decisions, task definitions, dependencies, or universal patterns.
+- **Planning Document Maintenance** - Updates the Spec, Plan, or Rules when execution reveals issues with initial design decisions, Task definitions, dependencies, or universal patterns.
     - Assesses cascade implications and determines whether modifications require User collaboration.
 
 - **Memory Maintenance** - Updates the [Tracker and Index](Agent_Orchestration.md#memory-and-project-state) after each Task Review and at Stage boundaries.
@@ -72,7 +72,7 @@ Workers execute Tasks assigned by the Manager. Each Worker is defined in the Pla
 
 - **Task Execution** - Executes assigned Tasks following the Task Prompt instructions, validates results per specified criteria, and iterates on failure until success or a stop condition. See [Task Execution](Workflow_Overview.md#task-execution) for the full procedure.
 
-- **Task Logging** - Documents execution results in a structured Task Log and writes a Task Report to the Report Bus. Task Logs serve as the context abstraction layer between the Manager's coordination view and the Worker's execution details. See [Task Logging](Workflow_Overview.md#task-logging) for contents and procedure.
+- **Task Logging** - Documents execution results in a structured Task Log and writes a Task Report to the Report Bus. Task Logs bridge the Manager's coordination view and the Worker's execution details, letting the Manager understand outcomes without reviewing code directly. See [Task Logging](Workflow_Overview.md#task-logging) for contents and procedure.
 
 - **Rules Proposals** - When execution reveals patterns or corrections that could benefit all Workers, the Worker proposes the update to the User after Task completion. Changes are written to Rules only after User approval.
 

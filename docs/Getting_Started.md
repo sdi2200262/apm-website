@@ -49,7 +49,7 @@ The initialization command will:
 After initialization completes, you're ready to begin.
 
 :::note How Agents communicate
-Throughout an APM session, Agents communicate by writing to files in `.apm/bus/` - the **Message Bus**. The Manager writes task assignments to a Worker's Task Bus; the Worker writes results back to its Report Bus. You act as the messenger between Agent conversations, running commands like `/apm-4-check-tasks` and `/apm-5-check-reports` to deliver messages. Each Agent tells you exactly what to do next - which command to run and in which conversation.
+Throughout an APM session, Agents communicate by writing to files in `.apm/bus/` - the **Message Bus**. The Manager writes Task assignments to a Worker's Task Bus; the Worker writes results back to its Report Bus. You act as the messenger between Agent conversations, running commands like `/apm-4-check-tasks` and `/apm-5-check-reports` to deliver messages. Each Agent tells you exactly what to do next - which command to run and in which conversation.
 :::
 
 :::note "Open a new Agent"
@@ -111,7 +111,7 @@ The Planner creates three planning documents:
 
 - **Spec** - Design decisions and constraints defining what is being built
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
-- **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`)
+- **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`)
 
 You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus (creating directories and bus files in `.apm/bus/` for each Worker defined in the Plan) and the Planning Phase completes.
 
@@ -129,7 +129,7 @@ Review the summary carefully. If it accurately reflects your project, authorize 
 
 ## Step 4: Your First Task Cycle
 
-This is the core loop of the Implementation Phase. Each Task goes through four procedures - Assignment, Execution, Logging, and Review - with you carrying messages between Agent conversations. Each Agent directs you on what to do next.
+This is the core loop of the Implementation Phase. Each Task goes through four procedures - assignment, execution, logging, and review - with you carrying messages between Agent conversations. Each Agent directs you on what to do next.
 
 **1. Manager dispatches a Task** - The Manager constructs a self-contained Task Prompt (objective, instructions, validation criteria, and all the context a Worker needs) and writes it to the Worker's Task Bus. It then tells you which Worker conversation to go to and what to run.
 
@@ -188,9 +188,9 @@ Look for signs of context pressure: the Agent repeating questions it already ask
 ### Handoff Process
 
 1. **Trigger Handoff** - Run `/apm-6-handoff-manager` or `/apm-7-handoff-worker` in the outgoing Agent's conversation.
-2. **Outgoing Agent wraps up** - Creates a Handoff Log (working knowledge not captured in Task Logs) and writes a handoff prompt to its Handoff Bus with context reconstruction instructions.
+2. **Outgoing Agent wraps up** - Creates a Handoff Log (working knowledge not captured in Task Logs) and writes a Handoff Prompt to its Handoff Bus with context reconstruction instructions.
 3. **Open a new Agent** - For the same role (e.g. "Manager 2" or "Frontend Agent 2").
-4. **Initialize the incoming Agent** - Run the same initialization command (`/apm-2-initiate-manager` or `/apm-3-initiate-worker frontend-agent`). The incoming Agent auto-detects the handoff prompt from its Handoff Bus.
+4. **Initialize the incoming Agent** - Run the same initialization command (`/apm-2-initiate-manager` or `/apm-3-initiate-worker frontend-agent`). The incoming Agent auto-detects the Handoff Prompt from its Handoff Bus.
 5. **Verify and resume** - The incoming Agent reconstructs context from planning documents, Handoff Log, and relevant Task Logs, then presents an understanding summary for your verification before continuing.
 
 ### If Context Compaction Happens

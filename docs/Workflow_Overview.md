@@ -48,7 +48,7 @@ The Planner decomposes gathered context into three [planning documents](Agent_Or
 
 **Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages, then breaks each Stage into Tasks. After writing the full Plan, it performs a review pass assessing workload distribution, cross-Agent dependencies, and generates a Dependency Graph. The User reviews and approves.
 
-**Rules.** The Planner extracts universal execution patterns and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`). The User reviews and approves.
+**Rules.** The Planner extracts universal execution patterns and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
 
 After all three documents are approved, the Planner initializes the [Message Bus](Agent_Orchestration.md#the-message-bus). The Planning Phase is complete. The User opens a new conversation and initiates the Manager.
 
@@ -142,7 +142,7 @@ The Manager recommends running `/apm-8-summarize-session` in a new conversation 
 
 When an Agent's context window approaches its limits, a Handoff transfers working knowledge to a fresh instance. The mechanics of Handoff - the two-artifact system, context reconstruction, and how it affects dependency context - are covered in [Agent Orchestration](Agent_Orchestration.md). This section describes how Handoff fits into the workflow.
 
-Handoff can happen at any point during the Implementation Phase. The Manager or Worker signals context pressure, or the User notices signs of degradation (repeating questions, forgetting constraints, reduced quality). The User triggers the Handoff by running `/apm-6-handoff-manager` or `/apm-7-handoff-worker`. The outgoing Agent creates its artifacts, the User opens a new conversation for the same role, and the incoming Agent auto-detects the handoff prompt during initialization.
+Handoff can happen at any point during the Implementation Phase. The Manager or Worker signals context pressure, or the User notices signs of degradation (repeating questions, forgetting constraints, reduced quality). The User triggers the Handoff by running `/apm-6-handoff-manager` or `/apm-7-handoff-worker`. The outgoing Agent creates its artifacts, the User opens a new conversation for the same role, and the incoming Agent auto-detects the Handoff Prompt during initialization.
 
 If auto-compaction happens instead and the Agent starts acting inconsistently, the User runs `/apm-9-recover` to reconstruct working context without a full Handoff.
 

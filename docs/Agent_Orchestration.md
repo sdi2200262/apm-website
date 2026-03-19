@@ -21,7 +21,7 @@ The **Plan** defines how work is organized: Stages, Tasks, Worker assignments, d
 
 The **Rules** define how work is performed: universal execution patterns that apply to every Worker regardless of domain. This is the one document all Agents access directly. Because all Workers read the same file, only genuinely universal patterns belong here. Domain-specific guidance goes into Task Prompts via Spec extraction instead.
 
-The flow between phases is direct: the Planner creates all three documents with User approval, then the Manager reads them and uses them to coordinate Workers throughout the Implementation Phase. Both the Manager and Workers may update these documents when execution findings warrant it. The Spec and Plan are updated when design decisions or task definitions need adjustment, the Rules when new universal patterns emerge.
+The flow between phases is direct: the Planner creates all three documents with User approval, then the Manager reads them and uses them to coordinate Workers throughout the Implementation Phase. The Manager may update these documents when execution findings warrant it: the Spec and Plan when design decisions or Task definitions need adjustment. Workers may propose Rules updates when they discover universal patterns during execution, with changes written only after User approval.
 
 ## The Message Bus
 
@@ -31,7 +31,7 @@ Each Worker's directory contains three bus files:
 
 - **Task Bus** (`task.md`) - Manager writes Task Prompts here. The Worker reads them when the User runs `/apm-4-check-tasks` in the Worker's conversation.
 - **Report Bus** (`report.md`) - Worker writes Task Reports here. The Manager reads them when the User runs `/apm-5-check-reports` in the Manager's conversation.
-- **Handoff Bus** (`handoff.md`) - An outgoing Agent writes its handoff prompt here. The incoming Agent reads it during initialization.
+- **Handoff Bus** (`handoff.md`) - An outgoing Agent writes its Handoff Prompt here. The incoming Agent reads it during initialization.
 
 The Manager writes to a Worker's Task Bus, the Worker reads it and later writes back to its Report Bus, and the Manager reads the report. The User mediates every exchange by running `/apm-4-check-tasks` to deliver assignments and `/apm-5-check-reports` to deliver reports. Each Agent provides specific guidance covering only its end of the exchange. See [Task Cycles](Workflow_Overview.md#task-cycles) for the full procedural walkthrough.
 
@@ -136,7 +136,7 @@ The incoming Agent inherits clean, structured context rather than a compressed c
 
 ### Manager vs Worker Handoff
 
-A **Manager Handoff** must describe outstanding Tasks in full within the handoff prompt, since the original Task Prompts may no longer be available in the bus files.
+A **Manager Handoff** must describe outstanding Tasks in full within the Handoff Prompt, since the original Task Prompts may no longer be available in the bus files.
 
 A **Worker Handoff** mid-Task can reference the original Task Prompt directly since it's still in the bus. A Worker Handoff between Tasks simply notes readiness to receive the next assignment.
 

@@ -2,7 +2,7 @@
 id: tips-and-tricks
 slug: /tips-and-tricks
 sidebar_label: Tips and Tricks
-sidebar_position: 12
+sidebar_position: 11
 ---
 
 # Tips and Tricks
