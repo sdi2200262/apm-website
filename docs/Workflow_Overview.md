@@ -156,8 +156,7 @@ When an APM session ends, whether through project completion, a decision to paus
 
 ## Next Steps
 
-- [Prompt Engineering](Prompt_Engineering.md) - How APM's prompts are designed and structured
+- [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
 - [Modifying APM](Modifying_APM.md) - Local edits, custom repositories, and template customization
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
-- [CLI Guide](CLI.md) - All CLI commands, archival, and custom installations
+- [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures

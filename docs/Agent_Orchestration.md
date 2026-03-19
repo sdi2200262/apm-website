@@ -160,6 +160,5 @@ Recovery is distinct from Handoff. The Agent re-reads its procedural documents a
 ## Next Steps
 
 - [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure in both phases
-- [Prompt Engineering](Prompt_Engineering.md) - How APM's prompts are designed and structured
+- [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
-- [CLI Guide](CLI.md) - Session management, archival, and custom installations
