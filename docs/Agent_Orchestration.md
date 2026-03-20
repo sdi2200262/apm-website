@@ -81,7 +81,7 @@ The Tracker (`.apm/tracker.md`) is the live project state document, serving as t
 
 - **Task tracking** - Task statuses per Stage (Waiting, Ready, Active, Done), Agent assignments, and branch state. Updated after every Task Review.
 - **Agent tracking** - Which Workers exist, their current instance numbers, and coordination notes. Updated when Workers are first initialized and when Handoffs are detected.
-- **Version control state** - Base branch and branch convention established during Manager initialization.
+- **Version control state** - Base branch, branch convention, and commit convention established by the Planner during the Planning Phase.
 - **Working notes** - Ephemeral coordination context that the Manager and User accumulate during a Stage. Includes pending considerations, User preferences, and durable observations.
 
 ### The Index

@@ -39,7 +39,7 @@ The Planner operates once at project start to transform requirements into planni
 
 - **Context Gathering** - Conducts structured discovery to gather project context, producing an Understanding Summary for User review and approval. See [Context Gathering](Workflow_Overview.md#context-gathering) for the full procedure.
 
-- **Work Breakdown** - Decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) (Spec, Plan, and Rules), each reviewed with the User before proceeding. Initializes the [Message Bus](Agent_Orchestration.md#the-message-bus) for all Agents defined in the Plan. See [Work Breakdown](Workflow_Overview.md#work-breakdown) for the full procedure.
+- **Work Breakdown** - Decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) (Spec, Plan, and Rules), each reviewed with the User before proceeding. Initializes the [Message Bus](Agent_Orchestration.md#the-message-bus) and version control for all Agents defined in the Plan. See [Work Breakdown](Workflow_Overview.md#work-breakdown) for the full procedure.
 
 ## Manager
 
@@ -58,7 +58,7 @@ The Manager coordinates execution using the three planning documents and the Tra
 
 - **Memory Maintenance** - Updates the [Tracker and Index](Agent_Orchestration.md#memory-and-project-state) after each Task Review and at Stage boundaries.
 
-- **Version Control Coordination** - Initializes and manages feature branches and worktrees for parallel Task execution, performing merges at Stage boundaries.
+- **Version Control Coordination** - Manages feature branches and worktrees for parallel Task execution, performing merges at Stage boundaries. Version control is established by the Planner during the Planning Phase; the Manager coordinates operations during implementation.
 
 The Manager operates through multiple instances via [Handoff](Agent_Orchestration.md#handoff-and-continuity) when context limits approach.
 

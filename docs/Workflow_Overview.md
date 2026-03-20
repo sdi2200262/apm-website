@@ -48,9 +48,9 @@ The Planner decomposes gathered context into three [planning documents](Agent_Or
 
 **Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages, then breaks each Stage into Tasks. After writing the full Plan, it performs a review pass assessing workload distribution, cross-Agent dependencies, and generates a Dependency Graph. The User reviews and approves.
 
-**Rules.** The Planner extracts universal execution patterns and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
+**Rules.** The Planner extracts universal execution patterns (including version control conventions) and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
 
-After all three documents are approved, the Planner initializes the [Message Bus](Agent_Orchestration.md#the-message-bus). The Planning Phase is complete. The User opens a new conversation and initiates the Manager.
+After all three documents are approved, the Planner initializes the [Message Bus](Agent_Orchestration.md#the-message-bus) and version control (detecting or creating a git repository, recording conventions in the Tracker). The Planning Phase is complete. The User opens a new conversation and initiates the Manager.
 
 ## Implementation Phase
 
@@ -60,7 +60,7 @@ The Implementation Phase executes the planning documents. The [Manager](Agent_Ty
 
 The first Manager instance (Manager 1) reads all planning documents and its procedural guides, then:
 
-- Initializes version control if a git repository exists (detects the base branch, establishes branch conventions)
+- Verifies version control state (established by the Planner during the Planning Phase)
 - Populates the Tracker with Stage 1 Tasks and all Worker assignments
 - Initializes the Memory Index
 - Presents an understanding summary covering project scope, key design decisions, Workers, and Stage structure

@@ -93,9 +93,9 @@ The Planner guides you through both procedures to create the planning documents.
 
 The Planner asks questions across three rounds to understand your project:
 
-- **Round 1** - Project vision, existing materials, and goals
-- **Round 2** - Technical requirements and validation criteria
-- **Round 3** - Implementation approach and quality standards
+- **Round 1** - Existing materials and vision
+- **Round 2** - Technical requirements
+- **Round 3** - Implementation approach and quality
 
 After each round, the Planner iterates on gaps before advancing. It will also explore your codebase when your answers reference existing code or documentation. After all rounds, it presents an understanding summary for your approval.
 
@@ -113,7 +113,7 @@ The Planner creates three planning documents:
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
 - **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`)
 
-You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus (creating directories and bus files in `.apm/bus/` for each Worker defined in the Plan) and the Planning Phase completes.
+You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus (creating directories and bus files in `.apm/bus/` for each Worker defined in the Plan) and version control (detecting or creating a git repository, recording conventions in the Tracker), and the Planning Phase completes.
 
 ## Step 3: Initiate the Manager
 
@@ -123,7 +123,7 @@ Open a new Agent and run:
 /apm-2-initiate-manager
 ```
 
-As Manager 1 (the first instance), the Manager reads all planning documents and its procedural guides, initializes version control if a git repository exists, populates the Tracker with Stage 1 Tasks and all Worker assignments, initializes the Memory Index, and presents an understanding summary covering project scope, key design decisions, Workers, and Stage structure.
+As Manager 1 (the first instance), the Manager reads all planning documents and its procedural guides, verifies version control state (established by the Planner), populates the Tracker with Stage 1 Tasks and all Worker assignments, initializes the Memory Index, and presents an understanding summary covering project scope, key design decisions, Workers, and Stage structure.
 
 Review the summary carefully. If it accurately reflects your project, authorize it to proceed - otherwise make corrections. The Manager then assesses which Tasks are ready and begins dispatching work.
 
