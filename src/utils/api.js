@@ -13,11 +13,9 @@ export async function fetchGitHubStats() {
     const data = await res.json();
     return {
       stars: data.stargazers_count || 0,
-      forks: data.forks_count || 0,
-      issues: data.open_issues_count || 0,
     };
   } catch {
-    return { stars: 0, forks: 0, issues: 0 };
+    return { stars: 0 };
   }
 }
 

@@ -5,7 +5,7 @@ import { fetchGitHubStats, fetchNPMStats, fetchNPMVersion, fetchGitHubRelease } 
 const CACHE_KEY = 'apm-github-npm-stats';
 
 export function useStats() {
-  const [stats, setStats] = useState({ stars: 0, forks: 0, issues: 0, downloads: 0, npmVersion: null, githubRelease: null });
+  const [stats, setStats] = useState({ stars: 0, downloads: 0, npmVersion: null, githubRelease: null });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
