@@ -37,7 +37,7 @@ The Planner operates once at project start to transform requirements into planni
 
 **Core Responsibilities:**
 
-- **Context Gathering** - Conducts structured discovery to gather project context, producing an Understanding Summary for User review and approval. See [Context Gathering](Workflow_Overview.md#context-gathering) for the full procedure.
+- **Context Gathering** - Assesses the workspace environment and conducts structured discovery to gather project context, producing an Understanding Summary for User review and approval. See [Context Gathering](Workflow_Overview.md#context-gathering) for the full procedure.
 
 - **Work Breakdown** - Decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) (Spec, Plan, and Rules), each reviewed with the User before proceeding. Initializes the [Message Bus](Agent_Orchestration.md#the-message-bus) and version control for all Agents defined in the Plan. See [Work Breakdown](Workflow_Overview.md#work-breakdown) for the full procedure.
 

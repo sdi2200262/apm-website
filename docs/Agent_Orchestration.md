@@ -15,7 +15,7 @@ This doc covers the coordination mechanisms that connect the Agent roles describ
 
 Three documents created during the Planning Phase form the coordination foundation for the entire Implementation Phase.
 
-The **Spec** captures design decisions and constraints. The Manager reads it directly and extracts relevant content into Task Prompts so that each Worker receives only the design context it needs. Workers never reference the Spec.
+The **Spec** captures design decisions, constraints, and a workspace overview (directory structure, repositories, authoritative documents). The Manager reads it directly and extracts relevant content into Task Prompts so that each Worker receives only the design context it needs. Workers never reference the Spec.
 
 The **Plan** defines how work is organized: Stages, Tasks, Worker assignments, dependencies, and a Dependency Graph. The Planner identifies logical work domains from the project's requirements and maps each domain to a Worker (e.g. Frontend Agent, Backend Agent, API Agent). The Dependency Graph visualizes which Tasks can run in parallel, which form chains, and where one Worker's output feeds into another's. The Manager uses the Plan for dispatch decisions and progress tracking. Workers never reference the Plan.
 

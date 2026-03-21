@@ -91,7 +91,7 @@ The Planner guides you through both procedures to create the planning documents.
 
 ### Context Gathering
 
-The Planner asks questions across three rounds to understand your project:
+Before asking questions, the Planner scans your workspace to understand the project environment, including directory structure, git repositories and their conventions, existing documentation, and your platform's rules file if present. It then asks questions across three rounds:
 
 - **Round 1** - Existing materials and vision
 - **Round 2** - Technical requirements
@@ -109,7 +109,7 @@ After each round, the Planner iterates on gaps before advancing. It will also ex
 
 The Planner creates three planning documents:
 
-- **Spec** - Design decisions and constraints defining what is being built
+- **Spec** - Design decisions, constraints, and a workspace overview defining what is being built and where
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
 - **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`)
 

@@ -28,7 +28,7 @@ The Planning Phase produces the planning documents that guide all subsequent wor
 
 The Planner conducts structured discovery through three progressive question rounds, each building on the previous. The goal is to gather enough context to create accurate planning documents without interrogating exhaustively.
 
-Before starting, the Planner checks for archived APM sessions in `.apm/archives/`. If archives exist, it presents them and asks about relevance. Relevant archives are examined via the `apm-archive-explorer` subagent, with findings verified against the current codebase before integration into question rounds.
+Before starting question rounds, the Planner checks for archived APM sessions in `.apm/archives/` and performs a workspace assessment: scanning the directory structure, detecting git repositories and their conventions, reading existing documentation and the platform's rules file if present. If archives exist, it presents them and asks about relevance. Relevant archives are examined via the `apm-archive-explorer` subagent, with findings verified against the current codebase before integration into question rounds.
 
 **Round 1 - Existing Materials and Vision.** Project type, problem and purpose, essential features and scope, existing documentation and materials, current plan or vision, previous work and codebase context.
 
@@ -44,7 +44,7 @@ After all three rounds, the Planner presents a consolidated **understanding summ
 
 The Planner decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) through visible reasoning, presenting its thinking in chat before writing to files. This makes decomposition decisions visible and allows the User to redirect before artifacts are committed.
 
-**Spec.** The Planner analyzes design decisions from gathered context and writes the Spec. The User reviews and approves before it moves on.
+**Spec.** The Planner analyzes design decisions from gathered context and writes the Spec, including a workspace overview that maps the project environment (directory structure, repositories, authoritative documents) so the Manager has a complete picture without its own exploration. The User reviews and approves before it moves on.
 
 **Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages, then breaks each Stage into Tasks. After writing the full Plan, it performs a review pass assessing workload distribution, cross-Agent dependencies, and generates a Dependency Graph. The User reviews and approves.
 
