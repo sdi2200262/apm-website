@@ -43,13 +43,13 @@ APM's files are written for two audiences: the AI Agent parsing instructions, an
 - **De-duplication** - Each concept has one primary explanation in one location. Other files reference it rather than repeating it. Duplication wastes tokens and risks divergence between copies.
 - **Token efficiency** - Prose over tables when equally clear. No redundant phrasing. Files aim to stay under ~500 lines, because every token an Agent spends reading procedural files is a token unavailable for execution.
 
-Guides follow a consistent five-section pattern that Agents can rely on:
+Guides follow a consistent section pattern that Agents can rely on:
 
 1. **Overview** - Who reads this, what it does
 2. **Operational Standards** - Decision rules and reasoning approaches
 3. **Procedure** - Step-by-step actions
 4. **Structural Specifications** - Output formats and schemas
-5. **Content Guidelines** - Quality standards and common mistakes
+5. **Content Guidelines** - Common mistakes and quality standards
 
 ## Structured Formats
 

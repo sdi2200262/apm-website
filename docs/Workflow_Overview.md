@@ -28,7 +28,7 @@ The Planning Phase produces the planning documents that guide all subsequent wor
 
 The Planner conducts structured discovery through three progressive question rounds, each building on the previous. The goal is to gather enough context to create accurate planning documents without interrogating exhaustively.
 
-Before starting question rounds, the Planner checks for archived APM sessions in `.apm/archives/` and performs a workspace assessment: scanning the directory structure, detecting git repositories and their conventions, reading existing documentation and the platform's rules file if present. If archives exist, it presents them and asks about relevance. Relevant archives are examined via the `apm-archive-explorer` subagent, with findings verified against the current codebase before integration into question rounds.
+Before starting question rounds, the Planner checks for archived APM sessions in `.apm/archives/` and performs a workspace assessment: scanning the directory structure, detecting git repositories and their conventions, reading existing documentation and the platform's rules file if present, and configuring `.apm/` gitignore when inside a repository. If archives exist, it presents them and asks about relevance. Relevant archives are examined via the `apm-archive-explorer` subagent, with findings verified against the current codebase before integration into question rounds.
 
 **Round 1 - Existing Materials and Vision.** Project type, problem and purpose, essential features and scope, existing documentation and materials, current plan or vision, previous work and codebase context.
 
@@ -46,7 +46,7 @@ The Planner decomposes gathered context into three [planning documents](Agent_Or
 
 **Spec.** The Planner analyzes design decisions from gathered context and writes the Spec, including a workspace overview that maps the project environment (directory structure, repositories, authoritative documents) so the Manager has a complete picture without its own exploration. The User reviews and approves before it moves on.
 
-**Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages, then breaks each Stage into Tasks. After writing the full Plan, it performs a review pass assessing workload distribution, cross-Agent dependencies, and generates a Dependency Graph. The User reviews and approves.
+**Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages with sequencing rationale, then identifies Tasks per Stage (deliverables needed, Worker mapping, independence assessment) before reasoning through each Task in detail. After writing the full Plan, it performs a review pass assessing workload distribution, cross-Agent dependencies, and generates a Dependency Graph. The User reviews and approves.
 
 **Rules.** The Planner extracts universal execution patterns (including version control conventions) and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
 
@@ -95,7 +95,7 @@ The Worker receives the Task Prompt via `/apm-4-check-tasks` and begins executio
 1. **Context integration** - If [dependencies on other Agents' work](Agent_Orchestration.md#dependency-context) exist, the Worker reads the specified files to integrate prior work before starting.
 2. **Execution** - The Worker follows the instructions step by step, applying Rules from the platform's rules file throughout.
 3. **Validation** - Results are validated in a fixed order: automated checks first, then output verification, then User review if specified. The Worker does not request User review until programmatic and artifact validation pass.
-4. **Iteration** - If validation fails, the Worker corrects and re-validates. This continues until success or a stop condition is reached (fixes causing new issues, the issue requires external resolution, or debugging produces diagnosis without resolution). At a stop condition, the Worker spawns a debug subagent for fresh-context resolution.
+4. **Iteration** - If validation fails, the Worker corrects and re-validates. This continues until success or a stop condition is reached (fixes causing new issues, the issue requires external resolution, or debugging is not converging). At a stop condition, the Worker spawns a subagent for fresh-context resolution. If unresolved, the Worker reports back with Partial status rather than exhausting its context window.
 
 When the User provides a correction or directive during execution, the Worker complies immediately and continues. At Task completion, the correction is noted in the Task Log as an important finding for the Manager. The Worker then asks whether the correction should become a Rule for all Workers, but only after logging and reporting so it does not block the workflow.
 

@@ -57,7 +57,7 @@ Tasks often depend on outputs from prior Tasks. How much context the Manager inc
 
 **Cross-Agent dependencies** - A different Worker completed the producer Task. The consuming Worker has zero familiarity. The Manager provides comprehensive context: file reading instructions, output summaries, and integration guidance.
 
-After a Worker Handoff, the incoming Worker lacks the previous instance's working familiarity with earlier Tasks. The Manager accounts for this by providing more comprehensive context in future Task Prompts, treating those dependencies the same way it would treat work done by a different Worker.
+After a Worker Handoff, the incoming Worker lacks the previous instance's working familiarity with earlier Tasks. The Manager accounts for this by providing more comprehensive context in future Task Prompts, treating those dependencies the same way it would treat work done by a different Worker. Similarly, when a Worker recovers from auto-compaction, the Manager provides more comprehensive same-agent dependency context since reconstructed context may lack working nuance.
 
 ### Dispatch Modes
 

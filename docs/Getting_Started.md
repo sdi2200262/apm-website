@@ -91,7 +91,7 @@ The Planner guides you through both procedures to create the planning documents.
 
 ### Context Gathering
 
-Before asking questions, the Planner scans your workspace to understand the project environment, including directory structure, git repositories and their conventions, existing documentation, and your platform's rules file if present. It then asks questions across three rounds:
+Before asking questions, the Planner scans your workspace to understand the project environment: directory structure, git repositories and their conventions, existing documentation, and your platform's rules file if present. If `.apm/` resides inside a repository, the Planner configures gitignore defaults and asks whether you want to track any `.apm/` artifacts in git. It then asks questions across three rounds:
 
 - **Round 1** - Existing materials and vision
 - **Round 2** - Technical requirements
