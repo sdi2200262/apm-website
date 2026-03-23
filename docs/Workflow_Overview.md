@@ -46,11 +46,11 @@ The Planner decomposes gathered context into three [planning documents](Agent_Or
 
 **Spec.** The Planner analyzes design decisions from gathered context and writes the Spec, including a workspace overview that maps the project environment (directory structure, repositories, authoritative documents) so the Manager has a complete picture without its own exploration. The User reviews and approves before it moves on.
 
-**Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages with sequencing rationale, then identifies Tasks per Stage (deliverables needed, Worker mapping, independence assessment) before reasoning through each Task in detail. After writing the full Plan, it performs a review pass assessing workload distribution, cross-Agent dependencies, and generates a Dependency Graph. The User reviews and approves.
+**Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages with sequencing rationale, then identifies Tasks per Stage (deliverables needed, Worker mapping, independence assessment) before reasoning through each Task in detail including a dependency analysis. After writing the full Plan, it performs a workload review pass and presents a summary. The User reviews and approves.
 
-**Rules.** The Planner extracts universal execution patterns (including version control conventions) and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
+**Rules.** The Planner extracts universal execution patterns (including version control commit conventions) and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
 
-After all three documents are approved, the Planner initializes the [Message Bus](Agent_Orchestration.md#the-message-bus) and version control (detecting or creating a git repository, recording conventions in the Tracker). The Planning Phase is complete. The User opens a new conversation and initiates the Manager.
+After all three documents are approved, the Planner initializes the [Message Bus](Agent_Orchestration.md#the-message-bus) and records version control state in the Tracker (base branch, commit and branch conventions). The Planning Phase is complete. The User opens a new conversation and initiates the Manager.
 
 ## Implementation Phase
 

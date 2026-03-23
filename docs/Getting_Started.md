@@ -113,7 +113,7 @@ The Planner creates three planning documents:
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
 - **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`)
 
-You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus (creating directories and bus files in `.apm/bus/` for each Worker defined in the Plan) and version control (detecting or creating a git repository, recording conventions in the Tracker), and the Planning Phase completes.
+You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus (creating directories and bus files in `.apm/bus/` for each Worker defined in the Plan) and records version control state (base branch, conventions) for the Manager to use during implementation, and the Planning Phase completes.
 
 ## Step 3: Initiate the Manager
 
