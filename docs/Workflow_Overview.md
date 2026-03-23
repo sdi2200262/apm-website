@@ -44,7 +44,7 @@ After all three rounds, the Planner presents a consolidated **understanding summ
 
 The Planner decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) through visible reasoning, presenting its thinking in chat before writing to files. This makes decomposition decisions visible and allows the User to redirect before artifacts are committed.
 
-**Spec.** The Planner analyzes design decisions from gathered context and writes the Spec, including a workspace overview that maps the project environment (directory structure, repositories, authoritative documents) so the Manager has a complete picture without its own exploration. The User reviews and approves before it moves on.
+**Spec.** The Planner analyzes design decisions from gathered context and writes the Spec, including a Workspace section that maps the project environment (directory structure, repositories, authoritative documents) so the Manager has a complete picture without its own exploration. The User reviews and approves before it moves on.
 
 **Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages with sequencing rationale, then identifies Tasks per Stage (deliverables needed, Worker mapping, independence assessment) before reasoning through each Task in detail including a dependency analysis. After writing the full Plan, it performs a workload review pass and presents a summary. The User reviews and approves.
 

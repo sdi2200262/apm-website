@@ -15,7 +15,7 @@ This doc covers the coordination mechanisms that connect the Agent roles describ
 
 Three documents created during the Planning Phase form the coordination foundation for the entire Implementation Phase.
 
-The **Spec** captures design decisions, constraints, and a workspace overview (directory structure, repositories, authoritative documents). The Manager reads it directly and extracts relevant content into Task Prompts so that each Worker receives only the design context it needs. Workers never reference the Spec.
+The **Spec** captures design decisions, constraints, and a Workspace section (directory structure, repositories, authoritative documents). The Manager reads it directly and extracts relevant content into Task Prompts so that each Worker receives only the design context it needs. Workers never reference the Spec.
 
 The **Plan** defines how work is organized: Stages, Tasks, Worker assignments, dependencies, and a Dependency Graph. The Planner identifies logical work domains from the project's requirements and maps each domain to a Worker (e.g. Frontend Agent, Backend Agent, API Agent). The Dependency Graph visualizes which Tasks can run in parallel, which form chains, and where one Worker's output feeds into another's. The Manager uses the Plan for dispatch decisions and progress tracking. Workers never reference the Plan.
 
@@ -81,7 +81,7 @@ The Tracker (`.apm/tracker.md`) is the live project state document, serving as t
 
 - **Task tracking** - Task statuses per Stage (Waiting, Ready, Active, Done), Agent assignments, and branch state. Updated after every Task Review.
 - **Agent tracking** - Which Workers exist, their current instance numbers, and coordination notes. Updated when Workers are first initialized and when Handoffs are detected.
-- **Version control state** - Base branch, branch convention, and commit convention established by the Planner during the Planning Phase.
+- **Version control state** - Per-repository base branch, branch convention, and commit convention established by the Planner during the Planning Phase.
 - **Working notes** - Ephemeral coordination context that the Manager and User accumulate during a Stage. Includes pending considerations, User preferences, and durable observations.
 
 ### The Index
