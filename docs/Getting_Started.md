@@ -144,7 +144,7 @@ The Worker resolves its identity against the Message Bus, confirms registration,
 **3. Deliver the Task** - Run `/apm-4-check-tasks` in the Worker's conversation. The Worker reads the Task Prompt from its Task Bus and begins execution - following the instructions, validating results against the criteria in the prompt, and iterating if validation fails.
 
 :::tip
-Workers pause for your review when User validation is specified in the Task Prompt. You can also interrupt or steer the Worker at any point during execution.
+Workers pause when the Task requires your review or action. You can also interrupt or steer the Worker at any point during execution.
 :::
 
 **4. Worker logs and reports** - Once execution is complete, the Worker writes a structured Task Log to Memory (status, validation results, deliverables, and any flags for the Manager), then writes a brief Task Report to its Report Bus and tells you to deliver it to the Manager.

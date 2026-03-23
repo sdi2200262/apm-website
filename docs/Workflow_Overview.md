@@ -94,7 +94,7 @@ The Worker receives the Task Prompt via `/apm-4-check-tasks` and begins executio
 
 1. **Context integration** - If [dependencies on other Agents' work](Agent_Orchestration.md#dependency-context) exist, the Worker reads the specified files to integrate prior work before starting.
 2. **Execution** - The Worker follows the instructions step by step, applying Rules from the platform's rules file throughout.
-3. **Validation** - Results are validated in a fixed order: automated checks first, then output verification, then User review if specified. The Worker does not request User review until programmatic and artifact validation pass.
+3. **Validation** - The Worker validates results against the criteria in the prompt, completing autonomous checks before involving the User. If criteria require User involvement (judgment or action), the Worker pauses only after autonomous checks pass.
 4. **Iteration** - If validation fails, the Worker corrects and re-validates. This continues until success or a stop condition is reached (fixes causing new issues, the issue requires external resolution, or debugging is not converging). At a stop condition, the Worker spawns a subagent for fresh-context resolution. If unresolved, the Worker reports back with Partial status rather than exhausting its context window.
 
 When the User provides a correction or directive during execution, the Worker complies immediately and continues. At Task completion, the correction is noted in the Task Log as an important finding for the Manager. The Worker then asks whether the correction should become a Rule for all Workers, but only after logging and reporting so it does not block the workflow.
