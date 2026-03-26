@@ -2,7 +2,7 @@
 id: tips-and-tricks
 slug: /tips-and-tricks
 sidebar_label: Tips and Tricks
-sidebar_position: 11
+sidebar_position: 12
 ---
 
 # Tips and Tricks
@@ -111,6 +111,7 @@ For large projects, splitting work across multiple APM sessions and archiving be
 
 ## Related Docs
 
-- [CLI Guide](CLI.md) - All CLI commands and options
+- [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
 - [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories

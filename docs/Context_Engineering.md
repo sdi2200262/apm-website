@@ -81,5 +81,5 @@ When an APM session is archived, the entire `.apm/` state (planning documents, T
 ## Related Docs
 
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
-- [CLI Guide](CLI.md) - All CLI commands and options
+- [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Customization Guide](Customization_Guide.md) - Custom repositories and template customization

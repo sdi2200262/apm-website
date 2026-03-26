@@ -48,12 +48,11 @@ export async function fetchNPMVersion() {
 export async function fetchGitHubRelease() {
   try {
     const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=10`
+      `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`
     );
     if (!res.ok) throw new Error('GitHub releases API failed');
     const data = await res.json();
-    const stable = data.find((r) => !r.prerelease && !r.draft);
-    return { githubRelease: stable?.tag_name || null };
+    return { githubRelease: data.tag_name || null };
   } catch {
     return { githubRelease: null };
   }

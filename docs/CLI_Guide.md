@@ -1,5 +1,5 @@
 ---
-id: cli
+id: cli-guide
 slug: /cli
 sidebar_label: CLI Guide
 sidebar_position: 8
@@ -71,6 +71,8 @@ apm custom -r owner/repo -t v1.0.0 -a claude
 | `-f, --force` | Skip confirmation prompts |
 
 Without `--repo`, the CLI offers selection from saved repositories (managed via `--add-repo` and `--remove-repo`). Custom repositories show a security disclaimer on first use, which can be skipped for saved repositories.
+
+> **Note:** When a saved repository has the disclaimer skip enabled, no security warning is shown during `apm custom`, `apm add`, or `apm update` for that repository. If the repository is later compromised, the user receives no warning. Use `apm custom --list` to review which repositories have the disclaimer skipped. See the [Security Guide](Security_Guide.md) for details.
 
 **Repository management:**
 
@@ -252,4 +254,5 @@ The `apm archive --list` command reads these fields to display archive informati
 
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
 - [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

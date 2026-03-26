@@ -173,6 +173,7 @@ After installing, reference the skill in the assistant's chat to begin the migra
 
 ## Related Docs
 
-- [CLI Guide](CLI.md) - All CLI commands and options
+- [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

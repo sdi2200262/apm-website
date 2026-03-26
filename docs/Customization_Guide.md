@@ -57,7 +57,7 @@ Custom subagent configurations can be added under `templates/agents/`. These def
 
 ## Using `apm custom`
 
-The `apm custom` command handles installation from custom repositories. See the [CLI Guide](CLI.md#apm-custom) for full details.
+The `apm custom` command handles installation from custom repositories. See the [CLI Guide](CLI_Guide.md#apm-custom) for full details.
 
 Common workflows:
 
@@ -92,7 +92,9 @@ apm update
 When an installation comes from a custom repository, `apm update` fetches newer releases from that same repository.
 
 :::warning[Security]
-Custom repositories can contain arbitrary prompts and procedural files that AI Agents read and follow. The `agentic-pm` CLI shows a security disclaimer the first time a custom repository is used, warning that the content has not been reviewed by the APM maintainers. Review the repository contents before installing, particularly commands and guides that define Agent behavior. Saved repositories can skip the disclaimer on subsequent use.
+Custom repositories can write files anywhere within the project directory - not just prompt and procedural files, but also source code, configuration files, and dependency manifests. The `agentic-pm` CLI shows a security disclaimer the first time a custom repository is used. Saved repositories can skip the disclaimer on subsequent use, meaning a compromised repository produces no warning.
+
+There is no signature verification on releases. Review the repository contents before installing, particularly commands and guides that define Agent behavior. See the [Security Guide](Security_Guide.md) for full details on the trust model, risks, and mitigations.
 :::
 
 ## Examples
@@ -122,7 +124,9 @@ When sharing a custom repository, document what was changed and why in the repos
 
 ## Related Docs
 
+- [CLI Guide](CLI_Guide.md) - All CLI commands and options
+- [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
+- [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
-- [CLI Guide](CLI.md) - All CLI commands and options
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency

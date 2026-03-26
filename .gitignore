@@ -4,6 +4,7 @@ node_modules/
 # Build output
 build/
 .docusaurus/
+static/all-apm-docs.md
 
 # Environment
 .env
