@@ -155,9 +155,20 @@ apm update
 
 ## Migrating from Older Versions
 
-Projects using APM v0.5.x or earlier have a different file structure, metadata format, and CLI than v1.0.0+. The `agentic-pm` CLI v1.0.0+ cannot directly manage v0.5.x installations.
+Pre-v1.0.0 APM installations have a different file structure, metadata format, and CLI. The `agentic-pm` CLI v1.0.0+ cannot directly manage them. Additionally, v1.0.0 narrowed official support to Cursor, Claude Code, GitHub Copilot, Gemini CLI, and OpenCode. If the old installation used an assistant no longer supported, the User needs to choose a supported one during reinitialization.
 
-APM provides an optional **migration skill** that can guide an AI agent through the migration process: assessing the old installation, explaining the differences, archiving the existing session with proper metadata conversion, cleaning up old files, and preparing the project for `apm init` with the current `agentic-pm` CLI.
+### Recommended Approach
+
+1. Convert the old `metadata.json` to the v1 schema with the additional archive fields so the `agentic-pm` v1.0.0+ CLI can parse it. The schema is documented in the [CLI Guide](CLI_Guide.md#workspace-metadata).
+2. Move existing `.apm/` artifacts into a dated archive directory at `.apm/archives/session-YYYY-MM-DD-NNN/` or a custom name like `.apm/archives/pre-v1-migration/`. Place the converted `metadata.json` inside the archive directory.
+3. Optionally generate a session summary and place it in the same archive directory
+4. Remove the deprecated `.apm/guides/` directory — v1 scaffolds guides into the assistant directory as `apm-guides/`
+5. Remove only APM-installed files from assistant directories, preserving any non-APM content
+6. Remove `.apm/metadata.json` from the root so the current CLI sees a clean state
+7. Update the CLI: `npm install -g agentic-pm`
+8. Reinitialize: `apm init`
+
+APM provides an optional **migration skill** that packages this recommended procedure so an AI agent can guide you through it step by step. The skill handles state assessment, version difference research, metadata conversion, safe cleanup, and next steps. Install it and reference it in your assistant's chat:
 
 **Installation (Claude Code example):**
 
@@ -167,9 +178,9 @@ curl -sL https://raw.githubusercontent.com/sdi2200262/agentic-project-management
   -o .claude/skills/apm-migration/SKILL.md
 ```
 
-For other platforms, see the [standalone skills README](https://github.com/sdi2200262/agentic-project-management/tree/main/skills).
+For other platforms, see the [standalone skills directory](https://github.com/sdi2200262/agentic-project-management/tree/main/skills) for per-platform installation commands.
 
-After installing, reference the skill in the assistant's chat to begin the migration. The Agent will assess the current state, propose a plan, and execute after approval.
+After installing, reference the skill in the assistant's chat to begin. The Agent assesses the current state, proposes a migration plan, and executes after User approval.
 
 ## Related Docs
 

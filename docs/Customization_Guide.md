@@ -23,6 +23,37 @@ The workflow:
 
 The `agentic-pm` CLI treats custom repositories the same as the official one. It fetches the release manifest, presents available assistants, downloads the bundle, and extracts it into the project.
 
+## The Build Pipeline
+
+Running `npm run build:release` processes source templates into platform-specific bundles. The build system is configured by two key files:
+
+**`build/build-config.json`** defines an array of **targets**. In the official APM repository, each target corresponds to a supported assistant (Claude Code, Cursor, Copilot, Gemini CLI, OpenCode), but the build system itself is target-agnostic - a custom repository could define any set of targets. Each target specifies its output format (Markdown or TOML), config directory (e.g., `.claude/`, `.cursor/`, `.github/`), directory layout for commands, guides, skills, and agents, and platform-specific values like argument syntax and subagent invocation patterns.
+
+**`build/processors/placeholders.js`** resolves template placeholders to target-specific values at build time. Templates are authored once with placeholders like `{RULES_FILE}`, `{SKILL_PATH:name}`, `{ARGS}`, and `{SUBAGENT_GUIDANCE}`, and the build system replaces them per target. For example, `{RULES_FILE}` becomes `CLAUDE.md` for Claude Code but `GEMINI.md` for Gemini CLI, and `{ARGS}` becomes `$ARGUMENTS` for Markdown platforms but `{{args}}` for TOML. This is what makes APM's templates platform-agnostic at the source level.
+
+The build produces two types of output in `dist/`:
+
+- **ZIP bundles** - One per target (e.g., `claude.zip`, `cursor.zip`). Each contains the commands, guides, skills, agent configurations, and `.apm/` artifact templates for that target, with all placeholders resolved.
+- **`apm-release.json`** - The release manifest that tells the CLI what is available in the release:
+
+```json
+{
+  "version": "1.0.0",
+  "assistants": [
+    {
+      "id": "claude",
+      "name": "Claude Code",
+      "bundle": "claude.zip",
+      "configDir": ".claude"
+    }
+  ]
+}
+```
+
+When a User runs `apm init` or `apm custom`, the CLI fetches `apm-release.json` from the GitHub Release, reads the `assistants` array to present available options, then downloads and extracts the corresponding ZIP bundle. Without a valid `apm-release.json` attached to the release, the CLI cannot discover or install the bundles.
+
+When creating a GitHub Release for a custom repository, attach all files from `dist/` - both the ZIP bundles and `apm-release.json`.
+
 ## The Customization Skill
 
 The APM repository includes an optional customization skill at `skills/apm-customization/SKILL.md`. Since the skill lives in the repository itself, it is available in any fork or template without needing separate installation.
