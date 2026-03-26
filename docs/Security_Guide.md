@@ -32,7 +32,7 @@ Custom bundles are ZIP archives extracted into the project directory. A maliciou
 
 - **Execute code during installation** - The CLI only extracts ZIP contents. No scripts, hooks, or executables run during `apm init`, `apm custom`, `apm add`, or `apm update`.
 
-- **Write files outside the project directory** - The CLI validates that all extracted file paths resolve within the project directory. ZIP entries that attempt path traversal (e.g., `../../etc/passwd`) are silently discarded.
+- **Write files outside the project directory** - The CLI validates that all extracted file paths resolve within the project directory. ZIP entries that attempt path traversal (e.g., `../../etc/passwd`) are blocked with a warning.
 
 - **Delete or modify files not in the bundle** - Only files explicitly included in the ZIP are written. Existing files outside the bundle's paths are untouched.
 
