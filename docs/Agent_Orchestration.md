@@ -15,9 +15,9 @@ This doc covers the coordination mechanisms that connect the Agent roles describ
 
 Three documents created during the Planning Phase form the coordination foundation for the entire Implementation Phase.
 
-The **Spec** captures design decisions, constraints, and a Workspace section (directory structure, repositories, authoritative documents). The Manager reads it directly and extracts relevant content into Task Prompts so that each Worker receives only the design context it needs. Workers never reference the Spec.
+The **Spec** captures design decisions, constraints, and a Workspace section (directory structure, repositories, authoritative documents). The Planner may include notes in the Spec header to pass context on to the Manager, such as version control patterns or other observations relevant to implementation. The Manager reads the Spec directly and extracts relevant content into Task Prompts so that each Worker receives only the design context it needs. Workers never reference the Spec.
 
-The **Plan** defines how work is organized: Stages, Tasks, Worker assignments, dependencies, and a Dependency Graph. The Planner identifies logical work domains from the project's requirements and maps each domain to a Worker (e.g. Frontend Agent, Backend Agent, API Agent). The Dependency Graph visualizes which Tasks can run in parallel, which form chains, and where one Worker's output feeds into another's. The Manager uses the Plan for dispatch decisions and progress tracking. Workers never reference the Plan.
+The **Plan** defines how work is organized: Stages, Tasks, Worker assignments, dependencies, and a Dependency Graph. The Planner identifies logical work domains from the project's requirements and maps each domain to a Worker (e.g. Frontend Agent, Backend Agent, API Agent). The Dependency Graph visualizes which Tasks can run in parallel, which form chains, and where one Worker's output feeds into another's. The Planner may include notes in the Plan header to pass coordination signals on to the Manager. The Manager uses the Plan for dispatch decisions and progress tracking. Workers never reference the Plan.
 
 The **Rules** define how work is performed: universal execution patterns that apply to every Worker regardless of domain. This is the one document all Agents access directly. Because all Workers read the same file, only genuinely universal patterns belong here. Domain-specific guidance goes into Task Prompts via Spec extraction instead.
 
@@ -34,6 +34,8 @@ Each Worker's directory contains three bus files:
 - **Handoff Bus** (`handoff.md`) - An outgoing Agent writes its Handoff Prompt here. The incoming Agent reads it during initialization.
 
 The Manager writes to a Worker's Task Bus, the Worker reads it and later writes back to its Report Bus, and the Manager reads the report. The User mediates every exchange by running `/apm-4-check-tasks` to deliver assignments and `/apm-5-check-reports` to deliver reports. Each Agent provides specific guidance covering only its end of the exchange. See [Task Cycles](Workflow_Overview.md#task-cycles) for the full procedural walkthrough.
+
+Non-APM agents can also participate by creating their own directory under `.apm/bus/`. The Manager recognizes reports from agents outside the Plan and can incorporate their contributions or assign follow-up work.
 
 ## Task Prompts and Dispatch
 
@@ -79,9 +81,9 @@ Project state lives in structured files outside any Agent's context. When a conv
 
 The Tracker (`.apm/tracker.md`) is the live project state document, serving as the Manager's operational dashboard. It contains:
 
-- **Task tracking** - Task statuses per Stage (Waiting, Ready, Active, Done), Agent assignments, and branch state. Updated after every Task Review.
-- **Agent tracking** - Which Workers exist, their current instance numbers, and coordination notes. Updated when Workers are first initialized and when Handoffs are detected.
-- **Version control state** - Per-repository base branch, branch convention, and commit convention established by the Planner during the Planning Phase.
+- **Task tracking** - Task statuses per Stage (Waiting, Ready, Active, Done), Worker assignments, and branch state. Updated after every Task Review.
+- **Worker tracking** - Which Workers exist, their current instance numbers, and coordination notes. Updated when Workers are first dispatched to and when Handoffs are detected.
+- **Version control state** - Per-repository base branch, branch convention, and commit convention established by the Manager during first initialization.
 - **Working notes** - Ephemeral coordination context that the Manager and User accumulate during a Stage. Includes pending considerations, User preferences, and durable observations.
 
 ### The Index
@@ -91,7 +93,7 @@ The Index (`.apm/memory/index.md`) is the project's durable memory. It contains:
 - **Memory notes** - Persistent observations and patterns with lasting value. Placed first in the file so incoming Managers encounter durable knowledge immediately after Handoff.
 - **Stage summaries** - Appended after each Stage completes. Compress a Stage's execution into a coordination-ready summary: outcome, Agents involved, notable findings, and references to individual Task Logs.
 
-At Stage completion, the Manager distills working notes from the Tracker into Memory notes in the Index, retaining only observations that would help a future Agent. Ephemeral items are discarded.
+At Stage completion, the Manager reviews working notes and retains only observations with lasting value as Memory notes in the Index. Ephemeral items are discarded. Stage summaries capture what happened; Memory notes capture what matters going forward.
 
 ### File-based Memory
 

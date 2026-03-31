@@ -60,7 +60,7 @@ The Manager accounts for this by treating those dependencies as if a different W
 
 Every piece of project state in APM exists as a file outside any Agent's context window. When a conversation ends or an Agent's context fills up, the project state survives in the file system.
 
-The **Tracker** (`.apm/tracker.md`) holds live project state: Task statuses, Agent tracking, branch state, and working notes. It reflects the current moment and is updated constantly by the Manager.
+The **Tracker** (`.apm/tracker.md`) holds live project state: Task statuses, Worker tracking, branch state, and working notes. It reflects the current moment and is updated constantly by the Manager.
 
 **Memory** (`.apm/memory/`) is a separate hierarchy that captures project history:
 

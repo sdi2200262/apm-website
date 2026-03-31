@@ -91,13 +91,13 @@ The Planner guides you through both procedures to create the planning documents.
 
 ### Context Gathering
 
-Before asking questions, the Planner scans your workspace to understand the project environment: directory structure, git repositories and their conventions, existing documentation, and your platform's rules file if present. If `.apm/` resides inside a repository, the Planner configures gitignore defaults and asks whether you want to track any `.apm/` artifacts in git. It then asks questions across three rounds:
+Before asking questions, the Planner scans the workspace to understand the project environment: directory structure, git repositories, existing materials (PRDs, requirements, specs, design docs), and your platform's rules file if present. When you provide project context as an argument to the initiation command, the Planner treats referenced materials as authoritative and reads them before entering question rounds. For materials discovered without that context, the Planner asks which are current and relevant before using them as a basis for deeper exploration. It then asks questions across three rounds:
 
 - **Round 1** - Existing materials and vision
 - **Round 2** - Technical requirements
 - **Round 3** - Implementation approach and quality
 
-After each round, the Planner iterates on gaps before advancing. It will also explore your codebase when your answers reference existing code or documentation. After all rounds, it presents an understanding summary for your approval.
+After each round, the Planner iterates on gaps before advancing. It will also explore your codebase when your answers reference existing code or documentation - using subagents for substantial research, then verifying critical claims by reading referenced files directly before integrating findings. After all rounds, it presents an understanding summary for your approval.
 
 :::tip
 - Share all relevant constraints and uncertainties upfront
@@ -113,7 +113,7 @@ The Planner creates three planning documents:
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
 - **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`)
 
-You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus (creating directories and bus files in `.apm/bus/` for each Worker defined in the Plan) and records version control state (base branch, conventions) for the Manager to use during implementation, and the Planning Phase completes.
+You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. The Planner may include notes in the Spec and Plan headers to pass context on to the Manager. After all three approvals, the Planner initializes the Message Bus and the Planning Phase completes.
 
 ## Step 3: Initiate the Manager
 
@@ -123,9 +123,9 @@ Open a new Agent and run:
 /apm-2-initiate-manager
 ```
 
-As Manager 1 (the first instance), the Manager reads all planning documents and its procedural guides, verifies version control state (established by the Planner), populates the Tracker with Stage 1 Tasks and all Worker assignments, initializes the Memory Index, and presents an understanding summary covering project scope, key design decisions, Workers, and Stage structure.
+As Manager 1 (the first instance), the Manager reads all planning documents and its procedural guides, then explores the workspace's git state - checking current branches, commit history, and branching patterns for each working repository. If `.apm/` is inside a repository, it adds `.apm/` to `.gitignore` by default and asks whether you want to track any `.apm/` artifacts in git.
 
-Review the summary carefully. If it accurately reflects your project, authorize it to proceed - otherwise make corrections. The Manager then assesses which Tasks are ready and begins dispatching work.
+It then presents an understanding summary covering project scope, key design decisions, Workers, Stage structure, alongside proposed version control conventions for your approval. Review both carefully - if they accurately reflect your project, authorize the Manager to proceed. It then populates the Tracker, assesses which Tasks are ready, and begins dispatching work.
 
 ## Step 4: Your First Task Cycle
 
@@ -208,10 +208,11 @@ The Agent re-reads its procedural documents and explores project artifacts to re
 
 ## After Project Completion
 
-When the Manager completes all Tasks and Stages, it recommends running `/apm-8-summarize-session` in a new conversation. The summarization Agent reads all `.apm/` artifacts, validates them against the current codebase state, produces a session summary, and offers to archive.
+When the Manager completes all Tasks and Stages, it marks the project as complete in the Tracker and presents a completion summary. It then guides you through optional next steps:
 
-To archive via the CLI:
+Running `/apm-8-summarize-session` in a new conversation instructs the Agent to produce a structured session summary document that helps future Planners and helps with archival.
 
+Alternatively, you can archive directly via the CLI:
 ```bash
 apm archive                        # auto-named session-YYYY-MM-DD-NNN
 apm archive --name my-feature-v1   # custom archive directory name

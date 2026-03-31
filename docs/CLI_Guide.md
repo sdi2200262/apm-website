@@ -156,7 +156,7 @@ apm add -a copilot opencode cursor
 | :--- | :--- |
 | `-a, --assistant <id...>` | Assistant(s) to add |
 
-Fetches the same release version currently installed and shows only uninstalled assistants. Without `--assistant`, prompts for selection.
+Fetches the same release version currently installed and shows only uninstalled assistants. Without `--assistant`, prompts for selection. For custom installations, the security disclaimer is shown unless the repository has it skipped - matching the behavior of `apm custom` and `apm update`.
 
 ### apm remove
 

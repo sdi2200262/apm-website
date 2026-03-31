@@ -39,7 +39,7 @@ The Planner operates once at project start to transform requirements into planni
 
 - **Context Gathering** - Assesses the workspace environment and conducts structured discovery to gather project context, producing an Understanding Summary for User review and approval. See [Context Gathering](Workflow_Overview.md#context-gathering) for the full procedure.
 
-- **Work Breakdown** - Decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) (Spec, Plan, and Rules), each reviewed with the User before proceeding. Initializes the [Message Bus](Agent_Orchestration.md#the-message-bus) and records version control state for all Workers defined in the Plan. See [Work Breakdown](Workflow_Overview.md#work-breakdown) for the full procedure.
+- **Work Breakdown** - Decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) (Spec, Plan, and Rules), each reviewed with the User before proceeding. The Planner may include notes in the Spec and Plan headers to pass context on to the Manager. Initializes the [Message Bus](Agent_Orchestration.md#the-message-bus) for all Workers defined in the Plan. See [Work Breakdown](Workflow_Overview.md#work-breakdown) for the full procedure.
 
 ## Manager
 
@@ -58,7 +58,7 @@ The Manager coordinates execution using the three planning documents and the Tra
 
 - **Memory Maintenance** - Updates the [Tracker and Index](Agent_Orchestration.md#memory-and-project-state) after each Task Review and at Stage boundaries.
 
-- **Version Control Coordination** - Manages feature branches and worktrees for parallel Task execution, performing merges at Stage boundaries. Version control is established by the Planner during the Planning Phase; the Manager coordinates operations during implementation.
+- **Version Control Coordination** - Owns the entire version control lifecycle. During first initialization, the Manager explores git state, combines the Planner's observations with its own detection, and establishes conventions with User approval. During implementation, it creates feature branches, manages worktrees for parallel dispatch, and performs merges at Stage boundaries.
 
 The Manager operates through multiple instances via [Handoff](Agent_Orchestration.md#handoff-and-continuity) when context limits approach.
 
