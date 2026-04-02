@@ -87,16 +87,16 @@ The Manager assesses which Tasks are ready based on dependency completion and th
 
 For each Task, the Manager [constructs a self-contained Task Prompt](Agent_Orchestration.md#how-task-prompts-are-built) and writes it to the Worker's Task Bus, directing the User to the Worker's conversation.
 
-For uninitialized Workers, the Manager directs the User to create a new conversation and run the initiation command with the Worker's identifier. For batch dispatch, it summarizes what the Worker will receive. For parallel dispatch, it lists each Worker with its required action.
+For uninitialized Workers, the Manager directs the User to create a new conversation and run the initiation command with the Worker's identifier - the Worker detects the pending Task Prompt during initialization and begins executing. For batch dispatch, it summarizes what the Worker will receive. For parallel dispatch, it lists each Worker with its required action.
 
 #### Task Execution
 
-The Worker receives the Task Prompt via `/apm-4-check-tasks` and begins execution:
+The Worker receives the Task Prompt - either detected during initialization or delivered via `/apm-4-check-tasks` for subsequent Tasks - and begins execution:
 
 1. **Context integration** - If [dependencies on other Agents' work](Agent_Orchestration.md#dependency-context) exist, the Worker reads the specified files to integrate prior work before starting.
 2. **Execution** - The Worker follows the instructions step by step, applying Rules from the platform's rules file throughout.
 3. **Validation** - The Worker validates results against the criteria in the prompt, completing autonomous checks before involving the User. If criteria require User involvement (judgment or action), the Worker pauses only after autonomous checks pass.
-4. **Iteration** - If validation fails, the Worker corrects and re-validates. This continues until success or a stop condition is reached (fixes causing new issues, the issue requires external resolution, or debugging is not converging). At a stop condition, the Worker spawns a subagent for fresh-context resolution. If unresolved, the Worker reports back with Partial status rather than exhausting its context window.
+4. **Iteration** - If validation fails, the Worker attempts a correction. If the initial fix does not resolve the issue, the Worker spawns a debug subagent to isolate the problem in a fresh context rather than continuing to iterate in the main context. If the subagent resolves it, the Worker applies findings and resumes. If unresolved, the Worker reports back with Partial status rather than exhausting its context window.
 
 When the User provides a correction or directive during execution, the Worker complies immediately and continues. At Task completion, the correction is noted in the Task Log as an important finding for the Manager. The Worker then asks whether the correction should become a Rule for all Workers, but only after logging and reporting so it does not block the workflow.
 

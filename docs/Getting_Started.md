@@ -140,9 +140,7 @@ This is the core loop of the Implementation Phase. Each Task goes through four p
 /apm-3-initiate-worker frontend-agent
 ```
 
-The Worker resolves its identity against the Message Bus, confirms registration, and waits for its first Task Prompt.
-
-**3. Deliver the Task** - Run `/apm-4-check-tasks` in the Worker's conversation. The Worker reads the Task Prompt from its Task Bus and begins execution - following the instructions, validating results against the criteria in the prompt, and iterating if validation fails.
+The Worker resolves its identity against the Message Bus, detects the pending Task Prompt, and begins execution - following the instructions, validating results against the criteria in the prompt, and iterating if validation fails.
 
 :::tip
 Workers pause when the Task requires your review or action. You can also interrupt or steer the Worker at any point during execution.

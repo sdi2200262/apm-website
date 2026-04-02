@@ -132,7 +132,7 @@ When an Agent's context window fills up, a Handoff transfers working knowledge t
 Normal context compaction accumulates noise: debugging attempts, trial-and-error, abandoned approaches. Handoff filters this through two structured artifacts, each with a distinct purpose:
 
 - **Handoff Log** - Past tense. What was done, what was decided, what was observed. Working knowledge not captured in Task Logs. Stored persistently in Memory.
-- **Handoff Prompt** - Present tense. Current state, outstanding work, and specific instructions for the incoming Agent on how to reconstruct context. Written to the Handoff Bus and cleared after the incoming Agent processes it.
+- **Handoff Prompt** - Present tense. Current state, outstanding work, continuation guidance, and specific instructions for the incoming Agent on how to reconstruct context. Written to the Handoff Bus and cleared after the incoming Agent processes it.
 
 The incoming Agent inherits clean, structured context rather than a compressed conversation history.
 
@@ -140,7 +140,7 @@ The incoming Agent inherits clean, structured context rather than a compressed c
 
 A **Manager Handoff** must describe outstanding Tasks in full within the Handoff Prompt, since the original Task Prompts may no longer be available in the bus files.
 
-A **Worker Handoff** mid-Task can reference the original Task Prompt directly since it's still in the bus. A Worker Handoff between Tasks simply notes readiness to receive the next assignment.
+A **Worker Handoff** mid-Task can reference the original Task Prompt directly since it's still in the bus. A mid-batch Worker Handoff describes the state of each Task in the batch - which are complete, which is in progress, and which have not been started. A Worker Handoff between Tasks simply notes readiness to receive the next assignment.
 
 ### Context Reconstruction
 
