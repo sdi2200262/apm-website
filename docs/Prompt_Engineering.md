@@ -70,7 +70,7 @@ During the workflow, Agents generate structured documents for other Agents. Each
 | Handoff Log | Outgoing Agent | Incoming Agent | Past-tense working knowledge not captured in Task Logs |
 | Handoff Prompt | Outgoing Agent | Incoming Agent | Present-tense state and reconstruction instructions |
 
-Task Prompts deserve emphasis. Each Task Prompt is a complete execution plan, composed of dependency context, design decisions extracted from the Spec, step-by-step instructions, expected outputs, and validation criteria in a single self-contained document. A Worker receiving a Task Prompt has everything it needs to execute without looking beyond the prompt itself. For details on how they are built, see [Agent Orchestration](Agent_Orchestration.md#how-task-prompts-are-built).
+Task Prompts are the most design-intensive artifact. Each one is a complete execution plan - dependency context, design decisions from the Spec, instructions, expected outputs, and validation criteria - composed into a single self-contained document. See [How Task Prompts Are Built](Agent_Orchestration.md#how-task-prompts-are-built) for construction details.
 
 ## Platform-Agnostic Design
 

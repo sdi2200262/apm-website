@@ -40,7 +40,7 @@ Once workspace discovery is complete, the Planner begins question rounds. Releva
 
 After each round, the Planner assesses gaps and follows up before advancing. When User responses reference codebase elements, the Planner explores proactively - using subagents for substantial research to preserve its own context for Work Breakdown. After subagent results return, the Planner verifies critical claims by reading referenced files directly, since subagent summaries can compress or misrepresent details that matter for planning. Each round ends with a completion summary covering what was gathered and why the round is ready to advance.
 
-After all three rounds, the Planner presents a consolidated **understanding summary** for User review. The User verifies that the Planner accurately understands the project before planning documents are created. Modifications loop through targeted follow-ups until the User approves.
+After all three rounds, the Planner presents a consolidated **Understanding Summary** for User review. The User verifies that the Planner accurately understands the project before planning documents are created. Modifications loop through targeted follow-ups until the User approves.
 
 ### Work Breakdown
 
@@ -63,7 +63,7 @@ The Implementation Phase executes the planning documents. The [Manager](Agent_Ty
 The first Manager instance (Manager 1) reads all planning documents and its procedural guides, then:
 
 - Explores the workspace's git state for each working repository: current branch, available branches, recent commit history, and existing patterns. If `.apm/` is inside a repository, adds `.apm/` to `.gitignore` by default and asks whether the User wants to track any `.apm/` artifacts in git.
-- Presents an understanding summary alongside proposed version control conventions for User approval. The summary covers project scope, key design decisions, Workers, Stage structure.
+- Presents an Understanding Summary alongside proposed version control conventions for User approval. The summary covers project scope, key design decisions, Workers, Stage structure.
 - On approval, populates the Tracker with Stage 1 Tasks, all Worker assignments, and version control state, and initializes the Memory Index.
 
 The User reviews and authorizes the Manager to proceed. It then assesses which Tasks are ready and begins dispatching work.
@@ -83,7 +83,7 @@ Each Task progresses through four procedures: Task Assignment, Task Execution, T
 
 #### Task Assignment
 
-The Manager assesses which Tasks are ready based on dependency completion and the Tracker, then determines the [dispatch mode](Agent_Orchestration.md#dispatch-modes) - single, batch, or parallel. The Manager may also wait if a pending report would unlock a more efficient dispatch combination.
+The Manager assesses which Tasks are ready based on dependency completion and the Tracker, then determines the [dispatch mode](Agent_Orchestration.md#dispatch-modes) - single, batch, or parallel.
 
 For each Task, the Manager [constructs a self-contained Task Prompt](Agent_Orchestration.md#how-task-prompts-are-built) and writes it to the Worker's Task Bus, directing the User to the Worker's conversation.
 
@@ -117,7 +117,7 @@ For batch execution, the Worker logs each Task immediately after completing it a
 
 The Manager receives the report via `/apm-5-check-reports` and reviews the outcome:
 
-1. **Report processing** - The Manager reads the Task Report and checks for Handoff or recovery indications. For batch reports, each Task's outcome is processed individually. If a report arrives from an agent outside the Plan, the Manager recognizes it as a non-APM agent and can incorporate its contributions or assign follow-up work.
+1. **Report processing** - The Manager reads the Task Report and checks for Handoff or recovery indications. For batch reports, each Task's outcome is processed individually. If a report arrives from a [non-APM agent](Agent_Orchestration.md#the-message-bus), the Manager can incorporate its contributions or assign follow-up work.
 2. **Log review** - The Manager reads the Task Log, interprets status and flags, and assesses whether the claimed status is consistent with the log content. Inconsistency between claimed status and actual content is a hallucination indicator.
 3. **Review outcome** - If everything looks good (Success, no flags, content supports the status), the Manager proceeds. If something needs attention, the Manager investigates - self-investigating for small-scope issues, spawning a subagent for larger ones. Three outcomes are possible:
     - **Proceed** - No issues found. Update the Tracker, dispatch any newly ready Tasks.
@@ -131,7 +131,7 @@ After each review, the Manager immediately reassesses readiness and dispatches t
 
 Stages are sequential. Stage N+1 begins after Stage N completes. Parallel work across domains happens through parallel Task dispatch within a single Stage, not cross-Stage execution.
 
-After all Tasks in a Stage are Done, the Manager reviews the Stage's outcomes, appends a Stage summary to the [Index](Agent_Orchestration.md#the-index), and distills durable observations as Memory notes for future reference. It then proceeds to the next Stage's first dispatch.
+After all Tasks in a Stage are Done, the Manager reviews the Stage's outcomes and updates the [Index](Agent_Orchestration.md#the-index) with a Stage summary and any durable observations. It then proceeds to the next Stage's first dispatch.
 
 ### Project Completion
 

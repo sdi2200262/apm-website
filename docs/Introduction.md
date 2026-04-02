@@ -17,7 +17,7 @@ APM is an open-source framework for managing ambitious software projects with AI
 
 Building complex projects with AI assistants hits a fundamental wall: **context window limits**.
 
-As conversations grow, context degrades. The AI loses track of requirements and constraints, produces bad code, and hallucinates details. Earlier parts of the conversation get compressed or discarded. For substantial projects, this makes sustained progress nearly impossible.
+As conversations grow, context degrades. The AI loses track of requirements and constraints, produces inconsistent code, and hallucinates details. Earlier parts of the conversation get compressed or discarded. For substantial projects, this makes sustained progress nearly impossible.
 
 ## The Solution: Structured Multi-Agent Coordination
 
@@ -30,7 +30,7 @@ APM treats the AI not as a single continuous assistant, but as a team of special
     - Memory tracks progression
     - A file-based Message Bus enables cross-Agent communication
 
-- **Continuity** - When an Agent's context fills, a Handoff transfers working knowledge to a fresh instance. At intervals, completed APM sessions can be archived for future reference
+- **Continuity** - When an Agent's context fills, a Handoff transfers working knowledge to a fresh instance. After completion, APM sessions can be archived for future reference
 
 This mirrors how human teams collaborate: specialized roles, shared documentation, and explicit communication protocols.
 
@@ -63,7 +63,7 @@ Structured files outside any Agent's context keep track of state and history, so
 APM operates in two distinct phases:
 
 - **Planning Phase** - The Planner runs two procedures back to back:
-  1. **Context Gathering** - The Planner asks you structured questions across three rounds to understand your project's vision, technical requirements, and implementation approach. After each round it iterates on gaps, and once all rounds are complete it presents an understanding summary for your approval.
+  1. **Context Gathering** - The Planner asks you structured questions across three rounds to understand your project's vision, technical requirements, and implementation approach. After each round it iterates on gaps, and once all rounds are complete it presents an Understanding Summary for your approval.
   2. **Work Breakdown** - The Planner decomposes everything it gathered into three planning documents: the Spec, the Plan, and the Rules. You review and approve each one before the Planner moves on.
 
 - **Implementation Phase** - The Manager and Workers execute the planning documents through repeating cycles:

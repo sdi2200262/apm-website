@@ -21,7 +21,7 @@ The **Plan** defines how work is organized: Stages, Tasks, Worker assignments, d
 
 The **Rules** define how work is performed: universal execution patterns that apply to every Worker regardless of domain. This is the one document all Agents access directly. Because all Workers read the same file, only genuinely universal patterns belong here. Domain-specific guidance goes into Task Prompts via Spec extraction instead.
 
-The flow between phases is direct: the Planner creates all three documents with User approval, then the Manager reads them and uses them to coordinate Workers throughout the Implementation Phase. The Manager may update these documents when execution findings warrant it: the Spec and Plan when design decisions or Task definitions need adjustment. Workers may propose Rules updates when they discover universal patterns during execution, with changes written only after User approval.
+The flow between phases is direct: the Planner creates all three documents with User approval, then the Manager reads them and uses them to coordinate Workers throughout the Implementation Phase. The Manager may update these documents when execution findings warrant it: the Spec and Plan when design decisions or Task definitions need adjustment. Workers may also [propose Rules updates](Agent_Types.md#workers) during execution, with changes written only after User approval.
 
 ## The Message Bus
 
@@ -157,7 +157,7 @@ If a platform auto-compacts an Agent's context and behavior degrades - forgettin
 /apm-9-recover frontend-agent   # recover a Worker
 ```
 
-Recovery is distinct from Handoff. The Agent re-reads its procedural documents and explores project artifacts to rebuild working context, continuing as the same instance without incrementing the instance number.
+Recovery is distinct from Handoff. The Agent re-reads its procedural documents and explores project artifacts to rebuild working context, continuing as the same instance without incrementing the instance number. Handoff produces cleaner, more reliable context than recovery - prefer proactive Handoff over waiting for compaction when possible. For detailed recovery scenarios, see the [Troubleshooting Guide](Troubleshooting_Guide.md#context-recovery).
 
 ## Next Steps
 

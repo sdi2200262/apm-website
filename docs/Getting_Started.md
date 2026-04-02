@@ -17,7 +17,7 @@ Before starting, ensure you have:
 - **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Gemini CLI, or OpenCode
 - **Project Workspace** - A directory for your project
 
-**Model selection:** For best performance, use **Claude Opus 4.6** or **GPT-5.2+** throughout all Agent roles. For a budget-friendlier alternative, **Claude Sonnet 4.6** throughout delivers strong results. Workers can also use GPT-5.4, GPT-5.3-Codex, or Gemini 3.1 Pro. For the full model matrix, see [Tips and Tricks](Tips_and_Tricks.md).
+**Model selection:** Use the most capable model available to you for all Agent roles. See [Tips and Tricks](Tips_and_Tricks.md) for recommended models and cost-effective alternatives.
 
 ## Installation
 
@@ -49,7 +49,7 @@ The initialization command will:
 After initialization completes, you're ready to begin.
 
 :::note How Agents communicate
-Throughout an APM session, Agents communicate by writing to files in `.apm/bus/` - the **Message Bus**. The Manager writes Task assignments to a Worker's Task Bus; the Worker writes results back to its Report Bus. You act as the messenger between Agent conversations, running commands like `/apm-4-check-tasks` and `/apm-5-check-reports` to deliver messages. Each Agent tells you exactly what to do next - which command to run and in which conversation.
+Throughout an APM session, Agents communicate by writing to files in `.apm/bus/` - the **Message Bus**. The Manager writes Task assignments; Workers write results back. You act as the messenger between Agent conversations, running commands like `/apm-4-check-tasks` and `/apm-5-check-reports` to deliver messages. Each Agent tells you exactly what to do next - which command to run and in which conversation.
 :::
 
 :::note "Open a new Agent"
@@ -83,21 +83,21 @@ You can optionally pass project context as an argument to give the Planner a hea
 /apm-1-initiate-planner We're building a REST API for a task management app using Express and PostgreSQL. Here's the PRD: @docs/prd.md
 ```
 
-The Planner incorporates this before starting Context Gathering - it won't skip the discovery process, but it will ask more targeted questions.
+This context is incorporated before Context Gathering begins - the discovery process isn't skipped, but questions become more targeted.
 
 ## Step 2: Work Through the Planning Phase
 
-The Planner guides you through both procedures to create the planning documents. Take your time here - the quality of these documents directly shapes how well implementation goes.
+This step covers both procedures that produce the planning documents. Take your time here - the quality of these documents directly shapes how well implementation goes.
 
 ### Context Gathering
 
-Before asking questions, the Planner scans the workspace to understand the project environment: directory structure, git repositories, existing materials (PRDs, requirements, specs, design docs), and your platform's rules file if present. When you provide project context as an argument to the initiation command, the Planner treats referenced materials as authoritative and reads them before entering question rounds. For materials discovered without that context, the Planner asks which are current and relevant before using them as a basis for deeper exploration. It then asks questions across three rounds:
+Context Gathering starts with a workspace scan - directory structure, git repositories, existing materials - followed by three question rounds:
 
 - **Round 1** - Existing materials and vision
 - **Round 2** - Technical requirements
 - **Round 3** - Implementation approach and quality
 
-After each round, the Planner iterates on gaps before advancing. It will also explore your codebase when your answers reference existing code or documentation - using subagents for substantial research, then verifying critical claims by reading referenced files directly before integrating findings. After all rounds, it presents an understanding summary for your approval.
+After each round, the Planner iterates on gaps before advancing. When your answers reference existing code or documentation, it explores the codebase to ground its understanding. After all rounds, it presents an Understanding Summary for your approval.
 
 :::tip
 - Share all relevant constraints and uncertainties upfront
@@ -107,13 +107,13 @@ After each round, the Planner iterates on gaps before advancing. It will also ex
 
 ### Work Breakdown
 
-The Planner creates three planning documents:
+This procedure produces three planning documents:
 
 - **Spec** - Design decisions, constraints, and a workspace overview defining what is being built and where
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
 - **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`)
 
-You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. The Planner may include notes in the Spec and Plan headers to pass context on to the Manager. After all three approvals, the Planner initializes the Message Bus and the Planning Phase completes.
+You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus and the Planning Phase completes.
 
 ## Step 3: Initiate the Manager
 
@@ -125,7 +125,7 @@ Open a new Agent and run:
 
 As Manager 1 (the first instance), the Manager reads all planning documents and its procedural guides, then explores the workspace's git state - checking current branches, commit history, and branching patterns for each working repository. If `.apm/` is inside a repository, it adds `.apm/` to `.gitignore` by default and asks whether you want to track any `.apm/` artifacts in git.
 
-It then presents an understanding summary covering project scope, key design decisions, Workers, Stage structure, alongside proposed version control conventions for your approval. Review both carefully - if they accurately reflect your project, authorize the Manager to proceed. It then populates the Tracker, assesses which Tasks are ready, and begins dispatching work.
+It then presents an Understanding Summary covering project scope, key design decisions, Workers, Stage structure, alongside proposed version control conventions for your approval. Review both carefully - if they accurately reflect your project, authorize the Manager to proceed. It then populates the Tracker, assesses which Tasks are ready, and begins dispatching work.
 
 ## Step 4: Your First Task Cycle
 
@@ -179,32 +179,18 @@ For efficiency, the Manager may dispatch multiple Tasks at once:
 
 ## When Agents Reach Context Limits
 
-When an Agent's context window approaches its limit, perform a Handoff to transfer working knowledge to a fresh instance.
+When an Agent's context window approaches its limit, perform a Handoff to transfer working knowledge to a fresh instance. Look for signs of context pressure: the Agent repeating questions, forgetting constraints, or producing degraded responses. Handoff proactively rather than waiting for quality to collapse.
 
-### When to Handoff
+The process:
 
-Look for signs of context pressure: the Agent repeating questions it already asked, forgetting constraints you established earlier, or producing noticeably degraded responses. Handoff proactively rather than waiting for quality to collapse.
+1. Run `/apm-6-handoff-manager` or `/apm-7-handoff-worker` in the outgoing Agent's conversation
+2. Open a new Agent for the same role
+3. Run the same initialization command - the incoming Agent auto-detects the Handoff and reconstructs context
+4. Verify the incoming Agent's Understanding Summary before continuing
 
-### Handoff Process
+If the platform auto-compacts an Agent's context and behavior degrades, run `/apm-9-recover` instead of a full Handoff. The Agent re-reads its documents and reconstructs working context as the same instance. Handoff produces cleaner context than recovery - prefer it when you can anticipate the limit.
 
-1. **Trigger Handoff** - Run `/apm-6-handoff-manager` or `/apm-7-handoff-worker` in the outgoing Agent's conversation.
-2. **Outgoing Agent wraps up** - Creates a Handoff Log (working knowledge not captured in Task Logs) and writes a Handoff Prompt to its Handoff Bus with context reconstruction instructions.
-3. **Open a new Agent** - For the same role (e.g. "Manager 2" or "Frontend Agent 2").
-4. **Initialize the incoming Agent** - Run the same initialization command (`/apm-2-initiate-manager` or `/apm-3-initiate-worker frontend-agent`). The incoming Agent auto-detects the Handoff Prompt from its Handoff Bus.
-5. **Verify and resume** - The incoming Agent reconstructs context from planning documents, Handoff Log, and relevant Task Logs, then presents an understanding summary for your verification before continuing.
-
-### If Context Compaction Happens
-
-Most AI platforms compress or discard earlier parts of a conversation when the context window fills - this is called auto-compaction. The platform notifies you when this happens.
-
-APM is designed so that you trigger a Handoff *before* compaction occurs. If compaction does happen and the Agent starts acting inconsistently - forgetting constraints, repeating questions, losing track of state - use the recovery command:
-
-```markdown
-/apm-9-recover manager          # recover the Manager
-/apm-9-recover frontend-agent   # recover a Worker by its identifier
-```
-
-The Agent re-reads its procedural documents and explores project artifacts to reconstruct working context. This is not a Handoff - the Agent continues as the same instance.
+For the full mechanics, see [Handoff and Continuity](Agent_Orchestration.md#handoff-and-continuity). For recovery scenarios, see the [Troubleshooting Guide](Troubleshooting_Guide.md#context-recovery).
 
 ## After Project Completion
 

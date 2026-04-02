@@ -11,15 +11,13 @@ APM coordinates three specialized Agent types that work together to execute a pr
 
 The framework achieves specialization through context scoping rather than access control. Each Agent sees only the information relevant to its role. Task Prompts are designed to be self-contained, so Agents have no reason to look beyond them.
 
-## Context Scoping
+## How APM Works
 
-Each Agent type operates with a different view of the project:
+APM operates in two phases. In the Planning Phase, a Planner creates three planning documents - the Spec (what to build), the Plan (how work is organized into Stages and Tasks), and the Rules (how work is performed). In the Implementation Phase, a Manager coordinates Workers to execute those Tasks.
 
-- **Planner** - Sees project requirements, constraints, and the complete vision. Operates with full context during the Planning Phase to create planning documents.
+Agents communicate through a file-based Message Bus - the Manager writes Task assignments, Workers write results back, and the User carries messages between conversations. Project state persists in structured files: the Tracker (live project state), the Index (durable observations), and Task Logs (per-Task execution summaries). When an Agent's context fills, a Handoff transfers working knowledge to a fresh instance.
 
-- **Manager** - Sees planning documents (Spec, Plan, Rules), Task Logs, the Tracker, and the Index. Maintains a coordination-level perspective without implementation details.
-
-- **Workers** - See their Task Prompts, accumulated working context from prior Tasks in the current instance, and the Rules. No visibility into full project scope or other Agents' work unless the Manager explicitly provides it in a Task Prompt.
+Each mechanism is covered in detail in [Agent Orchestration](Agent_Orchestration.md). This doc focuses on the three Agent roles and how they use them.
 
 ## Quick Agent Comparison
 
