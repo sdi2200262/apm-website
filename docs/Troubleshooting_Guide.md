@@ -155,7 +155,7 @@ apm update
 
 ## Migrating from Older Versions
 
-Pre-v1.0.0 APM installations have a different file structure, metadata format, and CLI. The `agentic-pm` CLI v1.0.0+ cannot directly manage them. Additionally, v1.0.0 narrowed official support to Cursor, Claude Code, GitHub Copilot, Gemini CLI, and OpenCode. If the old installation used an assistant no longer supported, the User needs to choose a supported one during reinitialization.
+Pre-v1.0.0 APM installations have a different file structure, metadata format, and CLI. The `agentic-pm` CLI v1.0.0+ cannot directly manage them. Additionally, v1.0.0 narrowed official support to Cursor, Claude Code, GitHub Copilot, Gemini CLI, OpenCode, and Codex. If the old installation used an assistant no longer supported, the User needs to choose a supported one during reinitialization.
 
 ### Recommended Approach
 

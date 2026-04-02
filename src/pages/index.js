@@ -249,7 +249,7 @@ function HomeContent() {
                 const logo = ast.logoDark ? (colorMode === 'dark' ? ast.logoDark : ast.logoLight) : ast.logo;
                 return (
                   <div key={ast.id} className={styles.mobileAstItem} style={{ animationDelay: `${0.6 + i * 0.12}s` }}>
-                    {logo && <img src={logo} alt="" className={styles.mobileAstLogo} width="16" height="16" />}
+                    {logo && <img src={logo} alt="" className={styles.mobileAstLogo} style={ast.logoSize ? { width: ast.logoSize, height: ast.logoSize } : undefined} />}
                     <span className={styles.mobileAstName}>{ast.name}</span>
                   </div>
                 );

@@ -40,6 +40,15 @@ export const ASSISTANTS = [
     logoDark: '/img/opencode-logo-dark.svg',
     logoLight: '/img/opencode-logo-light.svg',
   },
+  {
+    id: 'codex',
+    name: 'Codex',
+    flag: '-a codex',
+    logo: '/img/codex-logo-dark.svg',
+    logoDark: '/img/codex-logo-dark.svg',
+    logoLight: '/img/codex-logo-light.svg',
+    logoSize: 22,
+  },
 ];
 
 /**

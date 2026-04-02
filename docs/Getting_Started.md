@@ -14,7 +14,7 @@ This guide walks you through your first APM session - from installation through 
 Before starting, ensure you have:
 
 - **Node.js** - Version 18 or higher for the APM CLI
-- **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Gemini CLI, or OpenCode
+- **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Gemini CLI, OpenCode, or Codex
 - **Project Workspace** - A directory for your project
 
 **Model selection:** Use the most capable model available to you for all Agent roles. See [Tips and Tricks](Tips_and_Tricks.md) for recommended models and cost-effective alternatives.
@@ -63,6 +63,7 @@ Each APM Agent runs in its own isolated conversation. What this looks like varie
 - **Claude Code** - Open a new terminal and start Claude Code
 - **Gemini CLI** - Open a new terminal and start Gemini CLI
 - **OpenCode** - Open a new terminal and start OpenCode
+- **Codex** - Open a new terminal and start Codex
 
 Throughout this guide, **"open a new Agent"** means whichever of the above applies to your platform. The key is that each Agent gets its own context - separate from every other Agent. Keep active Agent conversations open during the APM session for easy switching between them - don't delete conversations until the Agent has Handed off or the session is complete.
 :::

@@ -208,7 +208,7 @@ project/
 └── ...
 ```
 
-Platform-specific directories: `.claude/` for Claude Code, `.github/` for GitHub Copilot, `.gemini/` for Gemini CLI, `.opencode/` for OpenCode.
+Platform-specific directories: `.claude/` for Claude Code, `.github/` for GitHub Copilot, `.gemini/` for Gemini CLI, `.opencode/` for OpenCode, `.codex/` for Codex.
 
 ## Versioning
 

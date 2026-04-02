@@ -11,7 +11,7 @@ import ThemedImage from '@theme/ThemedImage';
 
 **A structured approach to building complex projects with AI Agents.**
 
-APM is an open-source framework for managing ambitious software projects with AI assistants - Claude Code, Cursor, GitHub Copilot, Gemini CLI, and OpenCode. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI Agents handle planning, coordination, and execution as a team.
+APM is an open-source framework for managing ambitious software projects with AI assistants - Claude Code, Cursor, GitHub Copilot, Gemini CLI, OpenCode, and Codex. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI Agents handle planning, coordination, and execution as a team.
 
 ## The Problem: Context Decay
 

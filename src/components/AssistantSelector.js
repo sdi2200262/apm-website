@@ -22,7 +22,7 @@ export default function AssistantSelector({ active, onSelect }) {
             style={{ animationDelay: `${0.6 + i * 0.12}s` }}
           >
             {logo ? (
-              <img src={logo} alt={ast.name} className={styles.logo} width="16" height="16" />
+              <img src={logo} alt={ast.name} className={styles.logo} style={ast.logoSize ? { width: ast.logoSize, height: ast.logoSize } : undefined} />
             ) : null}
             <span className={styles.name}>{ast.name}</span>
           </button>
