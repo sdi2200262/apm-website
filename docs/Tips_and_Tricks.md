@@ -61,6 +61,8 @@ Proactive Handoff before context window limits approach is cheaper than recovery
 
 That said, if a Worker has only one or two Tasks left or is near completing its current Task, it can be more practical to let the platform auto-compact, use Recovery to finish the remaining work, and Handoff afterward if needed.
 
+The hardest part of Handoff is knowing when to trigger it - context degradation is not always obvious until quality has already dropped. If your platform supports hooks or triggers that fire at context thresholds, you can use them to detect when Handoff is needed and prompt the Agent to initiate it. For Claude Code, [`cc-context-awareness`](https://github.com/giannisp01/cc-context-awareness) provides configurable context threshold hooks, and ships with a ready-made `apm-handoff` template that handles Manager, Worker, and Planner agents out of the box.
+
 ### Subagent Usage
 
 Workers should use subagents for substantial debugging or research rather than consuming their own context window. A debug subagent runs in its own context, resolves the issue (or reports findings), and returns results. The Worker's context is preserved for actual execution. The Planner similarly benefits during Context Gathering, where substantial codebase exploration is better delegated to a subagent so the Planner's context remains available for Work Breakdown.
