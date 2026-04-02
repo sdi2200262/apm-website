@@ -37,6 +37,10 @@ docs/              # documentation pages (Markdown/MDX)
 static/img/        # logos, diagrams, social card
 ```
 
+## Contributing
+
+The v0.5.4 docs had video walkthroughs covering the full workflow. The v1 docs need the same treatment — video coverage of the Planning Phase, Implementation Phase, Handoff, and session continuation would be a significant contribution. If you're interested, open an issue to discuss scope and format.
+
 ## License
 
 [MPL-2.0](https://github.com/sdi2200262/agentic-project-management/blob/main/LICENSE)

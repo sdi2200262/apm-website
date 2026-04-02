@@ -174,7 +174,7 @@ APM provides an optional **migration skill** that packages this recommended proc
 
 ```bash
 mkdir -p .claude/skills/apm-migration
-curl -sL https://raw.githubusercontent.com/sdi2200262/agentic-project-management/main/skills/apm-migration/SKILL.md \
+curl -sL https://raw.githubusercontent.com/sdi2200262/agentic-project-management/v1.0.0-dev/skills/apm-migration/SKILL.md \
   -o .claude/skills/apm-migration/SKILL.md
 ```
 
