@@ -12,7 +12,7 @@
   padding: 0 !important;
   border-bottom: 1px solid var(--apm-border);
   border-right: none !important;
-  background: rgba(14, 14, 17, 0.88) !important;
+  background: rgba(14, 17, 18, 0.88) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }

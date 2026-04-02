@@ -1,119 +1,119 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 266" fill="none">
   <defs>
     <marker id="ah" viewBox="0 0 8 6" refX="7.5" refY="3" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#4a4a5c"/>
+      <path d="M0,0 L8,3 L0,6 Z" fill="#586060"/>
     </marker>
   </defs>
 
   <!-- Background -->
-  <rect width="740" height="266" fill="#0e0e11"/>
+  <rect width="740" height="266" fill="#0e1112"/>
 
   <!-- Vertical divider -->
-  <line x1="370" y1="8" x2="370" y2="240" stroke="#252530" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="370" y1="8" x2="370" y2="240" stroke="#252c2c" stroke-width="1" stroke-dasharray="4 3"/>
 
   <!-- ===== PLANNING PHASE (left, x: 0–360) ===== -->
 
   <!-- Header -->
-  <text x="180" y="16" font-family="'JetBrains Mono', monospace" font-size="9" fill="#888899" letter-spacing="1.5" text-anchor="middle">PLANNING PHASE</text>
+  <text x="180" y="16" font-family="'JetBrains Mono', monospace" font-size="9" fill="#8a9594" letter-spacing="1.5" text-anchor="middle">PLANNING PHASE</text>
 
   <!-- CONTEXT GATHERING label -->
-  <text x="141" y="72" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8" text-anchor="middle">CONTEXT GATHERING</text>
+  <text x="141" y="72" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">CONTEXT GATHERING</text>
 
   <!-- YOU box -->
-  <rect x="10" y="56" width="68" height="28" rx="2" stroke="#252530" stroke-width="1"/>
-  <text x="44" y="74" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8" text-anchor="middle">YOU</text>
+  <rect x="10" y="56" width="68" height="28" rx="2" stroke="#252c2c" stroke-width="1"/>
+  <text x="44" y="74" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">YOU</text>
 
   <!-- PLANNER box (accent) -->
   <rect x="204" y="56" width="90" height="28" rx="2" stroke="#3aada5" stroke-width="1"/>
-  <text x="249" y="74" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e2e8" letter-spacing="0.8" text-anchor="middle">PLANNER</text>
+  <text x="249" y="74" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">PLANNER</text>
 
   <!-- Curved arc: YOU → PLANNER -->
-  <path d="M 78,63 Q 141,46 204,63" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 78,63 Q 141,46 204,63" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- Curved arc: PLANNER → YOU -->
-  <path d="M 204,77 Q 141,94 78,77" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 204,77 Q 141,94 78,77" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- Work breakdown path: down, left, down -->
-  <path d="M 249,84 L 249,98 Q 249,105 242,105 L 187,105 Q 180,105 180,112 L 180,125" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 249,84 L 249,98 Q 249,105 242,105 L 187,105 Q 180,105 180,112 L 180,125" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- WORK BREAKDOWN label -->
-  <text x="253" y="102" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8">WORK BREAKDOWN</text>
+  <text x="253" y="102" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8">WORK BREAKDOWN</text>
 
   <!-- .apm/ dashed group -->
-  <rect x="60" y="128" width="240" height="76" rx="2" stroke="#4a4a5c" stroke-width="1" stroke-dasharray="4 3"/>
-  <text x="180" y="145" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8" text-anchor="middle">.apm/</text>
+  <rect x="60" y="128" width="240" height="76" rx="2" stroke="#586060" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="180" y="145" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">.apm/</text>
 
   <!-- SPEC box -->
-  <rect x="68" y="164" width="62" height="26" rx="2" stroke="#252530" stroke-width="1" fill="#111115"/>
-  <text x="99" y="181" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8" text-anchor="middle">SPEC</text>
+  <rect x="68" y="164" width="62" height="26" rx="2" stroke="#252c2c" stroke-width="1" fill="#121616"/>
+  <text x="99" y="181" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">SPEC</text>
 
   <!-- PLAN box -->
-  <rect x="149" y="164" width="62" height="26" rx="2" stroke="#252530" stroke-width="1" fill="#111115"/>
-  <text x="180" y="181" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8" text-anchor="middle">PLAN</text>
+  <rect x="149" y="164" width="62" height="26" rx="2" stroke="#252c2c" stroke-width="1" fill="#121616"/>
+  <text x="180" y="181" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">PLAN</text>
 
   <!-- RULES box -->
-  <rect x="230" y="164" width="62" height="26" rx="2" stroke="#252530" stroke-width="1" fill="#111115"/>
-  <text x="261" y="181" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8" text-anchor="middle">RULES</text>
+  <rect x="230" y="164" width="62" height="26" rx="2" stroke="#252c2c" stroke-width="1" fill="#121616"/>
+  <text x="261" y="181" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">RULES</text>
 
   <!-- ===== IMPLEMENTATION PHASE (right, x offset +380) ===== -->
 
   <!-- Header -->
-  <text x="560" y="16" font-family="'JetBrains Mono', monospace" font-size="9" fill="#888899" letter-spacing="1.5" text-anchor="middle">IMPLEMENTATION PHASE</text>
+  <text x="560" y="16" font-family="'JetBrains Mono', monospace" font-size="9" fill="#8a9594" letter-spacing="1.5" text-anchor="middle">IMPLEMENTATION PHASE</text>
 
   <!-- MANAGER subgraph -->
-  <rect x="382" y="36" width="112" height="166" rx="2" stroke="#4a4a5c" stroke-width="1" stroke-dasharray="4 3"/>
-  <text x="438" y="48" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="1.0" text-anchor="middle">MANAGER</text>
+  <rect x="382" y="36" width="112" height="166" rx="2" stroke="#586060" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="438" y="48" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="1.0" text-anchor="middle">MANAGER</text>
 
   <!-- WORKER subgraph -->
-  <rect x="500" y="36" width="238" height="62" rx="2" stroke="#4a4a5c" stroke-width="1" stroke-dasharray="4 3"/>
-  <text x="619" y="48" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="1.0" text-anchor="middle">WORKER</text>
+  <rect x="500" y="36" width="238" height="62" rx="2" stroke="#586060" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="619" y="48" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="1.0" text-anchor="middle">WORKER</text>
 
   <!-- .apm/memory/ subgraph -->
-  <rect x="500" y="106" width="238" height="96" rx="2" stroke="#4a4a5c" stroke-width="1" stroke-dasharray="4 3"/>
-  <text x="619" y="120" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8" text-anchor="middle">.apm/memory/</text>
-  <text x="619" y="132" font-family="'JetBrains Mono', monospace" font-size="7" fill="#888899" letter-spacing="0.6" text-anchor="middle">persistent · centralized</text>
+  <rect x="500" y="106" width="238" height="96" rx="2" stroke="#586060" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="619" y="120" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">.apm/memory/</text>
+  <text x="619" y="132" font-family="'JetBrains Mono', monospace" font-size="7" fill="#8a9594" letter-spacing="0.6" text-anchor="middle">persistent · centralized</text>
 
   <!-- TASK ASSIGNMENT (MANAGER) -->
   <rect x="390" y="54" width="94" height="32" rx="2" stroke="#3aada5" stroke-width="1"/>
-  <text x="437" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e2e8" letter-spacing="0.8" text-anchor="middle">TASK ASSIGNMENT</text>
-  <text x="437" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#888899" letter-spacing="0.6" text-anchor="middle">plan · assign</text>
+  <text x="437" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">TASK ASSIGNMENT</text>
+  <text x="437" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#8a9594" letter-spacing="0.6" text-anchor="middle">plan · assign</text>
 
   <!-- TASK EXECUTION (WORKER) -->
   <rect x="508" y="54" width="98" height="32" rx="2" stroke="#3aada5" stroke-width="1"/>
-  <text x="557" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e2e8" letter-spacing="0.8" text-anchor="middle">TASK EXECUTION</text>
-  <text x="557" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#888899" letter-spacing="0.6" text-anchor="middle">execute · validate</text>
+  <text x="557" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">TASK EXECUTION</text>
+  <text x="557" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#8a9594" letter-spacing="0.6" text-anchor="middle">execute · validate</text>
 
   <!-- TASK LOGGING (WORKER) -->
   <rect x="632" y="54" width="98" height="32" rx="2" stroke="#3aada5" stroke-width="1"/>
-  <text x="681" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e2e8" letter-spacing="0.8" text-anchor="middle">TASK LOGGING</text>
-  <text x="681" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#888899" letter-spacing="0.6" text-anchor="middle">log · report</text>
+  <text x="681" y="67" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">TASK LOGGING</text>
+  <text x="681" y="78" font-family="'JetBrains Mono', monospace" font-size="7" fill="#8a9594" letter-spacing="0.6" text-anchor="middle">log · report</text>
 
   <!-- TASK LOG stacked boxes -->
-  <rect x="577" y="167" width="96" height="26" rx="2" stroke="#252530" stroke-width="1" fill="#111115"/>
-  <rect x="574" y="164" width="96" height="26" rx="2" stroke="#252530" stroke-width="1" fill="#111115"/>
-  <rect x="571" y="161" width="96" height="26" rx="2" stroke="#252530" stroke-width="1" fill="#111115"/>
-  <text x="619" y="178" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.8" text-anchor="middle">TASK LOG</text>
+  <rect x="577" y="167" width="96" height="26" rx="2" stroke="#252c2c" stroke-width="1" fill="#121616"/>
+  <rect x="574" y="164" width="96" height="26" rx="2" stroke="#252c2c" stroke-width="1" fill="#121616"/>
+  <rect x="571" y="161" width="96" height="26" rx="2" stroke="#252c2c" stroke-width="1" fill="#121616"/>
+  <text x="619" y="178" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">TASK LOG</text>
 
   <!-- TASK REVIEWING (MANAGER) -->
   <rect x="390" y="158" width="94" height="32" rx="2" stroke="#3aada5" stroke-width="1"/>
-  <text x="437" y="171" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e2e8" letter-spacing="0.8" text-anchor="middle">TASK REVIEWING</text>
-  <text x="437" y="182" font-family="'JetBrains Mono', monospace" font-size="7" fill="#888899" letter-spacing="0.6" text-anchor="middle">review · assess</text>
+  <text x="437" y="171" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">TASK REVIEWING</text>
+  <text x="437" y="182" font-family="'JetBrains Mono', monospace" font-size="7" fill="#8a9594" letter-spacing="0.6" text-anchor="middle">review · assess</text>
 
   <!-- TASK ASSIGNMENT → TASK EXECUTION -->
-  <path d="M 484,70 L 508,70" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 484,70 L 508,70" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- TASK EXECUTION → TASK LOGGING -->
-  <path d="M 606,70 L 632,70" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 606,70 L 632,70" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- TASK LOGGING → TASK LOG -->
-  <path d="M 681,86 L 681,138 Q 681,145 674,145 L 626,145 Q 619,145 619,152 L 619,161" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 681,86 L 681,138 Q 681,145 674,145 L 626,145 Q 619,145 619,152 L 619,161" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- TASK LOG → TASK REVIEWING -->
-  <path d="M 571,174 L 484,174" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 571,174 L 484,174" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- TASK REVIEWING → TASK ASSIGNMENT (loop) -->
-  <path d="M 437,158 L 437,86" stroke="#4a4a5c" stroke-width="1" fill="none" marker-end="url(#ah)"/>
+  <path d="M 437,158 L 437,86" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- ===== Combined footer ===== -->
-  <text x="370" y="252" font-family="'JetBrains Mono', monospace" font-size="8" fill="#888899" letter-spacing="0.5" text-anchor="middle">you control every step</text>
+  <text x="370" y="252" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.5" text-anchor="middle">you control every step</text>
 </svg>

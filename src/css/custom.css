@@ -10,17 +10,18 @@
   /* Grid row height — single source of truth, referenced by grid + ContentViewer */
   --apm-row-h: 50px;
 
-  /* APM Custom Properties — Dark (default) */
-  --apm-bg: #0e0e11;
-  --apm-grid: #1e1e26;
-  --apm-border: #252530;
-  --apm-t1: #e2e2e8;
-  --apm-t2: #9a9aab;
-  --apm-t3: #5a5a6c;
+  /* APM Custom Properties — Dark (default)
+     Neutrals tinted with accent hue (175°) at low saturation for cohesion */
+  --apm-bg: #0e1112;
+  --apm-grid: #1a1f1f;
+  --apm-border: #252c2c;
+  --apm-t1: #e2e7e6;
+  --apm-t2: #8e9a99;
+  --apm-t3: #586060;
   --apm-accent: #3aada5;
   --apm-accent2: #2a8d86;
-  --apm-cmd-bg: #111115;
-  --apm-cmd-border: #1e1e28;
+  --apm-cmd-bg: #121616;
+  --apm-cmd-border: #1e2424;
 
   /* Map to Docusaurus Infima variables */
   --ifm-color-primary: #3aada5;
@@ -31,11 +32,11 @@
   --ifm-color-primary-lighter: #60cac3;
   --ifm-color-primary-lightest: #84d9d3;
 
-  --ifm-background-color: #0e0e11;
-  --ifm-background-surface-color: #111115;
-  --ifm-font-color-base: #e2e2e8;
-  --ifm-font-color-secondary: #888899;
-  --ifm-heading-color: #e2e2e8;
+  --ifm-background-color: #0e1112;
+  --ifm-background-surface-color: #121616;
+  --ifm-font-color-base: #e2e7e6;
+  --ifm-font-color-secondary: #8a9594;
+  --ifm-heading-color: #e2e7e6;
 
   --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
   --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', monospace;
@@ -49,41 +50,57 @@
   --ifm-code-font-size: 85%;
   --ifm-line-height-base: 1.75;
 
-  --ifm-navbar-background-color: #0e0e11;
+  --ifm-navbar-background-color: #0e1112;
   --ifm-navbar-shadow: none;
-  --ifm-footer-background-color: #111115;
+  --ifm-footer-background-color: #121616;
 
   --ifm-link-color: #3aada5;
   --ifm-link-hover-color: #4fbfb7;
 
-  --ifm-menu-color: #888899;
+  --ifm-menu-color: #8a9594;
   --ifm-menu-color-active: #3aada5;
   --ifm-menu-color-background-active: rgba(58, 173, 165, 0.08);
 
-  --ifm-toc-link-color: #888899;
-  --ifm-toc-border-color: #252530;
+  --ifm-toc-link-color: #8a9594;
+  --ifm-toc-border-color: #252c2c;
 
-  --ifm-hr-border-color: #252530;
-  --ifm-table-border-color: #252530;
+  --ifm-hr-border-color: #252c2c;
+  --ifm-table-border-color: #252c2c;
+  --ifm-table-stripe-background: rgba(255, 255, 255, 0.02);
 
   --ifm-breadcrumb-color-active: #3aada5;
   --ifm-breadcrumb-item-background-active: rgba(58, 173, 165, 0.08);
 
   --docusaurus-highlighted-code-line-bg: rgba(58, 173, 165, 0.1);
+
+  /* Admonition colors — muted to match dark aesthetic */
+  --ifm-color-info: #5580aa;
+  --ifm-color-info-dark: #4a7099;
+  --ifm-color-info-contrast-foreground: #a0bdd8;
+  --ifm-color-success: #3aada5;
+  --ifm-color-success-dark: #2a8d86;
+  --ifm-color-success-contrast-foreground: #84d9d3;
+  --ifm-color-warning: #c9943e;
+  --ifm-color-warning-dark: #b38435;
+  --ifm-color-warning-contrast-foreground: #e0c088;
+  --ifm-color-danger: #c94a4a;
+  --ifm-color-danger-dark: #b33e3e;
+  --ifm-color-danger-contrast-foreground: #e09a9a;
 }
 
 /* Light theme overrides */
 [data-theme='light'] {
-  --apm-bg: #f5f5f7;
-  --apm-grid: #e2e2e8;
-  --apm-border: #d0d0d8;
-  --apm-t1: #1a1a20;
-  --apm-t2: #5a5a6a;
-  --apm-t3: #9090a0;
+  /* Neutrals tinted with accent hue (175°) for cohesion with dark theme */
+  --apm-bg: #f4f6f6;
+  --apm-grid: #e1e5e4;
+  --apm-border: #cfd4d3;
+  --apm-t1: #1a2121;
+  --apm-t2: #5a6565;
+  --apm-t3: #8e9797;
   --apm-accent: #2a8d86;
   --apm-accent2: #237d77;
-  --apm-cmd-bg: #eaeaef;
-  --apm-cmd-border: #d0d0d8;
+  --apm-cmd-bg: #e8ecec;
+  --apm-cmd-border: #cfd4d3;
 
   --ifm-color-primary: #2a8d86;
   --ifm-color-primary-dark: #237d77;
@@ -93,27 +110,27 @@
   --ifm-color-primary-lighter: #4fbfb7;
   --ifm-color-primary-lightest: #84d9d3;
 
-  --ifm-background-color: #f5f5f7;
-  --ifm-background-surface-color: #eaeaef;
-  --ifm-font-color-base: #1a1a20;
-  --ifm-font-color-secondary: #5a5a6a;
-  --ifm-heading-color: #1a1a20;
+  --ifm-background-color: #f4f6f6;
+  --ifm-background-surface-color: #e8ecec;
+  --ifm-font-color-base: #1a2121;
+  --ifm-font-color-secondary: #5a6565;
+  --ifm-heading-color: #1a2121;
 
-  --ifm-navbar-background-color: #f5f5f7;
-  --ifm-footer-background-color: #eaeaef;
+  --ifm-navbar-background-color: #f4f6f6;
+  --ifm-footer-background-color: #e8ecec;
 
   --ifm-link-color: #2a8d86;
   --ifm-link-hover-color: #237d77;
 
-  --ifm-menu-color: #5a5a6a;
+  --ifm-menu-color: #5a6565;
   --ifm-menu-color-active: #2a8d86;
   --ifm-menu-color-background-active: rgba(42, 141, 134, 0.08);
 
-  --ifm-toc-link-color: #5a5a6a;
-  --ifm-toc-border-color: #d0d0d8;
+  --ifm-toc-link-color: #5a6565;
+  --ifm-toc-border-color: #cfd4d3;
 
-  --ifm-hr-border-color: #d0d0d8;
-  --ifm-table-border-color: #d0d0d8;
+  --ifm-hr-border-color: #cfd4d3;
+  --ifm-table-border-color: #cfd4d3;
 
   --docusaurus-highlighted-code-line-bg: rgba(42, 141, 134, 0.1);
 }
@@ -328,11 +345,27 @@ body {
 }
 
 /* ============================================
+   Admonitions — Dark theme only
+   Unify surface fill and border with code blocks
+   ============================================ */
+
+[data-theme='dark'] .alert {
+  background: var(--apm-cmd-bg) !important;
+  border: 1px solid var(--apm-border);
+  border-radius: 3px;
+}
+
+[data-theme='dark'] .alert--info    { border-left: 3px solid var(--ifm-color-info-dark); }
+[data-theme='dark'] .alert--success { border-left: 3px solid var(--ifm-color-success-dark); }
+[data-theme='dark'] .alert--warning { border-left: 3px solid var(--ifm-color-warning-dark); }
+[data-theme='dark'] .alert--danger  { border-left: 3px solid var(--ifm-color-danger-dark); }
+
+/* ============================================
    Code Blocks
    ============================================ */
 
 .prism-code {
-  border: 1px solid var(--apm-cmd-border);
+  border: 1px solid var(--apm-border);
   border-radius: 3px !important;
   font-size: 13px;
   background: var(--apm-cmd-bg) !important;
@@ -344,7 +377,7 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 85%;
   background: var(--apm-cmd-bg);
-  border: 1px solid var(--apm-cmd-border);
+  border: 1px solid var(--apm-border);
   padding: 2px 5px;
 }
 

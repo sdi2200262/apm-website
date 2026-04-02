@@ -85,6 +85,7 @@ const config = {
         logo: {
           alt: 'APM Logo',
           src: 'img/apm-logo.svg',
+          srcDark: 'img/apm-logo-dark.svg',
         },
         items: [
           {
