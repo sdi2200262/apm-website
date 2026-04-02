@@ -12,13 +12,15 @@ Documentation website for [Agentic Project Management](https://github.com/sdi220
 ## Development
 
 ```bash
-npm install
+npm ci           # install from lockfile (deterministic)
 npm start        # dev server at localhost:3000
 npm run build    # production build
 npm run serve    # preview production build
 ```
 
 Requires Node.js 20+.
+
+**Dependency security:** Dependencies are locked via `package-lock.json`. Always use `npm ci` (which installs exactly what the lockfile specifies) rather than `npm install` (which re-resolves semver ranges and can pull in compromised versions). CI builds should always use `npm ci`.
 
 ## Structure
 
