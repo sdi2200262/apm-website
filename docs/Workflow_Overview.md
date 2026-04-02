@@ -152,12 +152,14 @@ If auto-compaction happens instead and the Agent starts acting inconsistently, t
 When an APM session ends, whether through project completion, a decision to pause, or a shift in direction, the User can archive the session and start fresh.
 
 1. **Summarize** - The User runs `/apm-8-summarize-session` in a new conversation. The summarization Agent reads `.apm/` artifacts, validates them against the current codebase, and produces a session summary.
-2. **Archive** - The User runs `apm archive` (or `apm archive --name custom-name`). This snapshots `.apm/` artifacts to `.apm/archives/`, removes installed assistant files, and clears installation metadata.
+2. **Archive** - The User runs [`apm archive`](CLI_Guide.md#apm-archive) (or `apm archive --name custom-name`). This snapshots `.apm/` artifacts to `.apm/archives/`, removes installed assistant files, and clears installation metadata.
 3. **Continue** - The User runs `apm init` to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance - so each APM session can build on what came before.
 
 ## Next Steps
 
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
+- [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
 - [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
