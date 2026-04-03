@@ -113,6 +113,18 @@ I want all new API endpoints to follow the error response format defined in docs
 
 Workers can also propose Rules updates when they discover patterns during execution.
 
+**Suggest dispatch modes** - The Manager decides how to dispatch Tasks, but you can suggest groupings based on what you know about the work:
+
+```
+Hold off on dispatching until both the frontend and backend Workers report back - then batch the integration Tasks together.
+```
+
+or:
+
+```
+The database schema and the API routes don't depend on each other - dispatch them in parallel to separate Workers so we can move faster.
+```
+
 ### Session Management
 
 For large projects, splitting work across multiple APM sessions and archiving between them keeps each session focused. The new Planner examines archived sessions during Context Gathering, so context carries forward without a single session trying to hold everything. Some patterns that work well:
