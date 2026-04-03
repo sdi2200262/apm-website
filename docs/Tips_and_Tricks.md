@@ -101,6 +101,30 @@ I want all new API endpoints to follow the error response format defined in docs
 
 Workers can also propose Rules updates when they discover patterns during execution. The Manager may add to either working notes or Rules autonomously when the User mentions something relevant in conversation.
 
+### Steering the Workflow
+
+You can influence the APM workflow at any point - it is not a rigid pipeline. A few patterns that work well:
+
+**Request new Tasks** - Tell the Manager you need something that isn't in the Plan. It can create Tasks, adjust dependencies, or modify the Plan on the fly:
+
+```
+I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it before Stage 2.
+```
+
+**Add context when delivering reports** - When you run `/apm-5-check-reports`, you can include additional context or requirements alongside the delivery. The Manager factors these into its next decisions:
+
+```
+/apm-5-check-reports python-agent
+
+The task was executed but I noticed the error handling doesn't cover timeout scenarios. I want the next Task for this Worker to address that before moving on.
+```
+
+**Direct Workers during execution** - You can steer a Worker mid-Task with corrections, scope adjustments, or additional work. Workers note User directives in the Task Log by default so the Manager sees them during review, but explicitly asking the Worker to log it ensures it gets flagged:
+
+```
+The API response format changed since the Plan was written - use the v2 format from docs/api-v2.md instead. Flag this in your Task Log as an important finding so the Manager updates the Spec and future Tasks use the right format.
+```
+
 ### Session Management
 
 For large projects, splitting work across multiple APM sessions and archiving between them keeps each session focused. The new Planner examines archived sessions during Context Gathering, so context carries forward without a single session trying to hold everything. Some patterns that work well:
