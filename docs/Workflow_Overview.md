@@ -137,7 +137,7 @@ After all Tasks in a Stage are Done, the Manager reviews the Stage's outcomes an
 
 After all Stages complete, the Manager marks the project as complete in the Tracker and presents a project completion summary covering: Stages completed, total Tasks executed, Workers involved, Stage outcomes, notable findings, and final deliverables.
 
-The Manager then guides the User through optional next steps. Running `/apm-8-summarize-session` in a new conversation produces a structured session summary covering decisions made, work completed, and lessons learned - this helps future Planners absorb archived context more efficiently. Running `apm archive` via the CLI archives the current `.apm/` artifacts and cleans the workspace for a new session. The summarization agent also offers to perform archival at the end of its procedure.
+The Manager then guides the User through optional next steps. Running `/apm-8-summarize-session` produces a structured session summary covering decisions made, work completed, and lessons learned - this helps future Planners absorb archived context more efficiently. The User can run it in the completing Manager's chat if context allows, or in a new conversation for more context room. Running `apm archive` via the CLI archives the current `.apm/` artifacts and cleans the workspace for a new session. The summarization agent also offers to perform archival at the end of its procedure.
 
 ## Handoff
 

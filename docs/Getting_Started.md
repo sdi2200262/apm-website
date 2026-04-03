@@ -197,7 +197,7 @@ For the full mechanics, see [Handoff and Continuity](Agent_Orchestration.md#hand
 
 When the Manager completes all Tasks and Stages, it marks the project as complete in the Tracker and presents a completion summary. It then guides you through optional next steps:
 
-Running `/apm-8-summarize-session` in a new conversation instructs the Agent to produce a structured session summary document that helps future Planners and helps with archival.
+Running `/apm-8-summarize-session` produces a structured session summary that helps future Planners and helps with archival. Run it in the completing Manager's chat if context allows, or in a new conversation for more context room.
 
 Alternatively, you can archive directly via the CLI:
 ```bash

@@ -22,7 +22,7 @@ You run these as slash commands in your Agent conversations:
 | `/apm-5-check-reports` | Deliver a Task Report to the Manager (add a Worker id to target a specific one) |
 | `/apm-6-handoff-manager` | Initiate Manager Handoff before context fills |
 | `/apm-7-handoff-worker` | Initiate Worker Handoff before context fills |
-| `/apm-8-summarize-session` | Generate a structured session summary (run in a new conversation) |
+| `/apm-8-summarize-session` | Generate a structured session summary (current chat or new conversation) |
 | `/apm-9-recover <role>` | Reconstruct context after compaction (e.g. `manager` or `frontend-agent`) |
 
 ## CLI Commands
