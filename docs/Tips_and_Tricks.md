@@ -75,40 +75,14 @@ Agents are designed to use subagents on their own, but they do not always take t
 
 The most effective cost optimization is thorough planning. A well-structured Plan with clear Task boundaries, accurate dependencies, and specific validation criteria reduces follow-ups, rework, and debugging during implementation. Time spent reviewing planning documents before approving them pays for itself in fewer Task iterations.
 
-### Injecting Context
-
-The User can inject context into the APM workflow at any point during the Implementation Phase, through working notes in the Tracker or through Rules updates.
-
-**Working notes** are ephemeral coordination context in the Tracker. They capture preferences, environment details, and observations that should inform upcoming Tasks but may not apply permanently. The Manager accumulates them throughout each Stage and distills durable observations into Memory notes at Stage boundaries. Periodically reviewing these with the Manager and removing stale items helps keep coordination context lean.
-
-The User can add working notes in two ways. Through the Worker, where it gets noted in the Task Log and the Manager picks it up during review:
-
-```
-I added my .env credentials in the root of the workspace so testing in this Task can be done against the live server instance for accurate validation. Note this in your Task Log as an important finding - I want all following Tasks with similar testing requirements to use the live server as well.
-```
-
-Or through the Manager directly:
-
-```
-Add a working note: I prefer verbose logging during this Stage so I can monitor execution progress across Workers.
-```
-
-**Rules** are universal execution patterns that apply to all Workers permanently. If the User identifies a pattern that every Worker should follow regardless of domain, it belongs in Rules rather than working notes:
-
-```
-I want all new API endpoints to follow the error response format defined in docs/api-errors.md. Add this to Rules so all Workers follow it.
-```
-
-Workers can also propose Rules updates when they discover patterns during execution. The Manager may add to either working notes or Rules autonomously when the User mentions something relevant in conversation.
-
 ### Steering the Workflow
 
-You can influence the APM workflow at any point - it is not a rigid pipeline. A few patterns that work well:
+You can influence the APM workflow at any point during the Implementation Phase. Here are some examples:
 
-**Request new Tasks** - Tell the Manager you need something that isn't in the Plan. It can create Tasks, adjust dependencies, or modify the Plan on the fly:
+**Direct Workers during execution** - You can steer a Worker mid-Task with corrections, scope adjustments, or additional work. Workers note User directives in the Task Log by default so the Manager sees them during review, but explicitly asking the Worker to log it ensures it gets flagged:
 
 ```
-I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it before Stage 2.
+The API response format changed since the Plan was written - use the v2 format from docs/api-v2.md instead. Flag this in your Task Log as an important finding so the Manager updates the Spec and future Tasks use the right format.
 ```
 
 **Add context when delivering reports** - When you run `/apm-5-check-reports`, you can include additional context or requirements alongside the delivery. The Manager factors these into its next decisions:
@@ -119,11 +93,25 @@ I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it 
 The task was executed but I noticed the error handling doesn't cover timeout scenarios. I want the next Task for this Worker to address that before moving on.
 ```
 
-**Direct Workers during execution** - You can steer a Worker mid-Task with corrections, scope adjustments, or additional work. Workers note User directives in the Task Log by default so the Manager sees them during review, but explicitly asking the Worker to log it ensures it gets flagged:
+**Request new Tasks** - Tell the Manager you need something that isn't in the Plan. It can create Tasks, adjust dependencies, or modify the Plan on the fly:
 
 ```
-The API response format changed since the Plan was written - use the v2 format from docs/api-v2.md instead. Flag this in your Task Log as an important finding so the Manager updates the Spec and future Tasks use the right format.
+I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it before Stage 2.
 ```
+
+**Add working notes** - Working notes are ephemeral coordination context in the Tracker. They capture preferences, environment details, and observations that should inform upcoming Tasks. You can add them through a Worker (noted in the Task Log, picked up by the Manager during review) or through the Manager directly:
+
+```
+Add a working note: I prefer verbose logging during this Stage so I can monitor execution progress across Workers.
+```
+
+**Update Rules** - Rules are universal execution patterns that apply to all Workers permanently. If you identify a pattern that every Worker should follow, it belongs in Rules:
+
+```
+I want all new API endpoints to follow the error response format defined in docs/api-errors.md. Add this to Rules so all Workers follow it.
+```
+
+Workers can also propose Rules updates when they discover patterns during execution.
 
 ### Session Management
 
