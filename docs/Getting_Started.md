@@ -9,6 +9,8 @@ sidebar_position: 2
 
 This guide walks you through your first APM session - from installation through completing your first few tasks.
 
+If you want your AI assistant to help explain APM concepts or answer questions as you go, the [`apm-assist`](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-assist) skill can be installed into any project and reads the live documentation.
+
 ## Prerequisites
 
 Before starting, ensure you have:

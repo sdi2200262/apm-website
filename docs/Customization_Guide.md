@@ -18,7 +18,7 @@ The official APM repository contains source templates that the build system proc
 | | Fork | Template |
 | :--- | :--- | :--- |
 | **Git history** | Carries the full upstream commit history | Starts with a clean, empty history |
-| **Upstream sync** | `git merge upstream/main` pulls in new APM releases | No upstream link — merging future changes requires manual diffing |
+| **Upstream sync** | `git merge upstream/main` pulls in new APM releases | No upstream link - merging future changes requires manual diffing |
 | **Best for** | Incremental customization that tracks upstream improvements (e.g. a team adding domain-specific procedures while staying current with APM releases) | Deep divergence where the APM repo is a starting point, not an ongoing dependency (e.g. building a substantially different workflow that shares the build system but rewrites most templates) |
 
 The workflow:
@@ -29,7 +29,7 @@ The workflow:
 4. Create a GitHub Release and attach the build artifacts
 5. Install with `apm custom -r owner/repo`
 
-The `agentic-pm` CLI handles custom repositories the same way it handles the official one at install time — it fetches the release manifest, presents available assistants, downloads the bundle, and extracts it into the project. The one difference is version filtering: `apm init` restricts official releases to the CLI's major version (e.g. CLI v1.x only fetches v1.x.x), while `apm custom` exposes all available releases regardless of CLI version.
+The `agentic-pm` CLI handles custom repositories the same way it handles the official one at install time - it fetches the release manifest, presents available assistants, downloads the bundle, and extracts it into the project. The one difference is version filtering: `apm init` restricts official releases to the CLI's major version (e.g. CLI v1.x only fetches v1.x.x), while `apm custom` exposes all available releases regardless of CLI version.
 
 ## The Build Pipeline
 

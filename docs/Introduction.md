@@ -91,6 +91,8 @@ APM is installed via the [`agentic-pm`](https://www.npmjs.com/package/Agentic-pm
 
 To get started, see [Getting Started](Getting_Started.md).
 
+If you want your AI assistant to explain APM concepts or help with migration from an older version, the [`apm-assist`](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-assist) skill can be installed into any project and answers questions by reading the live documentation.
+
 ## Contributing
 
 APM is open source and welcomes contributions. Report bugs or request features via [GitHub Issues](https://github.com/sdi2200262/Agentic-project-management/issues), or submit improvements via Pull Requests.
@@ -99,11 +101,10 @@ For contribution guidelines, see [CONTRIBUTING.md](https://github.com/sdi2200262
 
 ## Recommended Reading Order
 
-Each doc builds on the ones before it:
+**Start using APM** - [Getting Started](Getting_Started.md) walks you through installation and your first session end to end. There's also a [Quick Reference](Quick_Reference.md) with all the commands and workflows in one place if you want it handy.
 
-1. [Getting Started](Getting_Started.md) - Install APM and walk through a first APM session hands-on
-2. [Agent Types](Agent_Types.md) - How Planner, Manager, and Worker roles work in depth
-3. [Agent Orchestration](Agent_Orchestration.md) - Communication, Memory, dispatch, and Handoff mechanics
-4. [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure
-5. [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
-6. [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
+**Understand the architecture** - Three docs build on each other: [Agent Types](Agent_Types.md) covers the three roles, [Agent Orchestration](Agent_Orchestration.md) covers how they coordinate, and [Workflow Overview](Workflow_Overview.md) walks through every procedure.
+
+**Go deeper** - [Prompt Engineering](Prompt_Engineering.md) explains how APM's files are designed. [Context Engineering](Context_Engineering.md) explains why each Agent sees what it sees.
+
+**Look things up** - [CLI Guide](CLI_Guide.md) for commands and options, [Troubleshooting](Troubleshooting_Guide.md) for common issues, [Tips and Tricks](Tips_and_Tricks.md) for model selection and workflow efficiency.

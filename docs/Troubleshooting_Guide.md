@@ -153,34 +153,32 @@ npm update -g agentic-pm
 apm update
 ```
 
-## Migrating from Older Versions
+## Migrating from v0.5.x
 
-Pre-v1.0.0 APM installations have a different file structure, metadata format, and CLI. The `agentic-pm` CLI v1.0.0+ cannot directly manage them. Additionally, v1.0.0 narrowed official support to Cursor, Claude Code, GitHub Copilot, Gemini CLI, OpenCode, and Codex. If the old installation used an assistant no longer supported, the User needs to choose a supported one during reinitialization.
+v0.5.x installations have a different file structure, metadata format, and CLI. The `agentic-pm` CLI v1.0.0+ cannot directly manage them. For a full list of what changed, see the [CHANGELOG](https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md).
 
 ### Recommended Approach
 
-1. Convert the old `metadata.json` to the v1 schema with the additional archive fields so the `agentic-pm` v1.0.0+ CLI can parse it. The schema is documented in the [CLI Guide](CLI_Guide.md#workspace-metadata).
-2. Move existing `.apm/` artifacts into a dated archive directory at `.apm/archives/session-YYYY-MM-DD-NNN/` or a custom name like `.apm/archives/pre-v1-migration/`. Place the converted `metadata.json` inside the archive directory.
+1. Move existing `.apm/` artifacts (Implementation Plan, Memory directory, metadata) into an archive directory under `.apm/archives/` (any name works, e.g. `my-awesome-apm-project`)
+2. Convert the old `metadata.json` to the v1 archive schema and place it inside the archive directory. The schema is documented in the [CLI Guide](CLI_Guide.md#workspace-metadata). Map `templateVersion` to `releaseVersion`, full assistant names to short IDs, and add `archivedAt` and `reason: "migration"` fields
 3. Optionally generate a session summary and place it in the same archive directory
-4. Remove the deprecated `.apm/guides/` directory — v1 scaffolds guides into the assistant directory as `apm-guides/`
-5. Remove only APM-installed files from assistant directories, preserving any non-APM content
+4. Remove the `.apm/guides/` directory - v1 scaffolds guides into the platform directory instead
+5. Remove only APM-installed files from assistant directories (v0.5.x files typically have `apm-` prefixes), preserving any non-APM content
 6. Remove `.apm/metadata.json` from the root so the current CLI sees a clean state
 7. Update the CLI: `npm install -g agentic-pm`
-8. Reinitialize: `apm init`
+8. Reinitialize: `apm init` - the new Planner detects the migration archive during Context Gathering
 
-APM provides an optional **migration skill** that packages this recommended procedure so an AI agent can guide you through it step by step. The skill handles state assessment, version difference research, metadata conversion, safe cleanup, and next steps. Install it and reference it in your assistant's chat:
+APM provides an optional **[apm-assist](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-assist)** skill that can handle migration (among other things). Install it into your workspace and reference it in your assistant's chat - the Agent assesses the current state, detects your version, proposes a migration plan, and executes after your approval. It can also explain APM concepts and answer questions by reading the live documentation.
 
 **Installation (Claude Code example):**
 
 ```bash
-mkdir -p .claude/skills/apm-migration
-curl -sL https://raw.githubusercontent.com/sdi2200262/agentic-project-management/v1.0.0-dev/skills/apm-migration/SKILL.md \
-  -o .claude/skills/apm-migration/SKILL.md
+mkdir -p .claude/skills/apm-assist
+curl -sL https://raw.githubusercontent.com/sdi2200262/agentic-project-management/main/skills/apm-assist/SKILL.md \
+  -o .claude/skills/apm-assist/SKILL.md
 ```
 
-For other platforms, see the [standalone skills directory](https://github.com/sdi2200262/agentic-project-management/tree/main/skills) for per-platform installation commands.
-
-After installing, reference the skill in the assistant's chat to begin. The Agent assesses the current state, proposes a migration plan, and executes after User approval.
+For other platforms, see the [standalone skills directory](https://github.com/sdi2200262/agentic-project-management/tree/main/skills) for installation commands.
 
 ## Related Docs
 
