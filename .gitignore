@@ -4,7 +4,8 @@ node_modules/
 # Build output
 build/
 .docusaurus/
-static/all-apm-docs.md
+static/llms.txt
+static/llms-full.txt
 
 # Environment
 .env

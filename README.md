@@ -37,6 +37,10 @@ docs/              # documentation pages (Markdown/MDX)
 static/img/        # logos, diagrams, social card
 ```
 
+## LLM Access
+
+The site serves `/llms.txt` and `/llms-full.txt` for AI agent consumption. Both are generated at build time from the docs by `scripts/build-all-docs.js` (runs as `prebuild` and `prestart`).
+
 ## Contributing
 
 The v0.5.4 docs had video walkthroughs covering the full workflow. The v1 docs need the same treatment — video coverage of the Planning Phase, Implementation Phase, Handoff, and session continuation would be a significant contribution. If you're interested, open an issue to discuss scope and format.
