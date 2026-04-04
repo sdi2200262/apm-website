@@ -75,6 +75,26 @@ Agents are designed to use subagents on their own, but they do not always take t
 
 The most effective cost optimization is thorough planning. A well-structured Plan with clear Task boundaries, accurate dependencies, and specific validation criteria reduces follow-ups, rework, and debugging during implementation. Time spent reviewing planning documents before approving them pays for itself in fewer Task iterations.
 
+### Validation Criteria
+
+During the Planning Phase, the validation criteria you describe to the Planner end up in every Task Prompt the Manager builds. When those criteria are specific and testable, Workers can execute, validate, and iterate on their own - potentially completing complex work in a single uninterrupted run without needing your input.
+
+Workers use whatever tools are available on the platform to validate. If there's a test suite, they run it. If there's a browser tool (like the Claude web extension or a Playwright MCP server), they can visually verify a UI renders correctly. If there's a linter or type checker, they run those too. The more concrete the criteria, the more the Worker can verify on its own before reporting back.
+
+Be explicit about what "done" looks like. Instead of "make sure it works," describe what that means in testable terms:
+
+```
+Each API endpoint should return the correct status codes and response shapes. The Worker should validate by running the existing test suite (npm test) and adding new tests for any endpoints it creates.
+```
+
+```
+The dashboard should render all charts with sample data and be responsive down to 768px. The Worker should validate visually using the browser tool and fix any layout issues before reporting back.
+```
+
+The Planner encodes these into the Plan's Task definitions, and the Manager embeds them in each Task Prompt. Workers then validate autonomously against them.
+
+You can also mention during the Planning Phase that you want dedicated validation Tasks at the end of important Stages - Tasks whose purpose is not to build something but to validate all work so far as a review gate before moving on. These are useful at milestones where multiple Workers' outputs need to work together. That said, if per-Task validation criteria are solid, these are mostly for reassurance and catching edge cases rather than a strict requirement.
+
 ### Steering the Workflow
 
 You can influence the APM workflow at any point during the Implementation Phase. Here are some examples:
