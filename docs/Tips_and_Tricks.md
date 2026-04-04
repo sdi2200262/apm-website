@@ -97,15 +97,15 @@ You can also mention during the Planning Phase that you want dedicated validatio
 
 ### Steering the Workflow
 
-You can influence the APM workflow at any point during the Implementation Phase. Here are some examples:
+You can influence the APM workflow at any point during the Implementation Phase. Here are some examples.
 
-**Direct Workers during execution** - You can steer a Worker mid-Task with corrections, scope adjustments, or additional work. Workers note User directives in the Task Log by default so the Manager sees them during review, but explicitly asking the Worker to log it ensures it gets flagged:
+**Directing Workers** - You can steer a Worker mid-Task with corrections, scope adjustments, or additional work. Workers note your directives in the Task Log by default so the Manager sees them during review, but explicitly asking the Worker to log it ensures it gets flagged:
 
 ```
 The API response format changed since the Plan was written - use the v2 format from docs/api-v2.md instead. Flag this in your Task Log as an important finding so the Manager updates the Spec and future Tasks use the right format.
 ```
 
-**Add context when delivering reports** - When you run `/apm-5-check-reports`, you can include additional context or requirements alongside the delivery. The Manager factors these into its next decisions:
+**Adding context to reports** - When you run `/apm-5-check-reports`, you can include additional context or requirements alongside the delivery. The Manager factors these into its next decisions:
 
 ```
 /apm-5-check-reports python-agent
@@ -113,27 +113,25 @@ The API response format changed since the Plan was written - use the v2 format f
 The task was executed but I noticed the error handling doesn't cover timeout scenarios. I want the next Task for this Worker to address that before moving on.
 ```
 
-**Request new Tasks** - Tell the Manager you need something that isn't in the Plan. It can create Tasks, adjust dependencies, or modify the Plan on the fly:
+**Requesting new Tasks** - You can ask the Manager to create Tasks that aren't in the Plan, adjust dependencies, or modify the Plan on the fly:
 
 ```
 I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it before Stage 2.
 ```
 
-**Add working notes** - Working notes are ephemeral coordination context in the Tracker. They capture preferences, environment details, and observations that should inform upcoming Tasks. You can add them through a Worker (noted in the Task Log, picked up by the Manager during review) or through the Manager directly:
+**Working notes** - Working notes are ephemeral coordination context in the Tracker. They capture preferences, environment details, and observations that should inform upcoming Tasks. You can add them through a Worker (noted in the Task Log, picked up by the Manager during review) or through the Manager directly:
 
 ```
 Add a working note: I prefer verbose logging during this Stage so I can monitor execution progress across Workers.
 ```
 
-**Update Rules** - Rules are universal execution patterns that apply to all Workers permanently. If you identify a pattern that every Worker should follow, it belongs in Rules:
+**Rules updates** - If you identify a pattern that every Worker should follow permanently, it belongs in Rules rather than working notes. Workers can also propose Rules updates when they discover patterns during execution:
 
 ```
 I want all new API endpoints to follow the error response format defined in docs/api-errors.md. Add this to Rules so all Workers follow it.
 ```
 
-Workers can also propose Rules updates when they discover patterns during execution.
-
-**Suggest dispatch modes** - The Manager decides how to dispatch Tasks, but you can suggest groupings based on what you know about the work:
+**Dispatch preferences** - The Manager decides how to dispatch Tasks, but you can suggest groupings based on what you know about the work:
 
 ```
 Hold off on dispatching until both the frontend and backend Workers report back - then batch the integration Tasks together.
@@ -147,11 +145,11 @@ The database schema and the API routes don't depend on each other - dispatch the
 
 ### Session Management
 
-For large projects, splitting work across multiple APM sessions and archiving between them keeps each session focused. The new Planner examines archived sessions during Context Gathering, so context carries forward without a single session trying to hold everything. Some patterns that work well:
+For large projects, splitting work across multiple APM sessions and archiving between them keeps each session focused. The new Planner examines archived sessions during Context Gathering, so context carries forward without a single session trying to hold everything.
 
-**Per-feature sessions** - One APM session per feature or deliverable. Archive after each feature is complete, start a new session for the next. Each Planner picks up where the previous left off.
+**Per-feature sessions** - Run one session per feature or deliverable. Archive after each feature completes and start fresh for the next. Each Planner picks up where the previous left off.
 
-**Direction changes** - If an APM session hits a blocker or execution reveals important findings that require a change of direction, pause the Manager, ask it to wrap up its working notes, summarize the session, and archive. A new Planner can assess the situation with the full archive context and plan the revised approach from scratch.
+**Direction changes** - If a session hits a blocker or execution reveals something that requires a change of direction, pause the Manager, ask it to wrap up its working notes, summarize the session, and archive. A new Planner can assess the situation with the full archive context and plan the revised approach from scratch.
 
 **Sequential layer builds** - For projects with clear layers (e.g. database first, then backend, then frontend), each layer can be its own APM session. Each session's archive informs the next Planner about what was built and how it works.
 
