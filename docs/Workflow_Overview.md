@@ -48,7 +48,7 @@ The Planner decomposes gathered context into three [planning documents](Agent_Or
 
 **Spec.** The Planner analyzes design decisions from gathered context and writes the Spec, including a Workspace section that maps the project environment (directory structure, repositories, authoritative documents). The User reviews and approves before the Planner moves on.
 
-**Plan.** The Planner identifies work domains and maps them to Workers, identifies all Stages with sequencing rationale, then identifies Tasks per Stage (deliverables needed, Worker mapping, independence assessment) before reasoning through each Task in detail including a dependency analysis. After writing the full Plan, the Planner performs a separate review pass assessing structural completeness, workload distribution, and dependency graph consistency - correcting issues before presenting to the User. The User reviews and approves.
+**Plan.** The Planner identifies work domains and maps them to Workers, reasons about how domain characteristics create stage boundaries, then walks through each Stage's deliverables and how they decompose into Tasks before deepening the analysis per Task. After a dependency analysis and pre-write completeness checks, the Planner writes the full Plan and presents it for User review and approval.
 
 **Rules.** The Planner extracts universal execution patterns and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
 
@@ -131,7 +131,7 @@ After each review, the Manager immediately reassesses readiness and dispatches t
 
 Stages are sequential. Stage N+1 begins after Stage N completes. Parallel work across domains happens through parallel Task dispatch within a single Stage, not cross-Stage execution.
 
-After all Tasks in a Stage are Done, the Manager reviews the Stage's outcomes and updates the [Index](Agent_Orchestration.md#the-index) with a Stage summary and any durable observations. It then proceeds to the next Stage's first dispatch.
+After all Tasks in a Stage are Done, the Manager assesses whether the Stage's deliverables require holistic verification before proceeding — based on complexity and observations from Task Reviews. When verification is needed, it runs checks, examines edge cases, or dispatches a verification subagent. It then writes a Stage summary to the [Index](Agent_Orchestration.md#the-index) with Stage-level outcomes and durable observations, and proceeds to the next Stage's first dispatch.
 
 ### Project Completion
 

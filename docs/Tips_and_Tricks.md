@@ -93,7 +93,7 @@ The dashboard should render all charts with sample data and be responsive down t
 
 The Planner encodes these into the Plan's Task definitions, and the Manager embeds them in each Task Prompt. Workers then validate autonomously against them.
 
-You can also mention during the Planning Phase that you want dedicated validation Tasks at the end of important Stages - Tasks whose purpose is not to build something but to validate all work so far as a review gate before moving on. These are useful at milestones where multiple Workers' outputs need to work together. That said, if per-Task validation criteria are solid, these are mostly for reassurance and catching edge cases rather than a strict requirement.
+The Manager can also perform holistic verification at Stage boundaries when the complexity warrants it. If you want specific milestones verified before proceeding, tell the Manager during the Implementation Phase — it can run checks, examine edge cases, or dispatch a verification subagent before moving to the next Stage.
 
 ### Steering the Workflow
 
