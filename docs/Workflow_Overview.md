@@ -48,7 +48,7 @@ The Planner decomposes gathered context into three [planning documents](Agent_Or
 
 **Spec.** The Planner analyzes design decisions from gathered context and writes the Spec, including a Workspace section that maps the project environment (directory structure, repositories, authoritative documents). The User reviews and approves before the Planner moves on.
 
-**Plan.** The Planner identifies work domains and maps them to Workers, reasons about how domain characteristics create stage boundaries, then walks through each Stage's deliverables and how they decompose into Tasks before deepening the analysis per Task. After a dependency analysis and pre-write completeness checks, the Planner writes the full Plan and presents it for User review and approval.
+**Plan.** The Planner identifies work domains and maps them to Workers. It reasons about how domain characteristics create stage boundaries, then walks through each Stage's deliverables and how they decompose into Tasks before deepening the analysis per Task. After a dependency analysis and pre-write completeness checks, the Planner writes the full Plan and presents it for User review and approval.
 
 **Rules.** The Planner extracts universal execution patterns and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
 
@@ -96,7 +96,7 @@ The Worker receives the Task Prompt - either detected during initialization or d
 1. **Context integration** - If [dependencies on other Agents' work](Agent_Orchestration.md#dependency-context) exist, the Worker reads the specified files to integrate prior work before starting.
 2. **Execution** - The Worker follows the instructions step by step, applying Rules from the platform's rules file throughout.
 3. **Validation** - The Worker validates results against the criteria in the prompt, completing autonomous checks before involving the User. If criteria require User involvement (judgment or action), the Worker pauses only after autonomous checks pass.
-4. **Iteration** - If validation fails, the Worker investigates the root cause before attempting a fix - reading error output, tracing the failure, understanding what went wrong. One targeted change per iteration. If the fix does not resolve the issue, the Worker spawns a debug subagent with structured instructions (error output, what was investigated, expected vs actual behavior) to trace the root cause and propose a fix in a fresh context. The Worker validates the subagent's findings before applying them. If unresolved, the Worker reports back with Partial status rather than exhausting its context window.
+4. **Iteration** - If validation fails, the Worker investigates the root cause before attempting a fix: reading error output, tracing the failure, understanding what went wrong. One targeted change per iteration. If the fix does not resolve the issue, the Worker spawns a debug subagent with structured instructions (error output, what was investigated, expected vs actual behavior) to trace the root cause and propose a fix in a fresh context. The Worker validates the subagent's findings before applying them. If unresolved, the Worker reports back with Partial status rather than exhausting its context window.
 
 When the User provides a correction or directive during execution, the Worker complies immediately and continues. At Task completion, the correction is noted in the Task Log as an important finding for the Manager. The Worker then asks whether the correction should become a Rule for all Workers, but only after logging and reporting so it does not block the workflow.
 
@@ -121,7 +121,7 @@ The Manager receives the report via `/apm-5-check-reports` and reviews the outco
 2. **Log review** - The Manager reads the Task Log, interprets status and flags, and assesses whether the claimed status is consistent with the log content. Inconsistency between claimed status and actual content is a hallucination indicator.
 3. **Review outcome** - If everything looks good (Success, no flags, content supports the status), the Manager proceeds. If something needs attention, the Manager investigates - self-investigating for small-scope issues, spawning a subagent for larger ones. Three outcomes are possible:
     - **Proceed** - No issues found. Update the Tracker, dispatch any newly ready Tasks.
-    - **Follow-up** - Worker must retry. The Manager creates a new Task Prompt with refined instructions based on what went wrong. Same log path - the Worker overwrites the previous log.
+    - **Follow-up** - Worker must retry. The Manager creates a new Task Prompt with refined instructions based on what went wrong. Same log path; the Worker overwrites the previous log.
     - **Document modification** - Execution revealed issues with the Spec, Plan, or Rules. The Manager assesses cascade implications and determines whether modifications fall within its authority or require User collaboration. After modifications, the Manager proceeds or issues a follow-up.
 4. **Tracker update** - Every outcome path ends with updating the [Tracker](Agent_Orchestration.md#the-tracker).
 
@@ -131,13 +131,13 @@ After each review, the Manager immediately reassesses readiness and dispatches t
 
 Stages are sequential. Stage N+1 begins after Stage N completes. Parallel work across domains happens through parallel Task dispatch within a single Stage, not cross-Stage execution.
 
-After all Tasks in a Stage are Done, the Manager assesses whether the Stage's deliverables require holistic verification before proceeding — based on complexity and observations from Task Reviews. When verification is needed, it runs checks, examines edge cases, or dispatches a verification subagent. It then writes a Stage summary to the [Index](Agent_Orchestration.md#the-index) with Stage-level outcomes and durable observations, and proceeds to the next Stage's first dispatch.
+After all Tasks in a Stage are Done, the Manager assesses whether the Stage's deliverables require holistic verification before proceeding. This decision is based on complexity and observations from Task Reviews. When verification is needed, it runs checks, examines edge cases, or dispatches a verification subagent. It then writes a Stage summary to the [Index](Agent_Orchestration.md#the-index) with Stage-level outcomes and durable observations, and proceeds to the next Stage's first dispatch.
 
 ### Project Completion
 
 After all Stages complete, the Manager marks the project as complete in the Tracker and presents a project completion summary covering: Stages completed, total Tasks executed, Workers involved, Stage outcomes, notable findings, and final deliverables.
 
-The Manager then guides the User through optional next steps. Running `/apm-8-summarize-session` in a new conversation produces a structured session summary covering decisions made, work completed, and lessons learned - this helps future Planners absorb archived context more efficiently. Alternatively, the User can run it in the completing Manager's chat when context allows - the Manager's accumulated project knowledge can produce a more detailed summary with fewer gaps. Running `apm archive` via the CLI archives the current `.apm/` artifacts and cleans the workspace for a new session. The summarization agent also offers to perform archival at the end of its procedure.
+The Manager then guides the User through optional next steps. Running `/apm-8-summarize-session` in a new conversation produces a structured session summary covering decisions made, work completed, and lessons learned - this helps future Planners absorb archived context more efficiently. Alternatively, the User can run it in the completing Manager's chat when context allows. The Manager's accumulated project knowledge can produce a more detailed summary with fewer gaps. Running `apm archive` via the CLI archives the current `.apm/` artifacts and cleans the workspace for a new session. The summarization agent also offers to perform archival at the end of its procedure.
 
 ## Handoff
 

@@ -117,9 +117,9 @@ Memory is organized as a file hierarchy under `.apm/`:
 │           └── handoff-01.log.md
 ```
 
-Each Stage gets its own directory under `memory/`. Workers write Task Logs directly into the Stage directory for the Task they completed - the Manager provides the exact path in each Task Prompt. Handoff Logs are organized per Agent under `memory/handoffs/`.
+Each Stage gets its own directory under `memory/`. Workers write Task Logs directly into the Stage directory for the Task they completed. The Manager provides the exact path in each Task Prompt. Handoff Logs are organized per Agent under `memory/handoffs/`.
 
-Task Logs are the context bridge between Workers and the Manager. The Manager reads logs to understand what happened and make coordination decisions without reviewing code directly. Workers flag findings that might affect the broader project - the Manager interprets these with full project awareness during [Task Review](Workflow_Overview.md#task-review).
+Task Logs are the context bridge between Workers and the Manager. The Manager reads logs to understand what happened and make coordination decisions without reviewing code directly. Workers flag findings that might affect the broader project. The Manager interprets these with full project awareness during [Task Review](Workflow_Overview.md#task-review).
 
 Task Logs also serve Handoff continuity. Incoming Agents read relevant logs to reconstruct what was accomplished.
 
@@ -146,7 +146,7 @@ A **Worker Handoff** mid-Task can reference the original Task Prompt directly si
 
 An incoming **Manager** reads: planning documents, the Tracker, the Index (Memory notes and Stage summaries), the Handoff Log, and relevant recent Task Logs.
 
-An incoming **Worker** reads: the Rules, the Handoff Log, and their own current-Stage Task Logs. Previous-Stage logs are not loaded - keeping the incoming Worker's context lean so most of the budget is available for execution. The Manager compensates by providing richer dependency context in future Task Prompts for any Tasks that depend on work from before the Handoff.
+An incoming **Worker** reads: the Rules, the Handoff Log, and their own current-Stage Task Logs. Previous-Stage logs are not loaded to keep the incoming Worker's context lean so most of the budget is available for execution. The Manager compensates by providing richer dependency context in future Task Prompts for any Tasks that depend on work from before the Handoff.
 
 ### Recovery
 
@@ -157,7 +157,7 @@ If a platform auto-compacts an Agent's context and behavior degrades - forgettin
 /apm-9-recover frontend-agent   # recover a Worker
 ```
 
-Recovery is distinct from Handoff. The Agent re-reads its procedural documents and explores project artifacts to rebuild working context, continuing as the same instance without incrementing the instance number. Handoff produces cleaner, more reliable context than recovery - prefer proactive Handoff over waiting for compaction when possible. For detailed recovery scenarios, see the [Troubleshooting Guide](Troubleshooting_Guide.md#context-recovery).
+Recovery is distinct from Handoff. The Agent re-reads its procedural documents and explores project artifacts to rebuild working context, continuing as the same instance without incrementing the instance number. Handoff produces cleaner, more reliable context than recovery. Prefer proactive Handoff over waiting for compaction when possible. For detailed recovery scenarios, see the [Troubleshooting Guide](Troubleshooting_Guide.md#context-recovery).
 
 ## Next Steps
 

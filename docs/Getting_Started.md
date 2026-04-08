@@ -67,7 +67,7 @@ Each APM Agent runs in its own isolated conversation. What this looks like varie
 - **OpenCode** - Open a new terminal and start OpenCode
 - **Codex** - Open a new terminal and start Codex
 
-Throughout this guide, **"open a new Agent"** means whichever of the above applies to your platform. The key is that each Agent gets its own context - separate from every other Agent. Keep active Agent conversations open during the APM session for easy switching between them - don't delete conversations until the Agent has Handed off or the session is complete.
+Throughout this guide, **"open a new Agent"** means whichever of the above applies to your platform. The key is that each Agent gets its own context, separate from every other Agent. Keep active Agent conversations open during the APM session for easy switching between them. Don't delete conversations until the Agent has Handed off or the session is complete.
 :::
 
 ## Step 1: Initiate the Planner
@@ -90,11 +90,11 @@ This context is incorporated before Context Gathering begins - the discovery pro
 
 ## Step 2: Work Through the Planning Phase
 
-This step covers both procedures that produce the planning documents. Take your time here - the quality of these documents directly shapes how well implementation goes.
+This step covers both procedures that produce the planning documents. Take your time here. The quality of these documents directly shapes how well implementation goes.
 
 ### Context Gathering
 
-Context Gathering starts with a workspace scan - directory structure, git repositories, existing materials - followed by three question rounds:
+Context Gathering starts with a workspace scan (directory structure, git repositories, existing materials) followed by three question rounds:
 
 - **Round 1** - Existing materials and vision
 - **Round 2** - Technical requirements
@@ -126,9 +126,9 @@ Open a new Agent and run:
 /apm-2-initiate-manager
 ```
 
-As Manager 1 (the first instance), the Manager reads all planning documents and its procedural guides, then explores the workspace's git state - checking current branches, commit history, and branching patterns for each working repository. If `.apm/` is inside a repository, it adds `.apm/` to `.gitignore` by default and asks whether you want to track any `.apm/` artifacts in git.
+As Manager 1 (the first instance), the Manager reads all planning documents and its procedural guides, then explores the workspace's git state: current branches, commit history, and branching patterns for each working repository. If `.apm/` is inside a repository, it adds `.apm/` to `.gitignore` by default and asks whether you want to track any `.apm/` artifacts in git.
 
-It then presents an Understanding Summary covering project scope, key design decisions, Workers, Stage structure, alongside proposed version control conventions for your approval. Review both carefully - if they accurately reflect your project, authorize the Manager to proceed. It then populates the Tracker, assesses which Tasks are ready, and begins dispatching work.
+It then presents an Understanding Summary covering project scope, key design decisions, Workers, and Stage structure. Alongside this it proposes version control conventions for your approval. Review both carefully - if they accurately reflect your project, authorize the Manager to proceed. It then populates the Tracker, assesses which Tasks are ready, and begins dispatching work.
 
 ## Step 4: Your First Task Cycle
 
@@ -142,7 +142,7 @@ This is the core loop of the Implementation Phase. Each Task goes through four p
 /apm-3-initiate-worker frontend-agent
 ```
 
-The Worker resolves its identity against the Message Bus, detects the pending Task Prompt, and begins execution - following the instructions, validating results against the criteria in the prompt, and iterating if validation fails.
+The Worker resolves its identity against the Message Bus and detects the pending Task Prompt. It then begins execution - following the instructions, validating results against the criteria in the prompt, and iterating if validation fails.
 
 :::tip
 Workers pause when the Task requires your review or action. You can also interrupt or steer the Worker at any point during execution.
@@ -168,7 +168,7 @@ When a Task needs retry, the Manager creates a follow-up Task Prompt with refine
 
 ### Document Modifications
 
-When execution reveals issues with the planning documents, the Manager may update the Spec, Plan, or Rules. Small contained changes are within the Manager's authority. Significant changes - multiple Tasks affected, scope changes, design direction shifts - require your collaboration.
+When execution reveals issues with the planning documents, the Manager may update the Spec, Plan, or Rules. Small contained changes are within the Manager's authority. Significant changes (multiple Tasks affected, scope changes, design direction shifts) require your collaboration.
 
 ### Batch and Parallel Dispatch
 
@@ -189,7 +189,7 @@ The process:
 3. Run the same initialization command - the incoming Agent auto-detects the Handoff and reconstructs context
 4. Verify the incoming Agent's Understanding Summary before continuing
 
-If the platform auto-compacts an Agent's context and behavior degrades, run `/apm-9-recover` instead of a full Handoff. The Agent re-reads its documents and reconstructs working context as the same instance. Handoff produces cleaner context than recovery - prefer it when you can anticipate the limit.
+If the platform auto-compacts an Agent's context and behavior degrades, run `/apm-9-recover` instead of a full Handoff. The Agent re-reads its documents and reconstructs working context as the same instance. Handoff produces cleaner context than recovery. Prefer it when you can anticipate the limit.
 
 For the full mechanics, see [Handoff and Continuity](Agent_Orchestration.md#handoff-and-continuity). For recovery scenarios, see the [Troubleshooting Guide](Troubleshooting_Guide.md#context-recovery).
 
@@ -197,7 +197,7 @@ For the full mechanics, see [Handoff and Continuity](Agent_Orchestration.md#hand
 
 When the Manager completes all Tasks and Stages, it marks the project as complete in the Tracker and presents a completion summary. It then guides you through optional next steps:
 
-Running `/apm-8-summarize-session` in a new conversation produces a structured session summary that helps future Planners and helps with archival. If the completing Manager still has context room, you can run it there instead - the Manager's accumulated project knowledge produces a more detailed summary with fewer gaps.
+Running `/apm-8-summarize-session` in a new conversation produces a structured session summary that helps future Planners and helps with archival. If the completing Manager still has context room, you can run it there instead. The Manager's accumulated project knowledge produces a more detailed summary with fewer gaps.
 
 Alternatively, you can archive directly via the CLI:
 ```bash

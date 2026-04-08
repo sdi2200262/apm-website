@@ -3,7 +3,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'APM — Agentic Project Management',
+  title: 'APM - Agentic Project Management',
   tagline: 'Let AI agents manage your project structure, tasks, and workflow.',
   favicon: 'img/favicon.svg',
 

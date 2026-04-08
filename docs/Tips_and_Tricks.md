@@ -61,7 +61,7 @@ Proactive Handoff before context window limits approach is cheaper than recovery
 
 That said, if a Worker has only one or two Tasks left or is near completing its current Task, it can be more practical to let the platform auto-compact, use Recovery to finish the remaining work, and Handoff afterward if needed.
 
-The hardest part of Handoff is knowing when to trigger it - context degradation is not always obvious until quality has already dropped. If your platform supports hooks or triggers that fire at context thresholds, you can use them to detect when Handoff is needed and prompt the Agent to initiate it. For Claude Code, [`cc-context-awareness`](https://github.com/giannisp01/cc-context-awareness) provides configurable context threshold hooks, and ships with a ready-made `apm-handoff` template that handles Manager, Worker, and Planner agents out of the box.
+The hardest part of Handoff is knowing when to trigger it. Context degradation is not always obvious until quality has already dropped. If your platform supports hooks or triggers that fire at context thresholds, you can use them to detect when Handoff is needed and prompt the Agent to initiate it. For Claude Code, [`cc-context-awareness`](https://github.com/giannisp01/cc-context-awareness) provides configurable context threshold hooks, and ships with a ready-made `apm-handoff` template that handles Manager, Worker, and Planner agents out of the box.
 
 ### Subagent Usage
 
@@ -93,7 +93,7 @@ The dashboard should render all charts with sample data and be responsive down t
 
 The Planner encodes these into the Plan's Task definitions, and the Manager embeds them in each Task Prompt. Workers then validate autonomously against them.
 
-The Manager can also perform holistic verification at Stage boundaries when the complexity warrants it. If you want specific milestones verified before proceeding, tell the Manager during the Implementation Phase — it can run checks, examine edge cases, or dispatch a verification subagent before moving to the next Stage.
+The Manager can also perform holistic verification at Stage boundaries when the complexity warrants it. If you want specific milestones verified before proceeding, tell the Manager during the Implementation Phase. It can run checks, examine edge cases, or dispatch a verification subagent before moving to the next Stage.
 
 ### Steering the Workflow
 

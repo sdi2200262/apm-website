@@ -21,7 +21,7 @@ As conversations grow, context degrades. The AI loses track of requirements and 
 
 ## The Solution: Structured Multi-Agent Coordination
 
-APM treats the AI not as a single continuous assistant, but as a team of specialized Agents - each focused on a specific role with intentionally scoped context.
+APM treats the AI not as a single continuous assistant, but as a team of specialized Agents. Each is focused on a specific role with intentionally scoped context.
 
 - **Specialization** - Different Agents handle planning, coordination, and implementation. Each operates in its own context with only the information it needs.
 
@@ -83,7 +83,7 @@ APM operates in two distinct phases:
   style={{margin: '1.5rem 0'}}
 />
 
-When an APM session completes - or at any point during one - you can archive it and start fresh. Archives live in `.apm/archives/` and are accessible to future Planners during Context Gathering, so subsequent APM sessions build on what came before rather than starting from zero.
+When an APM session completes (or at any point during one) you can archive it and start fresh. Archives live in `.apm/archives/` and are accessible to future Planners during Context Gathering, so subsequent APM sessions build on what came before rather than starting from zero.
 
 ## Installation & Usage
 

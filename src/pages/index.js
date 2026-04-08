@@ -68,7 +68,7 @@ function HomeContent() {
   const animDownloads = useCounter(stats.downloads);
 
   // Typed subtitle effect
-  const SUBTITLE = 'Manage complex projects with a team of AI agents, smoothly and efficiently.';
+  const SUBTITLE = 'Manage complex projects with a team of AI agents smoothly and efficiently.';
   const [typedText, setTypedText] = useState('');
   const [typingDone, setTypingDone] = useState(false);
 
@@ -266,17 +266,17 @@ function HomeContent() {
         <Grid.Region {...R(regions, 'hw-intro')} id="hw-intro" className={styles.prose}>
           <p className={styles.proseText}>
             An <strong>APM session</strong> runs across two phases. A Planner, a Manager, and multiple Workers each
-            operate in their own isolated context, coordinating through planning documents, centralized Memory and
-            project tracking, and a file-based communication system.
+            operate in their own isolated context. Coordination happens through planning documents, centralized
+            Memory, and file-based communication.
           </p>
         </Grid.Region>
 
         <Grid.Region {...R(regions, 'hw-p1')} id="hw-p1" className={styles.prose}>
           <p className={styles.proseText}>
             The <strong>Planning Phase</strong> starts with the <strong>Planner</strong> doing collaborative
-            project discovery - asking targeted questions about requirements, constraints and preferences
+            project discovery by asking targeted questions about requirements, constraints and preferences
             while exploring your codebase. Once you sign off on its understanding, the Planner breaks gathered
-            context into three planning documents: a <strong>Spec</strong>, a <strong>Plan</strong> and a <strong>Rules</strong> file - yours to review
+            context into three planning documents: a <strong>Spec</strong>, a <strong>Plan</strong> and a <strong>Rules</strong> file for you to review
             and correct before implementation begins.
           </p>
         </Grid.Region>
@@ -284,10 +284,10 @@ function HomeContent() {
         <Grid.Region {...R(regions, 'hw-p2')} id="hw-p2" className={styles.prose}>
           <p className={styles.proseText}>
             The <strong>Implementation Phase</strong> is a continuous loop until project completion. The <strong>Manager</strong> assigns Tasks
-            based on the Plan's dependencies and reviews outcomes. <strong>Workers</strong> execute, log their work to <strong>Memory</strong>,
-            and report back - all coordinated through a file-based communication system with you triggering every step.
-            When any agent's context window fills, you can perform a <strong>Handoff</strong> - capturing working context so the next
-            instance picks up without context gaps.
+            based on the Plan's dependencies and reviews outcomes. <strong>Workers</strong> execute assigned tasks, log their
+            work to <strong>Memory</strong>, and report back. You trigger every step through a file-based communication system.
+            When any agent's context window fills, you can perform a <strong>Handoff</strong> to capture working context so the
+            next instance picks up without gaps.
           </p>
         </Grid.Region>
 

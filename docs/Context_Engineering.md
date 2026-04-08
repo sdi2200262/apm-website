@@ -23,7 +23,7 @@ Having an entire conversation's context budget available allows the Planner to e
 
 ### Manager
 
-The Manager operates one layer above implementation detail. Its default context is coordination-level: planning documents, the Tracker, the Index, and Task Logs. It goes deeper when needed - reading source files for Task Prompt construction, investigating implementation detail during review, or operating at any level when the User requests it - but returns to the coordination layer after each pass. This is what allows a single Manager to coordinate many Tasks across multiple Workers without its context becoming unmanageable.
+The Manager operates one layer above implementation detail. Its default context is coordination-level: planning documents, the Tracker, the Index, and Task Logs. It goes deeper when needed - reading source files for Task Prompt construction, investigating implementation detail during review, or operating at any level when the User requests it, but returns to the coordination layer after each pass. This is what allows a single Manager to coordinate many Tasks across multiple Workers without its context becoming unmanageable.
 
 ### Workers
 
@@ -44,7 +44,7 @@ The Manager's context could easily bloat since it coordinates every Task, review
 
 ### Cross-Agent Dependencies
 
-Workers share a codebase, so they can see each other's outputs - the files, the code, the artifacts. What they lack is the context behind that work: why it was built that way, what architectural decisions shaped it, where to look for integration points, what constraints apply.
+Workers share a codebase, so they can see each other's outputs: the files, the code, the artifacts. What they lack is the context behind that work: why it was built that way, what architectural decisions shaped it, where to look for integration points, what constraints apply.
 
 The Manager bridges this gap. It oversaw both sides of the dependency, assigned the producer Task, reviewed the outcome, and understands the design intent from the Spec. When constructing the consumer's Task Prompt, the Manager reads the producer's Task Log, extracts the key outputs and integration details, and provides the consuming Worker with the context it cannot get from the code alone.
 
@@ -60,9 +60,9 @@ The Manager accounts for this by treating those dependencies as if a different W
 
 Every piece of project state in APM exists as a file outside any Agent's context window. When a conversation ends or an Agent's context fills up, the project state survives in the file system.
 
-The [Tracker](Agent_Orchestration.md#the-tracker) holds live project state, reflecting the current moment. [Memory](Agent_Orchestration.md#file-based-memory) is a separate hierarchy that captures project history through Task Logs, Handoff Logs, and the Index. Together, they compose into a compression pipeline: execution detail flows into Task Logs, Task Logs compress into Stage summaries, working notes distill into Memory notes in the Index. Each layer reduces volume while preserving what matters for coordination.
+The [Tracker](Agent_Orchestration.md#the-tracker) holds live project state, reflecting the current moment. [Memory](Agent_Orchestration.md#file-based-memory) is a separate hierarchy that captures project history through Task Logs, Handoff Logs, and the Index. Together they form a compression pipeline: execution detail flows into Task Logs; Task Logs compress into Stage summaries; working notes distill into Memory notes in the Index. Each layer reduces volume while preserving what matters for coordination.
 
-An incoming Manager after Handoff reads the Index first - the most compressed and durable layer - then the Tracker for current state, then relevant Task Logs for recent detail. Each layer adds specificity, but the compressed layers load first so the Agent has the big picture before the details.
+An incoming Manager after Handoff reads the Index first - the most compressed and durable layer, then the Tracker for current state, then relevant Task Logs for recent detail. Each layer adds specificity, but the compressed layers load first so the Agent has the big picture before the details.
 
 [Session archives](Workflow_Overview.md#session-continuation) extend this principle across APM sessions. The archive is a contextual snapshot. A new Planner examines relevant archives during Context Gathering and validates findings against the current codebase, enabling iterative development without starting from zero.
 

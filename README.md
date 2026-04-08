@@ -4,10 +4,10 @@ Documentation website for [Agentic Project Management](https://github.com/sdi220
 
 ## Stack
 
-- **[Docusaurus](https://docusaurus.io/)** — documentation framework
-- **React** — custom landing page
-- **Tailwind CSS** — utility styles
-- **shadcn/ui** — component primitives
+- **[Docusaurus](https://docusaurus.io/)** - documentation framework
+- **React** - custom landing page
+- **Tailwind CSS** - utility styles
+- **shadcn/ui** - component primitives
 
 ## Development
 
@@ -43,7 +43,7 @@ The site serves `/llms.txt` and `/llms-full.txt` for AI agent consumption. Both 
 
 ## Contributing
 
-The v0.5.4 docs had video walkthroughs covering the full workflow. The v1 docs need the same treatment — video coverage of the Planning Phase, Implementation Phase, Handoff, and session continuation would be a significant contribution. If you're interested, open an issue to discuss scope and format.
+The v0.5.4 docs had video walkthroughs covering the full workflow. The v1 docs need the same treatment. Video coverage of the Planning Phase, Implementation Phase, Handoff, and session continuation would be a significant contribution. If you're interested, open an issue to discuss scope and format.
 
 ## License
 
