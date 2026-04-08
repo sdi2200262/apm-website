@@ -68,7 +68,7 @@ Workers execute Tasks assigned by the Manager. Each Worker is defined in the Pla
 
 **Core Responsibilities:**
 
-- **Task Execution** - Executes assigned Tasks following the Task Prompt instructions, validates results per specified criteria, and iterates on failure until success or a stop condition. See [Task Execution](Workflow_Overview.md#task-execution) for the full procedure.
+- **Task Execution** - Executes assigned Tasks following the Task Prompt instructions and validates results per specified criteria. When validation fails, the Worker investigates the root cause before attempting a fix, and spawns a debug subagent for deeper investigation when a correction does not resolve the issue. See [Task Execution](Workflow_Overview.md#task-execution) for the full procedure.
 
 - **Task Logging** - Documents execution results in a structured Task Log and writes a Task Report to the Report Bus. Task Logs bridge the Manager's coordination view and the Worker's execution details, letting the Manager understand outcomes without reviewing code directly. See [Task Logging](Workflow_Overview.md#task-logging) for contents and procedure.
 

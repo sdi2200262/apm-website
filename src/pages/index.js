@@ -274,9 +274,9 @@ function HomeContent() {
         <Grid.Region {...R(regions, 'hw-p1')} id="hw-p1" className={styles.prose}>
           <p className={styles.proseText}>
             The <strong>Planning Phase</strong> starts with the <strong>Planner</strong> doing collaborative
-            project discovery — asking targeted questions about requirements, constraints and preferences
+            project discovery - asking targeted questions about requirements, constraints and preferences
             while exploring your codebase. Once you sign off on its understanding, the Planner breaks gathered
-            context into three planning documents: a <strong>Spec</strong>, a <strong>Plan</strong> and a <strong>Rules</strong> file — yours to review
+            context into three planning documents: a <strong>Spec</strong>, a <strong>Plan</strong> and a <strong>Rules</strong> file - yours to review
             and correct before implementation begins.
           </p>
         </Grid.Region>
@@ -285,8 +285,8 @@ function HomeContent() {
           <p className={styles.proseText}>
             The <strong>Implementation Phase</strong> is a continuous loop until project completion. The <strong>Manager</strong> assigns Tasks
             based on the Plan's dependencies and reviews outcomes. <strong>Workers</strong> execute, log their work to <strong>Memory</strong>,
-            and report back — all coordinated through a file-based communication system with you triggering every step.
-            When any agent's context window fills, you can perform a <strong>Handoff</strong> — capturing working context so the next
+            and report back - all coordinated through a file-based communication system with you triggering every step.
+            When any agent's context window fills, you can perform a <strong>Handoff</strong> - capturing working context so the next
             instance picks up without context gaps.
           </p>
         </Grid.Region>

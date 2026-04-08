@@ -94,9 +94,9 @@
   <rect x="571" y="161" width="96" height="26" rx="2" stroke="#252c2c" stroke-width="1" fill="#121616"/>
   <text x="619" y="178" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">TASK LOG</text>
 
-  <!-- TASK REVIEWING (MANAGER) -->
+  <!-- TASK REVIEW (MANAGER) -->
   <rect x="390" y="158" width="94" height="32" rx="2" stroke="#3aada5" stroke-width="1"/>
-  <text x="437" y="171" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">TASK REVIEWING</text>
+  <text x="437" y="171" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">TASK REVIEW</text>
   <text x="437" y="182" font-family="'JetBrains Mono', monospace" font-size="7" fill="#8a9594" letter-spacing="0.6" text-anchor="middle">review · assess</text>
 
   <!-- TASK ASSIGNMENT → TASK EXECUTION -->
@@ -108,10 +108,10 @@
   <!-- TASK LOGGING → TASK LOG -->
   <path d="M 681,86 L 681,138 Q 681,145 674,145 L 626,145 Q 619,145 619,152 L 619,161" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
-  <!-- TASK LOG → TASK REVIEWING -->
+  <!-- TASK LOG → TASK REVIEW -->
   <path d="M 571,174 L 484,174" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
-  <!-- TASK REVIEWING → TASK ASSIGNMENT (loop) -->
+  <!-- TASK REVIEW → TASK ASSIGNMENT (loop) -->
   <path d="M 437,158 L 437,86" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- ===== Combined footer ===== -->

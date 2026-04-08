@@ -45,9 +45,9 @@
   <rect x="191" y="161" width="96" height="26" rx="2" stroke="#252c2c" stroke-width="1" fill="#121616"/>
   <text x="239" y="178" font-family="'JetBrains Mono', monospace" font-size="8" fill="#8a9594" letter-spacing="0.8" text-anchor="middle">TASK LOG</text>
 
-  <!-- TASK REVIEWING (MANAGER) -->
+  <!-- TASK REVIEW (MANAGER) -->
   <rect x="10" y="158" width="94" height="32" rx="2" stroke="#3aada5" stroke-width="1"/>
-  <text x="57" y="171" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">TASK REVIEWING</text>
+  <text x="57" y="171" font-family="'JetBrains Mono', monospace" font-size="8" fill="#e2e7e6" letter-spacing="0.8" text-anchor="middle">TASK REVIEW</text>
   <text x="57" y="182" font-family="'JetBrains Mono', monospace" font-size="7" fill="#8a9594" letter-spacing="0.6" text-anchor="middle">review · assess</text>
 
   <!-- TASK ASSIGNMENT → TASK EXECUTION (crosses MANAGER→WORKER) -->
@@ -59,10 +59,10 @@
   <!-- TASK LOGGING → TASK LOG (down then left, crosses WORKER→.apm/memory/) -->
   <path d="M 301,86 L 301,138 Q 301,145 294,145 L 246,145 Q 239,145 239,152 L 239,161" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
-  <!-- TASK LOG → TASK REVIEWING (crosses .apm/memory/→MANAGER) -->
+  <!-- TASK LOG → TASK REVIEW (crosses .apm/memory/→MANAGER) -->
   <path d="M 191,174 L 104,174" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
-  <!-- TASK REVIEWING → TASK ASSIGNMENT (loop back, within MANAGER) -->
+  <!-- TASK REVIEW → TASK ASSIGNMENT (loop back, within MANAGER) -->
   <path d="M 57,158 L 57,86" stroke="#586060" stroke-width="1" fill="none" marker-end="url(#ah)"/>
 
   <!-- Footer -->
