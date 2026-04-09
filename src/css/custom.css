@@ -161,6 +161,13 @@ body {
   background: var(--apm-bg) !important;
 }
 
+/* backdrop-filter creates a containing block for position:fixed children,
+   trapping the mobile sidebar inside the 60px navbar. Disable it when open. */
+.navbar.navbar-sidebar--show {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .navbar__title {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
