@@ -132,12 +132,6 @@ function HomeContent() {
     setTimeout(() => overlay.remove(), 450);
   };
 
-  // Hide Docusaurus navbar — we have our own
-  useEffect(() => {
-    const navbar = document.querySelector('.navbar');
-    if (navbar) navbar.style.display = 'none';
-    return () => { if (navbar) navbar.style.display = ''; };
-  }, []);
 
   return (
     <main className={`landing-page ${styles.landing}`}>
