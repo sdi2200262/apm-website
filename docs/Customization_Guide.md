@@ -136,7 +136,26 @@ Custom repositories can write files anywhere within the project directory - not 
 There is no signature verification on releases. Review the repository contents before installing, particularly commands and guides that define Agent behavior. See the [Security Guide](Security_Guide.md) for full details on the trust model, risks, and mitigations.
 :::
 
-## Examples
+## Official Custom Adaptations
+
+### APM Auto - Autonomous Subagent Dispatch
+
+[APM Auto](https://github.com/sdi2200262/apm-auto) is a Claude Code-only adaptation that replaces user-mediated Worker chats with Manager-driven subagent dispatch via Claude Code's `Agent()` tool. The Manager autonomously spawns ephemeral subagents to execute Tasks, reviews their output, merges branches, and continues - only pausing when genuine human judgment is needed.
+
+Key changes from the official workflow:
+- Workers become ephemeral subagents dispatched via a custom `apm-worker` agent definition
+- The Manager operates an autonomous coordination loop instead of waiting for User-mediated message delivery
+- Dependencies are classified at dispatch time (intra-batch vs cross-dispatch) instead of planning time
+- Commands reduced from 9 to 5 (Worker commands eliminated)
+- Single Claude Code target
+
+Best for prototyping, fast execution, and simpler projects where managing separate Worker chats adds friction without proportional value.
+
+```bash
+apm custom -r sdi2200262/apm-auto
+```
+
+## Community Examples
 
 ### Domain-Specific APM
 
