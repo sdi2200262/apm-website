@@ -53,7 +53,18 @@ const config = {
     mermaid: true,
   },
 
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: [
+    '@docusaurus/theme-mermaid',
+    [
+      '@easyops-cn/docusaurus-search-local',
+      /** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */
+      ({
+        hashed: true,
+        indexBlog: false,
+        docsRouteBasePath: '/docs',
+      }),
+    ],
+  ],
 
   presets: [
     [
