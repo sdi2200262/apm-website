@@ -34,6 +34,8 @@ APM treats the AI not as a single continuous assistant, but as a team of special
 
 This mirrors how human teams collaborate: specialized roles, shared documentation, and explicit communication protocols.
 
+What distinguishes this from subagent-based approaches: the agents doing implementation work are not restarted fresh on each task. They accumulate working context across assignments - building familiarity with their domain as the project progresses. When context fills, a structured Handoff transfers that working knowledge to a fresh instance rather than discarding it.
+
 ## Agent Types
 
 APM coordinates three specialized Agent types:
@@ -54,7 +56,7 @@ Structured files outside any Agent's context keep track of state and history, so
 
 - **Memory** - A file hierarchy that tracks project progression. Workers log their completed work; the Manager reads those logs to track progress without reviewing code directly. Durable observations accumulate across the project.
 
-- **Message Bus** - File-based message passing between Agent conversations. The Manager writes Task assignments; Workers write completion reports. You deliver messages by running simple commands, keeping APM platform-agnostic and every interaction auditable.
+- **Message Bus** - File-based message passing between Agent conversations. The Manager writes Task assignments; Workers write completion reports. You deliver messages by running simple commands, keeping APM platform-agnostic and every interaction auditable, so you may review each Task assignment before it reaches a Worker and each result before the Manager acts on it.
 
 - **Handoff** - When an Agent's context window fills up, you transfer its working knowledge to a fresh instance. The outgoing Agent captures what it knows in structured artifacts; the incoming Agent reads them and picks up where the previous left off.
 
