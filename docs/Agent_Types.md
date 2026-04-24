@@ -15,7 +15,7 @@ The framework achieves specialization through context scoping rather than access
 
 APM operates in two phases. In the Planning Phase, a Planner creates three planning documents - the Spec (what to build), the Plan (how work is organized into Stages and Tasks), and the Rules (how work is performed). In the Implementation Phase, a Manager coordinates Workers to execute those Tasks.
 
-Agents communicate through a file-based Message Bus - the Manager writes Task assignments, Workers write results back, and the User carries messages between conversations. Project state persists in structured files: the Tracker (live project state), the Index (durable observations), and Task Logs (per-Task execution summaries). When an Agent's context fills, a Handoff transfers working knowledge to a fresh instance.
+Agents communicate through a file-based Message Bus - the Manager writes Task assignments, Workers write results back, and the User carries messages between conversations. This mediation is intentional: every task assignment and result passes through your hands, giving you a checkpoint to review, redirect, or intervene at each step. Project state persists in structured files: the Tracker (live project state), the Index (durable observations), and Task Logs (per-Task execution summaries). When an Agent's context fills, a Handoff transfers working knowledge to a fresh instance.
 
 Each mechanism is covered in detail in [Agent Orchestration](Agent_Orchestration.md). This doc focuses on the three Agent roles and how they use them.
 
