@@ -155,6 +155,24 @@ Best for prototyping, fast execution, and simpler projects where managing separa
 apm custom -r sdi2200262/apm-auto
 ```
 
+### APM Semi - Collaborative Human-and-Agent Execution
+
+[APM Semi](https://github.com/sdi2200262/apm-semi) is an official custom adaptation that gives the User direct execution authority over any Task while keeping APM's structure and context management. The User can claim any Task at any point and execute it themselves; the agent on their side - the Manager during coordination or the paused Worker mid-execution - stays on standby, answering questions, running validation when the User returns, and writing the Task Log on the User's behalf.
+
+Key changes from the official workflow:
+- User-claimable Tasks during Plan review and dynamically throughout the Implementation Phase
+- Conversational claim, unclaim, takeover, and report-done with no slash commands needed
+- Sovereignty signal capture during Context Gathering, carried into Plan Analysis as User-owned assignments
+- Standby collaboration on User-held Tasks: validation iteration, residual handling, Task Log written on the User's behalf
+- Proactive claim suggestions at Stage boundaries based on accumulated session signal
+- All six APM platforms supported (Claude Code, Cursor, Copilot, Gemini CLI, OpenCode, Codex CLI)
+
+Best for users who want to author the substantive code themselves and lean on AI for boilerplate or peripheral Tasks - a collaborative way of working agentically rather than a fully delegated one.
+
+```bash
+apm custom -r sdi2200262/apm-semi
+```
+
 ## Community Examples
 
 ### Domain-Specific APM
