@@ -13,13 +13,22 @@
  */
 const NEWS = [
   {
+    id: 'apm-semi-v1.0.0',
+    type: 'release',
+    title: 'APM Semi: build hands-on by claiming any Task at any time',
+    url: 'https://github.com/sdi2200262/apm-semi',
+    date: '2026-04-26',
+    description:
+      'A custom APM adaptation for collaborative human-and-agent execution, where the User can claim any Task and the respective Agent stays on standby; answering questions, running validation, and logging on the User\'s behalf. Built for direct ownership over the work that matters.',
+  },
+  {
     id: 'apm-auto-v1.0.1',
     type: 'release',
-    title: 'APM Auto — autonomy through subagent dispatch',
+    title: 'APM Auto: build faster using subagent-driven execution',
     url: 'https://github.com/sdi2200262/apm-auto',
     date: '2026-04-11',
     description:
-      'A custom APM adaptation for Claude Code. The Manager autonomously spawns ephemeral subagents to execute Tasks, only pausing for genuine human judgment — vibe-coding with structure.',
+      'A custom APM adaptation for Claude Code, where the Manager assigns work autonomously using ephemeral subagents and pauses only when needing human judgement. Built for fast prototyping.',
   },
 ];
 
