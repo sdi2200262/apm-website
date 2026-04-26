@@ -5,6 +5,7 @@ import Grid, { useColumns } from '../components/Grid';
 import CommandBlock from '../components/CommandBlock';
 import AssistantSelector from '../components/AssistantSelector';
 import ContentViewer from '../components/ContentViewer';
+import NewsButton from '../components/NewsButton/NewsButton';
 import { useStats } from '../hooks/useStats';
 import { useContributors } from '../hooks/useContributors';
 import {
@@ -148,6 +149,7 @@ function HomeContent() {
               <a href="/docs/introduction" className={styles.navLink} onClick={() => setMenuOpen(false)}>Docs</a>
               <a href={GITHUB_URL} className={styles.navLink} target="_blank" rel="noopener">GitHub</a>
               <a href={NPM_URL} className={styles.navLink} target="_blank" rel="noopener">NPM</a>
+              <NewsButton />
             </nav>
             <div className={styles.barRight}>
               {templateVersion && (
