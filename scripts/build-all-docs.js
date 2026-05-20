@@ -52,7 +52,7 @@ const refDocs = DOC_ORDER.slice(8);      // CLI Guide through Security Guide
 
 let llmsTxt = `# Agentic Project Management (APM)
 
-> A structured framework for building complex software projects with AI assistants using coordinated multi-agent workflows. Open source, platform-agnostic, supports Claude Code, Cursor, GitHub Copilot, Gemini CLI, OpenCode, and Codex.
+> A structured framework for building complex software projects with AI assistants using coordinated multi-agent workflows. Open source, platform-agnostic, supports Claude Code, Cursor, GitHub Copilot, Antigravity CLI, OpenCode, and Codex.
 
 APM coordinates three AI agent roles (Planner, Manager, Workers) across two phases. The Planning Phase gathers requirements and produces structured planning documents. The Implementation Phase executes work through repeating task cycles where the Manager assigns tasks, Workers execute them, and the user carries messages between agent conversations via a file-based Message Bus. All project state lives in files (.apm/ directory), not in any agent's context window, so nothing is lost when a conversation ends.
 

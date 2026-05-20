@@ -45,16 +45,20 @@
 
 .barNav {
   display: flex;
+  align-items: center;
   gap: 20px;
 }
 
 .navLink {
+  display: flex;
+  align-items: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   color: var(--apm-t2);
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1.2;
   transition: color 0.15s ease;
 }
 
