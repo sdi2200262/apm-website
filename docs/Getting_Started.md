@@ -16,7 +16,7 @@ If you want your AI assistant to help explain APM concepts or answer questions a
 Before starting, ensure you have:
 
 - **Node.js** - Version 18 or higher for the APM CLI
-- **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Antigravity CLI, OpenCode, or Codex
+- **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Antigravity, OpenCode, or Codex
 - **Project Workspace** - A directory for your project
 
 **Model selection:** Use the most capable model available to you for all Agent roles. See [Tips and Tricks](Tips_and_Tricks.md) for recommended models and cost-effective alternatives.
@@ -63,7 +63,7 @@ Each APM Agent runs in its own isolated conversation. What this looks like varie
 
 **CLI assistants:**
 - **Claude Code** - Open a new terminal and start Claude Code
-- **Antigravity CLI** - Open a new terminal and start Antigravity CLI
+- **Antigravity** - Open a new terminal and start Antigravity
 - **OpenCode** - Open a new terminal and start OpenCode
 - **Codex** - Open a new terminal and start Codex
 

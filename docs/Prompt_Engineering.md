@@ -83,7 +83,7 @@ APM's files are authored once and adapted per platform at build time. The source
 | `{ARGS}` | Platform's argument syntax (`$ARGUMENTS`, `{{args}}`, or descriptive text for platforms without argument variables) |
 | `{SUBAGENT_GUIDANCE}` | Platform-native subagent invocation |
 
-The core workflow is identical across all platforms. A Planner on Claude Code and a Planner on Cursor follow the same procedures, read the same guides, and produce the same planning documents. The differences are limited to file paths, argument syntax, subagent invocation, and format (Markdown for Antigravity CLI, Markdown for everything else).
+The core workflow is identical across all platforms. A Planner on Claude Code and a Planner on Cursor follow the same procedures, read the same guides, and produce the same planning documents. The differences are limited to file paths, argument syntax, subagent invocation, and format (Markdown for Antigravity, Markdown for everything else).
 
 ## Terminology
 
