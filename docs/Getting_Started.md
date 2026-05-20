@@ -16,7 +16,7 @@ If you want your AI assistant to help explain APM concepts or answer questions a
 Before starting, ensure you have:
 
 - **Node.js** - Version 18 or higher for the APM CLI
-- **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Gemini CLI, OpenCode, or Codex
+- **AI Assistant** - One of the supported platforms: Claude Code, Cursor, GitHub Copilot, Antigravity CLI, OpenCode, or Codex
 - **Project Workspace** - A directory for your project
 
 **Model selection:** Use the most capable model available to you for all Agent roles. See [Tips and Tricks](Tips_and_Tricks.md) for recommended models and cost-effective alternatives.
@@ -63,7 +63,7 @@ Each APM Agent runs in its own isolated conversation. What this looks like varie
 
 **CLI assistants:**
 - **Claude Code** - Open a new terminal and start Claude Code
-- **Gemini CLI** - Open a new terminal and start Gemini CLI
+- **Antigravity CLI** - Open a new terminal and start Antigravity CLI
 - **OpenCode** - Open a new terminal and start OpenCode
 - **Codex** - Open a new terminal and start Codex
 
@@ -114,7 +114,7 @@ This procedure produces three planning documents:
 
 - **Spec** - Design decisions, constraints, and a workspace overview defining what is being built and where
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
-- **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`)
+- **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `ANTIGRAVITY.md`)
 
 You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus and the Planning Phase completes.
 

@@ -68,7 +68,7 @@ This is what `.apm/` looks like during a session:
 └── archives/             # Archived sessions from previous runs
 ```
 
-The Rules file lives outside `.apm/` - it's written to your platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`) so your assistant reads it automatically.
+The Rules file lives outside `.apm/` - it's written to your platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `ANTIGRAVITY.md`) so your assistant reads it automatically.
 
 ## Planning Phase
 

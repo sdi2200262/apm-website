@@ -50,7 +50,7 @@ The Planner decomposes gathered context into three [planning documents](Agent_Or
 
 **Plan.** The Planner identifies work domains and maps them to Workers. It reasons about how domain characteristics create stage boundaries, then walks through each Stage's deliverables and how they decompose into Tasks before deepening the analysis per Task. After a dependency analysis and pre-write completeness checks, the Planner writes the full Plan and presents it for User review and approval.
 
-**Rules.** The Planner extracts universal execution patterns and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`). The User reviews and approves.
+**Rules.** The Planner extracts universal execution patterns and writes them to the platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `ANTIGRAVITY.md`). The User reviews and approves.
 
 After all three documents are approved, the Planner initializes the [Message Bus](Agent_Orchestration.md#the-message-bus). The Planning Phase is complete. The User opens a new conversation and initiates the Manager.
 
