@@ -6,7 +6,7 @@
 
 .wrap {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
 }
 
@@ -14,17 +14,19 @@
 
 .trigger {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   background: transparent;
   border: none;
   padding: 0;
+  margin: 0;
   cursor: pointer;
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   color: var(--apm-t2);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1.2;
   transition: color 0.15s ease;
 }
 

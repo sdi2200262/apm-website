@@ -58,6 +58,7 @@
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1.2;
   transition: color 0.15s ease;
 }
 
