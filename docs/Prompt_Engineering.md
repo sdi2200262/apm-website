@@ -78,7 +78,7 @@ APM's files are authored once and adapted per platform at build time. The source
 
 | Placeholder | Resolves to |
 | :--- | :--- |
-| `{RULES_FILE}` | `CLAUDE.md`, `AGENTS.md`, or `ANTIGRAVITY.md` depending on platform |
+| `{RULES_FILE}` | `CLAUDE.md`, `AGENTS.md`, or `AGENTS.md` depending on platform |
 | `{SKILL_PATH:name}` | Platform-specific path where skills are installed |
 | `{ARGS}` | Platform's argument syntax (`$ARGUMENTS`, `{{args}}`, or descriptive text for platforms without argument variables) |
 | `{SUBAGENT_GUIDANCE}` | Platform-native subagent invocation |

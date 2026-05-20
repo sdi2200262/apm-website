@@ -28,7 +28,7 @@ export const ASSISTANTS = [
   },
   {
     id: 'antigravity',
-    name: 'Antigravity (CLI & IDE)',
+    name: 'Antigravity',
     flag: '-a antigravity',
     logo: '/img/antigravity-logo.svg',
   },

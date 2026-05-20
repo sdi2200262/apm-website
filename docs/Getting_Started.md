@@ -114,7 +114,7 @@ This procedure produces three planning documents:
 
 - **Spec** - Design decisions, constraints, and a workspace overview defining what is being built and where
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organized
-- **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `ANTIGRAVITY.md`)
+- **Rules** - Universal execution patterns defining how work is performed (written to the platform's rules file - e.g. `CLAUDE.md`, `AGENTS.md`, `AGENTS.md`)
 
 You review and approve each document before the Planner proceeds to the next. Request modifications and corrections as needed. After all three approvals, the Planner initializes the Message Bus and the Planning Phase completes.
 
