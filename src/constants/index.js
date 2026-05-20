@@ -27,10 +27,10 @@ export const ASSISTANTS = [
     logo: '/img/claude-logo.svg',
   },
   {
-    id: 'gemini',
-    name: 'Gemini CLI',
-    flag: '-a gemini',
-    logo: '/img/gemini-logo.svg',
+    id: 'antigravity',
+    name: 'Antigravity CLI',
+    flag: '-a antigravity',
+    logo: '/img/antigravity-logo.svg',
   },
   {
     id: 'opencode',
