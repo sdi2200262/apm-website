@@ -13,6 +13,15 @@
  */
 const NEWS = [
   {
+    id: 'antigravity-migration',
+    type: 'other',
+    title: 'Migrating Gemini CLI support to Antigravity',
+    url: 'https://github.com/sdi2200262/agentic-project-management/issues/115',
+    date: '2026-05-20',
+    description:
+      'Following Google\'s announcement, APM is transitioning support from Gemini CLI to the new Antigravity platform (CLI and IDE). Support for .antigravity and ANTIGRAVITY.md is now live in main.',
+  },
+  {
     id: 'apm-semi-v1.0.0',
     type: 'release',
     title: 'APM Semi: build hands-on by claiming any Task at any time',
