@@ -35,9 +35,9 @@ The `agentic-pm` CLI handles custom repositories the same way it handles the off
 
 Running `npm run build:release` processes source templates into platform-specific bundles. The build system is configured by two key files:
 
-**`build/build-config.json`** defines an array of **targets**. In the official APM repository, each target corresponds to a supported assistant (Claude Code, Cursor, Copilot, Gemini CLI, OpenCode, Codex), but the build system itself is target-agnostic - a custom repository could define any set of targets. Each target specifies its output format (Markdown or TOML), config directory (e.g. `.claude/`, `.cursor/`, `.github/`), and directory layout for commands, guides, skills, and agents. It also defines platform-specific values like argument syntax and subagent invocation patterns.
+**`build/build-config.json`** defines an array of **targets**. In the official APM repository, each target corresponds to a supported assistant (Claude Code, Cursor, Copilot, Antigravity, OpenCode, Codex), but the build system itself is target-agnostic - a custom repository could define any set of targets. Each target specifies its output format (Markdown), config directory (e.g. `.claude/`, `.cursor/`, `.github/`), and directory layout for commands, guides, skills, and agents. It also defines platform-specific values like argument syntax and subagent invocation patterns.
 
-**`build/processors/placeholders.js`** resolves template placeholders to target-specific values at build time. Templates are authored once with placeholders like `{RULES_FILE}`, `{SKILL_PATH:name}`, `{ARGS}`, and `{SUBAGENT_GUIDANCE}`, and the build system replaces them per target. For example, `{RULES_FILE}` becomes `CLAUDE.md` for Claude Code but `GEMINI.md` for Gemini CLI, and `{ARGS}` becomes `$ARGUMENTS` for Markdown platforms but `{{args}}` for TOML. This is what makes APM's templates platform-agnostic at the source level.
+**`build/processors/placeholders.js`** resolves template placeholders to target-specific values at build time. Templates are authored once with placeholders like `{RULES_FILE}`, `{SKILL_PATH:name}`, `{ARGS}`, and `{SUBAGENT_GUIDANCE}`, and the build system replaces them per target. For example, `{RULES_FILE}` becomes `CLAUDE.md` for Claude Code but `AGENTS.md` for Antigravity, and `{ARGS}` becomes `$ARGUMENTS` for Markdown platforms but `{{args}}` for TOML. This is what makes APM's templates platform-agnostic at the source level.
 
 The build produces two types of output in `dist/`:
 
@@ -165,7 +165,7 @@ Key changes from the official workflow:
 - Sovereignty signal capture during Context Gathering, carried into Plan Analysis as User-owned assignments
 - Standby collaboration on User-held Tasks: validation iteration, residual handling, Task Log written on the User's behalf
 - Proactive claim suggestions at Stage boundaries based on accumulated session signal
-- All six APM platforms supported (Claude Code, Cursor, Copilot, Gemini CLI, OpenCode, Codex CLI)
+- All six APM platforms supported (Claude Code, Cursor, Copilot, Antigravity, OpenCode, Codex CLI)
 
 Best for users who want to author the substantive code themselves and lean on AI for boilerplate or peripheral Tasks - a collaborative way of working agentically rather than a fully delegated one.
 

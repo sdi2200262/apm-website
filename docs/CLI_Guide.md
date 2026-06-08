@@ -208,7 +208,7 @@ project/
 └── ...
 ```
 
-Platform-specific directories: `.claude/` for Claude Code, `.github/` for GitHub Copilot, `.gemini/` for Gemini CLI, `.opencode/` for OpenCode, `.codex/` and `.agents/` for Codex (guides and agents go to `.codex/`; commands and skills go to `.agents/skills/`).
+Platform-specific directories: `.claude/` for Claude Code, `.github/` for GitHub Copilot, `.agents/` for Antigravity, `.opencode/` for OpenCode, `.codex/` and `.agents/` for Codex (guides and agents go to `.codex/`; commands and skills go to `.agents/skills/`).
 
 ## Versioning
 
