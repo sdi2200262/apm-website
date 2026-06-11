@@ -230,6 +230,11 @@
   .popover {
     width: 340px;
   }
+
+  /* Match the shrunk nav-link size so NEWS sits in line with the rest */
+  .trigger {
+    font-size: 11px;
+  }
 }
 
 /* ============================================
@@ -243,6 +248,7 @@
   /* Trigger inherits the hamburger nav-item look */
   .wrap {
     display: flex;
+    justify-content: center;
     width: 100%;
     border-bottom: 1px solid var(--apm-border);
   }
@@ -252,10 +258,14 @@
   }
 
   .trigger {
-    width: 100%;
-    justify-content: flex-start;
     padding: 10px 0;
     font-size: 12px;
+  }
+
+  /* Re-anchor the unread dot to the top-right of the label; the trigger's
+     vertical padding would otherwise push it up to the divider above. */
+  .dot {
+    top: 9px;
   }
 
   .backdrop {
