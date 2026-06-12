@@ -30,7 +30,7 @@ export const ASSISTANTS = [
     id: 'antigravity',
     name: 'Antigravity',
     flag: '-a antigravity',
-    logo: '/img/antigravity-logo.svg',
+    logo: '/img/antigravity-logo.png',
   },
   {
     id: 'opencode',
