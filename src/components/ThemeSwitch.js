@@ -9,9 +9,10 @@ const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matc
 // slots swap at once and two WAAPI animations hide the jump: the new choice slides from the left slot
 // into the right one, the old one fades out in place and back in on the left. The page follows 60ms
 // later through a View Transition cross-fade; reduced motion or no API skips the effects.
-// `away` slides the dock off the right edge until the pointer enters the corner (landing: once the cover
-// scrolls away). `toTop` (docs) adds an up button with its own random marker, and past 400px of scroll
-// sets `away` the same way, so both pages share one hide-and-reveal behaviour.
+// `away` (landing: once the cover scrolls away) slides the dock off the right edge. `toTop` adds an up button
+// with its own random marker; past 400px of scroll it shows and also counts as away. Either way the dock
+// stays while the mouse is in the 160x180 bottom-right corner, tracked from its last position, so scrolling
+// with the pointer resting there doesn't hide and re-show it (hover isn't re-evaluated during scroll).
 // Renders nothing until mounted: the marker's tilt is random and the theme is only known client-side.
 export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
   const { colorMode, setColorMode } = useColorMode();
@@ -25,6 +26,12 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
   const icons = useRef({}); // mode -> <button>, for the swap animations
   const [open, setOpen] = useState(false); // touch only: tapping the selected icon opens/closes the pill (no :hover there)
   const [scrolled, setScrolled] = useState(false);
+  const [inCorner, setInCorner] = useState(false);
+  useEffect(() => {
+    const on = (e) => e.pointerType === 'mouse' && setInCorner(e.clientX > window.innerWidth - 160 && e.clientY > window.innerHeight - 180);
+    window.addEventListener('pointermove', on, { passive: true });
+    return () => window.removeEventListener('pointermove', on);
+  }, []);
   useEffect(() => {
     if (!toTop) return undefined;
     const on = () => setScrolled(window.scrollY > 400);
@@ -32,7 +39,7 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
     window.addEventListener('scroll', on, { passive: true });
     return () => window.removeEventListener('scroll', on);
   }, [toTop]);
-  const away = awayProp || (toTop && scrolled);
+  const away = (awayProp || (toTop && scrolled)) && !inCorner;
   if (!jit) return null;
 
   const choose = (mode) => {
@@ -60,7 +67,6 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
   );
   return (
     <>
-      <div className={`dockzone${away ? ' on' : ''}`} aria-hidden="true" />
       <div className={`dock${away ? ' away' : ''}`}>
         {toTop && (
           <button type="button" className={`totop${scrolled ? ' on' : ''}`} onClick={() => window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' })} aria-label="Back to top" title="Back to top" tabIndex={scrolled ? 0 : -1}>

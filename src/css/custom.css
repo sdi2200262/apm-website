@@ -254,23 +254,16 @@ html.docs-wrapper .site-footer { margin-top: 88px; } /* same gap above the foote
 html.docs-wrapper :is(.navbar, .main-wrapper) { animation: apm-load .8s cubic-bezier(.4, 0, .2, 1); }
 
 /* Theme switch dock (src/components/ThemeSwitch.js): bottom-right pill, 38px closed (selected icon only), 76px
-   open on hover/focus; on docs an up button sits above it. .away (landing: cover scrolled away; docs: scrolled
-   past 400px) slides the dock off; keyboard focus or the 160x180 corner zone brings it back. Touch screens keep it. */
-.dock { position: fixed; z-index: 30; right: 12px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transition: transform .45s cubic-bezier(.65, 0, .35, 1); view-transition-name: apm-dock; }
+   open on hover/focus, with an up button above it. .away (set in JS: scrolled down, and the mouse is not in the
+   160x180 bottom-right corner) slides the dock off; keyboard focus also keeps it. Touch screens always keep it. */
+.dock { position: fixed; z-index: 30; right: 12px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: flex-end; gap: 8px; transition: transform .45s cubic-bezier(.65, 0, .35, 1); view-transition-name: apm-dock; }
 .dock.away:not(:has(:focus-visible)) { transform: translateX(64px); }
 @media (any-hover: none) { .dock.away:not(:has(:focus-visible)) { transform: none; } } /* touch: no hover to bring it back, so it stays */
-.dock { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-/* Up button (docs): same marker + thin icon as the switch; only there once the page is scrolled (.on),
-   which is also when the whole dock slides away (see .dock.away above). */
+/* Up button: same marker + thin icon as the switch; only there once the page is scrolled past 400px (.on). */
 .totop { position: relative; width: 38px; height: 38px; display: grid; place-items: center; appearance: none; margin: 0; padding: 0; border: 0; background: none; color: var(--apm-ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
 .totop.on { opacity: 1; pointer-events: auto; }
 .totop svg { position: relative; width: 20px; height: 20px; }
 .totop:focus-visible { outline: 2px solid var(--apm-link); outline-offset: 3px; }
-.dockzone { position: fixed; z-index: 29; right: 0; bottom: 0; width: 160px; height: 180px; pointer-events: none; }
-@media (hover: hover) {
-  .dockzone.on { pointer-events: auto; }
-  .dockzone.on:hover + .dock.away, .dock.away:hover { transform: none; }
-}
 .pill { position: relative; width: 38px; height: 38px; overflow: hidden; transition: width .14s cubic-bezier(.4, 0, 1, 1); }
 /* Open on hover (pointer devices), keyboard focus, or .open (touch: toggled by tapping the selected icon). */
 .pill:has(:focus-visible), .pill.open { width: 76px; transition: width .3s cubic-bezier(.22, 1, .36, 1); }

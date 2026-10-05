@@ -257,7 +257,7 @@ export default function Home() {
         </section>
 
         <Footer />
-        <ThemeSwitch away={away} />
+        <ThemeSwitch away={away} toTop />
       </div>
     </Layout>
   );
