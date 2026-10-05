@@ -79,8 +79,8 @@ APM operates in two distinct phases:
 <ThemedImage
   alt="APM session overview - Planning Phase produces Spec, Plan, and Rules; Implementation Phase cycles through Task Assignment, Execution, Logging, and Review"
   sources={{
-    light: '/img/diagrams/apm-overview-light.svg',
-    dark: '/img/diagrams/apm-overview-dark.svg',
+    light: '/img/diagrams/book-light-overview.svg',
+    dark: '/img/diagrams/book-dark-overview.svg',
   }}
   style={{margin: '1.5rem 0'}}
 />

@@ -1,45 +1,19 @@
 /* Landing page, book style. Page-wide rules are scoped through html:has(.landing-page) or .landing-page;
    component classes (.wrap, .code, ...) are bare but only rendered here. Theme = Docusaurus's [data-theme] on <html>. */
 
-/* Book, light. Gruvbox light, MIT/X11. https://github.com/morhetz/gruvbox/blob/master/colors/gruvbox.vim */
-html[data-theme='light']:has(.landing-page) {
-  --apm-paper: #FBF1C7;  /* light bg0 */
-  --apm-deep: #EBDBB2;   /* light bg1 */
-  --apm-ink: #3C3836;    /* light fg1 */
-  --apm-soft: #D5C4A1;   /* light bg2 */
-  --apm-link: #1F7A74;   /* own, the logo's teal */
-  --apm-hover: #14524E;  /* own, teal darkened */
-}
-
-/* Book, dark. Gruvbox dark, MIT/X11. Same source. */
-html[data-theme='dark']:has(.landing-page) {
-  --apm-paper: #282828;  /* dark bg0 */
-  --apm-deep: #3C3836;   /* dark bg1 */
-  --apm-ink: #EBDBB2;    /* dark fg1 */
-  --apm-soft: #504945;   /* dark bg2 */
-  --apm-link: #3AADA5;   /* own, the logo's teal lightened */
-  --apm-hover: #6FCFC8;  /* own, teal lightened more */
-}
-
-html:has(.landing-page) {
-  --ifm-background-color: var(--apm-paper);
-  background: var(--apm-paper);
-  scroll-behavior: auto; /* custom.css sets smooth globally, which also animates keyboard/scrollbar scrolling */
-}
+/* Palette (--apm-*), fonts and the shared header parts (.brand, .gh) are site-wide in src/css/custom.css. */
 
 .landing-page {
   background: var(--apm-paper);
   color: var(--apm-ink);
   font: 20px/1.6 'Literata', Georgia, serif;
   /* Fade in on load. No fill-mode: once done the animation is dropped, so the page is not kept as one big composited layer while scrolling. */
-  animation: apm-load .8s cubic-bezier(.4, 0, .2, 1);
+  animation: apm-load .8s cubic-bezier(.4, 0, .2, 1); /* keyframes in custom.css */
 }
-@keyframes apm-load { from { opacity: 0; } }
 .landing-page :is(h1, h2, h3, p, figure) { margin: 0; color: inherit; font-family: inherit; }
 .landing-page a { color: var(--apm-link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .landing-page a:hover { color: var(--apm-hover); }
 .landing-page :is(a, button):focus-visible { outline: 2px solid var(--apm-link); outline-offset: 3px; }
-.landing-page ::selection { background: var(--apm-ink); color: var(--apm-paper); }
 .landing-page code { font: 85% 'JetBrains Mono', ui-monospace, monospace; background: none; border: 0; padding: 0; color: inherit; }
 .landing-page button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 
@@ -52,22 +26,13 @@ html:has(.landing-page) {
   .grid2 { grid-template-columns: 200px minmax(0, 840px); }
 }
 
-/* Header and footer strips: plain ink links, underline on hover. */
+/* Header strip: plain ink links, underline on hover. (Footer: .site-footer in custom.css.) */
 .strip { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 24px; min-height: 56px; font-size: 14px; }
 .strip nav { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 24px; }
 .landing-page .strip a { color: var(--apm-ink); text-decoration: none; }
 .landing-page .strip a:hover { text-decoration: underline; }
 .topbar { position: sticky; top: 0; z-index: 20; background: var(--apm-paper); border-bottom: 1px solid transparent; transition: border-color .3s ease; }
 .topbar.scrolled { border-color: var(--apm-soft); }
-.landing-page .brand { display: flex; align-items: center; gap: 12px; font-weight: 600; }
-.gh { display: inline-flex; align-items: center; gap: 8px; }
-.stars { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; opacity: .75; user-select: none; }
-.bar { padding-bottom: 24px; }
-@media (max-width: 599px), (any-hover: none) {
-  .brand-name { display: none; }
-  .bar { flex-direction: column; justify-content: center; text-align: center; padding: 16px 0; }
-  .bar nav { justify-content: center; }
-}
 
 /* Cover: title, mark and description in one centred 640px column, about a screen tall. */
 .cover-body { display: grid; grid-template-columns: minmax(0, 640px); justify-content: center; align-content: center; gap: 56px; min-height: max(640px, calc(100svh - 57px)); padding: 72px 0; text-align: center; }
@@ -114,37 +79,6 @@ html[data-theme='dark'] .only-light, html[data-theme='light'] .only-dark { displ
   .plate-images img { min-width: 0; max-width: 420px; margin: 0 auto; }
 }
 
-/* Theme switch: bottom-right pill, 38px closed (selected icon only), 76px open on hover/focus. Leaves when the cover
-   scrolls away; returns on keyboard focus or when the pointer enters the 160x180 corner zone. */
-.dock { position: fixed; z-index: 30; right: 12px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transition: transform .45s cubic-bezier(.65, 0, .35, 1); view-transition-name: apm-dock; }
-.dock.away:not(:has(:focus-visible)) { transform: translateX(64px); }
-.dockzone { position: fixed; z-index: 29; right: 0; bottom: 0; width: 160px; height: 180px; pointer-events: none; }
-@media (hover: hover) {
-  .dockzone.on { pointer-events: auto; }
-  .dockzone.on:hover + .dock.away, .dock.away:hover { transform: none; }
-}
-.pill { position: relative; width: 38px; height: 38px; overflow: hidden; transition: width .14s cubic-bezier(.4, 0, 1, 1); }
-/* Open on hover (pointer devices), keyboard focus, or .open (touch: toggled by tapping the selected icon). */
-.pill:has(:focus-visible), .pill.open { width: 76px; transition: width .3s cubic-bezier(.22, 1, .36, 1); }
-@media (any-hover: hover) { .pill:hover { width: 76px; transition: width .3s cubic-bezier(.22, 1, .36, 1); } }
-.track { position: absolute; top: 0; right: 0; width: 76px; height: 38px; } /* right-anchored: the closed pill shows the right (selected) slot */
-.ind { position: absolute; background: var(--apm-paper); border: 1px solid var(--apm-ink); transition: all .5s cubic-bezier(.34, 1.45, .55, 1), background-color .45s ease-in-out .35s, border-color .45s ease-in-out .35s; }
-.landing-page .pill button { position: absolute; top: 0; width: 38px; height: 38px; display: grid; place-items: center; color: var(--apm-ink); opacity: .45; transition: opacity .35s ease .08s, color .45s ease-in-out .35s; }
-.landing-page .pill button:is([aria-pressed='true'], :hover) { opacity: 1; }
-.landing-page .pill button:focus-visible { outline: none; }
-/* The slot swap itself is animated in JS (ThemeSwitch). */
-.pill svg { width: 20px; height: 20px; transform: scale(.88); transition: transform .45s cubic-bezier(.34, 1.45, .55, 1) .05s; }
-.pill button[aria-pressed='true'] svg { transform: scale(1); }
-
-/* Theme change: slow cross-fade of the whole page; the fade runs from 32% to 82% of 0.9s. The switch is excluded. */
-@keyframes apm-out { 0%, 32% { opacity: 1; } 82%, 100% { opacity: 0; } }
-@keyframes apm-in { 0%, 32% { opacity: 0; } 82%, 100% { opacity: 1; } }
-::view-transition-old(root) { animation: apm-out .9s ease-in-out both; mix-blend-mode: plus-lighter; }
-::view-transition-new(root) { animation: apm-in .9s ease-in-out both; mix-blend-mode: plus-lighter; }
-::view-transition-group(apm-dock), ::view-transition-new(apm-dock) { animation: none; mix-blend-mode: normal; }
-::view-transition-old(apm-dock) { display: none; }
-::view-transition { pointer-events: none; } /* let hover reach the page during the fade, so the open switch stays open */
-
 @media (prefers-reduced-motion: reduce) {
-  .landing-page, .landing-page *, ::view-transition-old(root), ::view-transition-new(root) { transition: none !important; animation: none !important; }
+  .landing-page, .landing-page * { transition: none !important; animation: none !important; }
 }
