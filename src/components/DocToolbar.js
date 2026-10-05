@@ -9,12 +9,24 @@ export default function DocToolbar() {
   const [copied, setCopied] = useState(null);
   const all = useBaseUrl('/llms-full.txt');
   const pageText = () => document.querySelector('.theme-doc-markdown')?.innerText ?? '';
+  // Clipboard writes must start inside the click: a ClipboardItem takes the text as a promise, so the
+  // copy of all docs can still be fetching (Safari drops the gesture after an awaited fetch). Fallbacks:
+  // writeText, then execCommand (plain-http LAN addresses have no clipboard API). Label: Copied / Copy failed.
   const copy = async (key, text) => {
+    const pending = Promise.resolve(text());
+    let ok = true;
     try {
-      await navigator.clipboard.writeText(await text());
-      setCopied(key);
-      setTimeout(() => setCopied(null), COPY_FEEDBACK_DURATION);
-    } catch { /* clipboard blocked */ }
+      if (window.ClipboardItem) await navigator.clipboard.write([new ClipboardItem({ 'text/plain': pending.then((t) => new Blob([t], { type: 'text/plain' })) })]);
+      else await navigator.clipboard.writeText(await pending);
+    } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: await pending.catch(() => '') });
+      document.body.appendChild(ta);
+      ta.select();
+      try { ok = document.execCommand('copy'); } catch { ok = false; }
+      ta.remove();
+    }
+    setCopied(ok ? key : `${key}-failed`);
+    setTimeout(() => setCopied(null), COPY_FEEDBACK_DURATION);
   };
   const download = (href, name) => Object.assign(document.createElement('a'), { href, download: name }).click();
   const downloadPage = () => {
@@ -31,7 +43,7 @@ export default function DocToolbar() {
   return (
     <div className={styles.toolbar}>
       {actions.map(([key, label, run]) => (
-        <button key={key} type="button" className={styles.btn} onClick={run}>{copied === key ? 'Copied' : label}</button>
+        <button key={key} type="button" className={styles.btn} onClick={run}>{copied === key ? 'Copied' : copied === `${key}-failed` ? 'Copy failed' : label}</button>
       ))}
     </div>
   );
