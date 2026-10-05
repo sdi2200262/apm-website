@@ -1,351 +1,337 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
+import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import useIsBrowser from '@docusaurus/useIsBrowser';
 import { useColorMode } from '@docusaurus/theme-common';
-import Grid, { useColumns } from '../components/Grid';
-import CommandBlock from '../components/CommandBlock';
-import AssistantSelector from '../components/AssistantSelector';
-import ContentViewer from '../components/ContentViewer';
-import NewsButton from '../components/NewsButton/NewsButton';
-import { useStats } from '../hooks/useStats';
-import { useContributors } from '../hooks/useContributors';
-import {
-  ASSISTANTS,
-  GITHUB_URL,
-  GITHUB_RELEASES_URL,
-  GITHUB_ISSUES_URL,
-  GITHUB_DISCUSSIONS_URL,
-  GITHUB_CHANGELOG_URL,
-  GITHUB_LICENSE_URL,
-  NPM_URL,
-  getRegionsForCols,
-  getRegion,
-} from '../constants';
-import { formatNumber } from '../utils/format';
-import styles from './index.module.css';
+import '@fontsource/literata/400.css';
+import '@fontsource/literata/400-italic.css';
+import '@fontsource/literata/600.css';
+import Mark, { rng } from '../components/Mark';
+import './index.css';
 
-// Shorthand: get region coords by id from current responsive map
-function R(regions, id) {
-  const r = getRegion(regions, id);
-  return r ? { r1: r.r1, c1: r.c1, r2: r.r2, c2: r.c2 } : null;
+// Landing page, book style (design: "APM Website Redesign", Gruvbox palette + Literata).
+// Three parts: cover, overview, getting started. Palettes and layout live in ./index.css.
+// Everything random (mark, waves, switch marker) is drawn after mount from one seed, so SSR
+// output stays deterministic and hydration never mismatches.
+
+const REPO = 'https://github.com/sdi2200262/agentic-project-management';
+const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI agents handle planning, coordination and execution as a team.';
+const CAPTION = 'An APM session. The Planning Phase, on the left, produces the planning documents; the Implementation Phase, on the right, carries them out.';
+// Overview parts: key = diagram suffix (book-<theme>-overview-<key>.svg), value = caption. Order = Figure 2..5.
+const PARTS = {
+  planning: 'The Planner conducts structured project discovery while reading your codebase, then decomposes requirements into three planning documents: a Spec (what to build), a Plan (how work is organised) and Rules (how work is performed).',
+  implementation: 'The Manager coordinates execution by assigning Tasks to Workers and reviewing completed work. Each Worker receives a self-contained Task Prompt, executes, validates, logs to Memory and reports back.',
+  user: 'You mediate every exchange between agents by running commands in the right conversation. One command delivers a Task to a Worker; another brings the Worker\'s report back to the Manager.',
+  state: 'Project state lives in structured files outside any agent\'s context. When an agent reaches its limits, a Handoff passes its working knowledge to a fresh instance of the same agent.',
+};
+// [init flag, name, logo in static/img]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
+const ASSISTANTS = [
+  ['claude', 'Claude Code', 'claude-logo.svg'],
+  ['codex', 'Codex CLI', ['codex-logo-light.svg', 'codex-logo-dark.svg']],
+  ['cursor', 'Cursor', 'cursor-logo.svg'],
+  ['copilot', 'GitHub Copilot', 'github-copilot-logo.svg', 'mask'],
+  ['antigravity', 'Antigravity', 'antigravity-logo.png'],
+  ['opencode', 'OpenCode', ['opencode-logo-light.svg', 'opencode-logo-dark.svg']],
+];
+const FOOTER = [['Contributing', '/blob/main/CONTRIBUTING.md'], ['Issues', '/issues'], ['Discussions', '/discussions'], ['Changelog', '/blob/main/CHANGELOG.md']];
+
+const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// A hand-drawn section break: ~7 uneven peaks through a Catmull-Rom spline, slightly tilted.
+function wave(rnd) {
+  let x = 18 + rnd() * 6;
+  const pts = [[x, 10 + (rnd() - 0.5) * 2]];
+  for (let k = 0; k < 7; k++) {
+    x += 13 + rnd() * 5;
+    pts.push([x, 10 + (k % 2 ? 1 : -1) * (3 + rnd() * 4.5) + (rnd() - 0.5) * 1.5]);
+  }
+  pts.push([x + 10 + rnd() * 5, 10 + (rnd() - 0.5) * 3]);
+  const f = (n) => n.toFixed(1);
+  let d = `M${f(pts[0][0])} ${f(pts[0][1])}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [p0, p1, p2, p3] = [pts[Math.max(0, i - 1)], pts[i], pts[i + 1], pts[Math.min(pts.length - 1, i + 2)]];
+    d += ` C${f(p1[0] + (p2[0] - p0[0]) / 6)} ${f(p1[1] + (p2[1] - p0[1]) / 6)} ${f(p2[0] - (p3[0] - p1[0]) / 6)} ${f(p2[1] - (p3[1] - p1[1]) / 6)} ${f(p2[0])} ${f(p2[1])}`;
+  }
+  return { d, w: 1.1 + rnd() * 0.45, tilt: (rnd() - 0.5) * 3 };
 }
 
-// Inner component — rendered inside <Layout> so useColorMode has its provider
-function HomeContent() {
-  const [assistant, setAssistant] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { stats } = useStats();
-  const { contributors } = useContributors();
-  const { colorMode, setColorMode } = useColorMode();
-  const cols = useColumns();
-  const regions = getRegionsForCols(cols);
-  const isMobile = cols <= 8;
-  const isDesktop = cols > 16;
-
-  const initCommand = assistant ? `apm init ${assistant.flag}` : 'apm init';
-
-  // Version labels
-  const templateVersion = stats.githubRelease || null;
-  const cliVersion = stats.npmVersion ? `v${stats.npmVersion}` : null;
-
-  // Animated counter hook — slow count-up that finishes ~3s after load
-  function useCounter(target, duration = 4000) {
-    const [value, setValue] = useState(0);
-    useEffect(() => {
-      if (!target) return;
-      const start = performance.now();
-      const step = (now) => {
-        const progress = Math.min((now - start) / duration, 1);
-        const eased = progress < 0.7 ? progress / 0.7 * 0.85 : 0.85 + (1 - Math.pow(1 - (progress - 0.7) / 0.3, 3)) * 0.15;
-        setValue(Math.floor(eased * target));
-        if (progress < 1) requestAnimationFrame(step);
-      };
-      const delay = setTimeout(() => requestAnimationFrame(step), 400);
-      return () => clearTimeout(delay);
-    }, [target]);
-    return value;
-  }
-
-  const animStars = useCounter(stats.stars);
-  const animDownloads = useCounter(stats.downloads);
-
-  // Typed subtitle effect
-  const SUBTITLE = 'Manage complex projects with a team of AI agents smoothly and efficiently.';
-  const [typedText, setTypedText] = useState('');
-  const [typingDone, setTypingDone] = useState(false);
-
-  useEffect(() => {
-    let i = 0;
-    let interval;
-    const delay = setTimeout(() => {
-      interval = setInterval(() => {
-        i++;
-        setTypedText(SUBTITLE.slice(0, i));
-        if (i >= SUBTITLE.length) {
-          clearInterval(interval);
-          setTypingDone(true);
-        }
-      }, 30);
-    }, 600);
-    return () => { clearTimeout(delay); clearInterval(interval); };
-  }, []);
-
-  // Smooth subtitle height
-  const subtitleRef = useRef(null);
-  useEffect(() => {
-    const el = subtitleRef.current;
-    if (!el) return;
-    const child = el.firstElementChild;
-    if (!child) return;
-    el.style.height = `${child.scrollHeight}px`;
-  }, [typedText]);
-
-  // Contributor scroll-in observer
-  const ctrRef = useRef(null);
-  const [ctrVisible, setCtrVisible] = useState(false);
-
-  useEffect(() => {
-    if (!ctrRef.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setCtrVisible(true); },
-      { threshold: 0.3 }
-    );
-    observer.observe(ctrRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Theme wipe transition
-  const handleThemeToggle = () => {
-    const goingLight = colorMode === 'dark';
-    setColorMode(goingLight ? 'light' : 'dark');
-
-    const oldBg = getComputedStyle(document.documentElement).getPropertyValue('--apm-bg').trim();
-    const overlay = document.createElement('div');
-    Object.assign(overlay.style, {
-      position: 'fixed', inset: '0', zIndex: '10000', background: oldBg,
-      pointerEvents: 'none', clipPath: 'inset(0 0 0 0)', transition: 'clip-path 0.35s ease-in-out',
-    });
-    document.body.appendChild(overlay);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        overlay.style.clipPath = goingLight ? 'inset(0 0 100% 0)' : 'inset(100% 0 0 0)';
-      });
-    });
-    setTimeout(() => overlay.remove(), 450);
-  };
-
-
+function Wave({ w }) {
   return (
-    <main className={`landing-page ${styles.landing}`}>
-      <Grid regions={regions} rows={43}>
+    <div className="wave" aria-hidden="true">
+      {w && (
+        <svg viewBox="0 0 140 20" width="140" height="20" fill="none" stroke="currentColor" strokeLinecap="round">
+          <path d={w.d} strokeWidth={w.w} transform={`rotate(${w.tilt} 70 10)`} />
+        </svg>
+      )}
+    </div>
+  );
+}
 
-        {/* ===== HEADER BAR (sticky) ===== */}
-        <Grid.Region {...R(regions, 'hdr')} id="hdr" className={styles.bar} style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-          <div className={styles.barInner}>
-            <div className={styles.barLeft}>
-              <img src={colorMode === 'dark' ? '/img/apm-logo-dark.svg' : '/img/apm-logo.svg'} height="22" alt="APM" className={styles.barLogo} />
-            </div>
-            <nav className={`${styles.barNav} ${menuOpen ? styles.barNavOpen : ''}`}>
-              <a href="#how-it-works" className={styles.navLink} onClick={() => setMenuOpen(false)}>How it Works</a>
-              <a href="/docs/introduction" className={styles.navLink} onClick={() => setMenuOpen(false)}>Docs</a>
-              <a href={GITHUB_URL} className={styles.navLink} target="_blank" rel="noopener">GitHub</a>
-              <a href={NPM_URL} className={styles.navLink} target="_blank" rel="noopener">NPM</a>
-              <NewsButton />
-            </nav>
-            <div className={styles.barRight}>
-              {templateVersion && (
-                <a href={GITHUB_RELEASES_URL} className={styles.versionBadge} target="_blank" rel="noopener">
-                  template {templateVersion}
-                </a>
-              )}
-              {cliVersion && (
-                <a href={NPM_URL} className={styles.versionBadge} target="_blank" rel="noopener">
-                  cli {cliVersion}
-                </a>
-              )}
-              <button className={styles.themeToggle} onClick={handleThemeToggle} title="Toggle theme" aria-label="Toggle theme">
-                {colorMode === 'dark' ? (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                    <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                  </svg>
-                ) : (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                  </svg>
-                )}
-              </button>
-              <button className={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
-                <span className={`${styles.hamburgerLine} ${menuOpen ? styles.hamburgerOpen : ''}`} />
-              </button>
-            </div>
-          </div>
-        </Grid.Region>
+// One random seed per load, plus everything derived from it. null during SSR and the first render.
+function useDraw() {
+  const [draw, setDraw] = useState(null);
+  useEffect(() => {
+    const seed = Math.floor(Math.random() * 4294967295) + 1;
+    const rnd = rng(seed ^ 0x9e3779b9);
+    const waves = [wave(rnd), wave(rnd)];
+    // Switch marker insets/tilt when light / dark is selected.
+    const jit = [0, 1].map(() => ({ l: 1.2 + rnd() * 2.4, t: 4.5 + rnd() * 2.6, r: 1.2 + rnd() * 2.4, b: 4.5 + rnd() * 2.6, a: (rnd() - 0.5) * 3.6 }));
+    setDraw({ seed, waves, jit });
+  }, []);
+  return draw;
+}
 
-        {/* ===== HERO HEADING ===== */}
-        <Grid.Region {...R(regions, 'hero-h')} id="hero-h" className={styles.heroHeading}>
-          <h1 className={styles.heroTitle}>Agentic Project<br />Management</h1>
-        </Grid.Region>
+// GitHub star count in short form ("2.4k"); null until loaded or if the request fails.
+function useStars() {
+  const [stars, setStars] = useState(null);
+  useEffect(() => {
+    fetch(REPO.replace('github.com', 'api.github.com/repos'))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => Number.isInteger(d?.stargazers_count) && setStars(new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(d.stargazers_count).toLowerCase()))
+      .catch(() => {});
+  }, []);
+  return stars;
+}
 
-        {/* ===== HERO SUBTITLE ===== */}
-        <Grid.Region {...R(regions, 'hero-sub')} id="hero-sub" className={styles.heroSub}>
-          <div className={styles.heroSubWrap} ref={subtitleRef}>
-            <p className={styles.heroSubText}>
-              {typedText}
-              <span className={`${styles.typedCursor} ${typingDone ? styles.typedCursorDone : ''}`} />
-            </p>
-          </div>
-        </Grid.Region>
+// scrolled: header rule shows after 4px. away: the cover's bottom is above 40% of the viewport (hides the switch).
+function useScroll() {
+  const [s, setS] = useState({ scrolled: false, away: false });
+  useEffect(() => {
+    const on = () => {
+      const cover = document.querySelector('.cover');
+      const next = { scrolled: window.scrollY > 4, away: !!cover && cover.getBoundingClientRect().bottom < window.innerHeight * 0.4 };
+      setS((p) => (p.scrolled === next.scrolled && p.away === next.away ? p : next));
+    };
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    window.addEventListener('resize', on);
+    return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); };
+  }, []);
+  return s;
+}
 
-        {/* ===== STATS ROW ===== */}
-        <Grid.Region {...R(regions, 'hero-stats')} id="hero-stats" className={styles.statsRow}>
-          {stats.stars > 0 && (
-            <a href={GITHUB_URL} className={styles.statChip} target="_blank" rel="noopener">
-              <img src={colorMode === 'dark' ? '/img/github-mark-white.svg' : '/img/github-mark-black.svg'} alt="GitHub" className={styles.statLogo} width="14" height="14" />
-              {formatNumber(animStars)} stars
-            </a>
-          )}
-          {stats.stars > 0 && stats.downloads > 0 && <span className={styles.statSep}>·</span>}
-          {stats.downloads > 0 && (
-            <a href={NPM_URL} className={styles.statChip} target="_blank" rel="noopener">
-              <img src="/img/npm-logo.svg" alt="npm" className={`${styles.statLogo} ${colorMode === 'dark' ? styles.statLogoInvert : ''}`} width="28" height="11" />
-              {formatNumber(animDownloads)} downloads
-            </a>
-          )}
-        </Grid.Region>
-
-        {/* ===== STEPS & COMMANDS (desktop only) ===== */}
-        {isDesktop && R(regions, 'step1') && (
-          <>
-            <Grid.Region {...R(regions, 'step1')} id="step1" className={styles.step}>
-              <span className={styles.stepLabel}><span className={styles.stepNum}>1.</span> Install the CLI</span>
-            </Grid.Region>
-            <Grid.Region {...R(regions, 'cmd1')} id="cmd1" className={styles.cmdRegion}>
-              <CommandBlock command="npm install -g agentic-pm" />
-            </Grid.Region>
-            <Grid.Region {...R(regions, 'step2')} id="step2" className={styles.step}>
-              <span className={styles.stepLabel}><span className={styles.stepNum}>2.</span> Initialize your project</span>
-            </Grid.Region>
-            <Grid.Region {...R(regions, 'cmd2')} id="cmd2" className={styles.cmdRegion}>
-              <CommandBlock command={initCommand} />
-            </Grid.Region>
-            <Grid.Region {...R(regions, 'ast')} id="ast" className={styles.astRegion}>
-              <AssistantSelector active={assistant} onSelect={setAssistant} />
-            </Grid.Region>
-          </>
-        )}
-
-        {/* ===== SUPPORTED ASSISTANTS (mobile + tablet) ===== */}
-        {!isDesktop && R(regions, 'mobile-ast') && (
-          <Grid.Region {...R(regions, 'mobile-ast')} id="mobile-ast" className={styles.mobileAst}>
-            <span className={styles.mobileAstLabel}>Supported Assistants</span>
-            <div className={styles.mobileAstGrid}>
-              {ASSISTANTS.map((ast, i) => {
-                const logo = ast.logoDark ? (colorMode === 'dark' ? ast.logoDark : ast.logoLight) : ast.logo;
-                return (
-                  <div key={ast.id} className={styles.mobileAstItem} style={{ animationDelay: `${0.6 + i * 0.12}s` }}>
-                    {logo && <img src={logo} alt="" className={styles.mobileAstLogo} style={ast.logoSize ? { width: ast.logoSize, height: ast.logoSize } : undefined} />}
-                    <span className={styles.mobileAstName}>{ast.name}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </Grid.Region>
-        )}
-
-        {/* ===== HOW IT WORKS ===== */}
-        <Grid.Region {...R(regions, 'hw-lbl')} id="hw-lbl" anchor="how-it-works" className={styles.hwLabel}>
-          <span className={styles.sectionLabel}>HOW IT WORKS</span>
-        </Grid.Region>
-
-        <Grid.Region {...R(regions, 'hw-intro')} id="hw-intro" className={styles.prose}>
-          <p className={styles.proseText}>
-            An <strong>APM session</strong> runs across two phases. A Planner, a Manager, and multiple Workers each
-            operate in their own isolated context. Coordination happens through planning documents, centralized
-            Memory, and file-based communication.
-          </p>
-        </Grid.Region>
-
-        <Grid.Region {...R(regions, 'hw-p1')} id="hw-p1" className={styles.prose}>
-          <p className={styles.proseText}>
-            The <strong>Planning Phase</strong> starts with the <strong>Planner</strong> doing collaborative
-            project discovery by asking targeted questions about requirements, constraints and preferences
-            while exploring your codebase. Once you sign off on its understanding, the Planner breaks gathered
-            context into three planning documents: a <strong>Spec</strong>, a <strong>Plan</strong> and a <strong>Rules</strong> file for you to review
-            and correct before implementation begins.
-          </p>
-        </Grid.Region>
-
-        <Grid.Region {...R(regions, 'hw-p2')} id="hw-p2" className={styles.prose}>
-          <p className={styles.proseText}>
-            The <strong>Implementation Phase</strong> is a continuous loop until project completion. The <strong>Manager</strong> assigns Tasks
-            based on the Plan's dependencies and reviews outcomes. <strong>Workers</strong> execute assigned tasks, log their
-            work to <strong>Memory</strong>, and report back. You trigger every step through a file-based communication system.
-            When any agent's context window fills, you can perform a <strong>Handoff</strong> to capture working context so the
-            next instance picks up without gaps.
-          </p>
-        </Grid.Region>
-
-        <Grid.Region {...R(regions, 'vis')} id="vis" className={styles.visual}>
-          <ContentViewer />
-        </Grid.Region>
-
-        {/* ===== CTA BUTTONS (all views, after How It Works) ===== */}
-        <Grid.Region {...R(regions, 'cta')} id="cta" className={styles.ctaRegion}>
-          <a href="/docs/getting-started" className={styles.ctaBtn}>See Documentation</a>
-          <a href={GITHUB_URL} className={`${styles.ctaBtn} ${styles.ctaBtnSecondary}`} target="_blank" rel="noopener">View on GitHub</a>
-        </Grid.Region>
-
-        {/* ===== CONTRIBUTORS ===== */}
-        <Grid.Region {...R(regions, 'ctr')} id="ctr" className={styles.contributors}>
-          <div className={styles.ctrInner} ref={ctrRef}>
-            <span className={styles.ctrLabel}>CONTRIBUTORS</span>
-            <div className={styles.ctrAvatars}>
-              {contributors.slice(0, 12).map((c, i) => (
-                <a key={c.login} href={c.url} target="_blank" rel="noopener noreferrer" title={c.login} style={{ display: 'flex', alignItems: 'center' }}>
-                  <img src={c.avatar} alt={c.login} className={`${styles.ctrAvatar} ${ctrVisible ? styles.ctrAvatarVisible : ''}`}
-                    style={ctrVisible ? { animationDelay: `${i * 0.08}s` } : undefined} width="22" height="22" loading="lazy" />
-                </a>
-              ))}
-              {contributors.length > 12 && <span className={styles.ctrMore}>+{contributors.length - 12}</span>}
-            </div>
-          </div>
-        </Grid.Region>
-
-        {/* ===== FOOTER BAR ===== */}
-        <Grid.Region {...R(regions, 'ftr')} id="ftr" className={styles.bar}>
-          <div className={`${styles.barInner} ${styles.footerInner}`}>
-            <div className={styles.barLeft}>
-              <span className={styles.copyright}>
-                {new Date().getFullYear()} Agentic Project Management · Licensed under{' '}
-                <a href={GITHUB_LICENSE_URL} className={styles.licenseLink} target="_blank" rel="noopener">MPL 2.0</a>
+function Header({ seed, scrolled }) {
+  const [open, setOpen] = useState(false);
+  const stars = useStars();
+  // Morph the icon into the cover mark on hover (pointer devices only) or keyboard focus.
+  const morph = (on, e) => setOpen(on && !reduced() && (e.type === 'focus' ? e.target.matches(':focus-visible') : window.matchMedia('(any-hover: hover)').matches));
+  const toTop = (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }); };
+  return (
+    <header className={`topbar${scrolled ? ' scrolled' : ''}`}>
+      <div className="wrap strip">
+        <a href="#" className="brand" onClick={toTop} onMouseEnter={(e) => morph(true, e)} onMouseLeave={(e) => morph(false, e)} onFocus={(e) => morph(true, e)} onBlur={(e) => morph(false, e)}>
+          {seed ? <Mark seed={seed} size={24} icon open={open} intro /> : <span style={{ width: 24 }} />}
+          <span className="brand-name">Agentic Project Management</span>
+        </a>
+        <nav>
+          <Link to="/docs/introduction">Docs</Link>
+          <span className="gh">
+            <a href={REPO}>GitHub</a>
+            {stars && (
+              <span className="stars" aria-label={`${stars} stars on GitHub`}>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></svg>
+                {stars}
               </span>
-            </div>
-            <a href="https://github.com/sdi2200262" className={styles.mascot} target="_blank" rel="noopener noreferrer" title="sdi2200262">
-              <img src="/img/cobuter-man-black-and-white-no-bg.png" alt="" className={`${styles.mascotImg} ${styles.mascotDefault}`} />
-              <img src="/img/cobuter-man-black-and-white-no-bg-hover.png" alt="" className={`${styles.mascotImg} ${styles.mascotHover}`} />
-            </a>
-            <div className={styles.barRight}>
-              <div className={styles.footerNavRow}>
-                <a href={GITHUB_ISSUES_URL} className={styles.navLink} target="_blank" rel="noopener">Issues</a>
-                <a href={GITHUB_DISCUSSIONS_URL} className={styles.navLink} target="_blank" rel="noopener">Discussions</a>
-                <a href={`${GITHUB_URL}/blob/main/CONTRIBUTING.md`} className={styles.navLink} target="_blank" rel="noopener">Contributing</a>
-                <a href={GITHUB_CHANGELOG_URL} className={styles.navLink} target="_blank" rel="noopener">Changelog</a>
-              </div>
-            </div>
-          </div>
-        </Grid.Region>
+            )}
+          </span>
+        </nav>
+      </div>
+    </header>
+  );
+}
 
-      </Grid>
-    </main>
+// Stacked diagram variants that cross-fade; a term pointed at or focused picks its variant and caption.
+// Touch screens (any-hover: none) get the portrait phone diagram instead, and no highlights (CSS).
+// Images render only in the browser: the theme in their URLs is unknown at build time.
+function Overview() {
+  const [active, setActive] = useState(null);
+  const { colorMode } = useColorMode();
+  const dir = useBaseUrl(`/img/diagrams/book-${colorMode}-overview`);
+  const isBrowser = useIsBrowser();
+  const term = (part, text) => (
+    <button type="button" className="term" onMouseEnter={() => setActive(part)} onMouseLeave={() => setActive(null)} onFocus={() => setActive(part)} onBlur={() => setActive(null)}>
+      {text}
+    </button>
+  );
+  const keys = Object.keys(PARTS);
+  return (
+    <div>
+      <p className="lead">
+        APM splits the work between three kinds of agent, each in its own conversation with only the context it needs.
+        The {term('planning', 'Planner')} turns your goals into a plan, the {term('implementation', 'Manager')} assigns its Tasks,
+        and {term('implementation', 'Workers')} carry them out. {term('user', 'You')} mediate every exchange between them,
+        and the {term('state', 'project state')} lives in files that outlast any one conversation.
+      </p>
+      <figure className="plate">
+        <div className="plate-images">
+          {isBrowser && <picture style={{ opacity: active ? 0 : 1 }}>
+            <source media="(any-hover: none)" srcSet={`${dir}-phone.svg`} />
+            <img src={`${dir}.svg`} alt="APM overview: the Planner, the Manager and Workers, coordinated through the user, with shared files" />
+          </picture>}
+          {isBrowser && keys.map((k) => <img key={k} className="hl" src={`${dir}-${k}.svg`} alt="" aria-hidden="true" style={{ opacity: active === k ? 1 : 0 }} />)}
+        </div>
+        <figcaption aria-live="polite">
+          <em>Figure {active ? keys.indexOf(active) + 2 : 1}.</em> {active ? PARTS[active] : CAPTION}
+          {!active && <span className="hover-only"> Point at an underlined term to see its part.</span>}
+        </figcaption>
+      </figure>
+      <p className="small">The <Link to="/docs/introduction">docs</Link> cover the agents, the workflow and the CLI in full.</p>
+    </div>
+  );
+}
+
+// A one-line command with a Copy link: clipboard API, then execCommand, else "Select and copy".
+function Code({ children }) {
+  const [label, setLabel] = useState('Copy');
+  const timer = useRef();
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const copy = () => {
+    const done = (ok) => {
+      setLabel(ok ? 'Copied' : 'Select and copy');
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setLabel('Copy'), 1600);
+    };
+    const legacy = () => {
+      const ta = Object.assign(document.createElement('textarea'), { value: children });
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch { /* blocked */ }
+      ta.remove();
+      done(ok);
+    };
+    if (navigator.clipboard) navigator.clipboard.writeText(children).then(() => done(true), legacy);
+    else legacy();
+  };
+  return (
+    <div className="code">
+      <pre>{children}</pre>
+      <button type="button" className="copy" onClick={copy}>{label}</button>
+    </div>
+  );
+}
+
+function Logo({ file, mask }) {
+  const src = useBaseUrl('/img/');
+  if (mask) return <span className="logo mask" style={{ maskImage: `url(${src}${file})`, WebkitMaskImage: `url(${src}${file})` }} />;
+  if (Array.isArray(file)) return <><img className="logo only-light" src={src + file[0]} alt="" /><img className="logo only-dark" src={src + file[1]} alt="" /></>;
+  return <img className="logo" src={src + file} alt="" />;
+}
+
+function GettingStarted() {
+  const [pick, setPick] = useState(null);
+  return (
+    <>
+      <div className="steps hover-only">
+        <h3>1. Install the CLI</h3>
+        <p>APM installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later.</p>
+        <Code>npm install -g agentic-pm</Code>
+        <h3>2. Initialise your project</h3>
+        <p>In your project directory, run the command below. Pick your assistant here, or when APM asks.</p>
+        <div className="pick" role="group" aria-label="AI assistant">
+          {ASSISTANTS.map(([id, name, file, mask]) => (
+            <button key={id} type="button" aria-pressed={pick === id} onClick={() => setPick(pick === id ? null : id)}>
+              <Logo file={file} mask={mask} />
+              {name}
+            </button>
+          ))}
+        </div>
+        <Code>{pick ? `apm init -a ${pick}` : 'apm init'}</Code>
+        <h3>3. Start the Planner</h3>
+        <p>Open your AI assistant and run:</p>
+        <Code>/apm-1-initiate-planner</Code>
+        <p>From there, each agent directs you through the workflow step by step. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
+      </div>
+      <div className="steps touch-only">
+        <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project from a terminal.</p>
+        <p><Link to="/docs/getting-started">Installation and first steps are in the docs.</Link></p>
+      </div>
+    </>
+  );
+}
+
+// Bottom-right light/dark switch. The selected option always sits in the right slot (the one shown
+// when closed) under the marker; on a click the two icons swap places. The swap happens at once; the
+// page follows 60ms later through a View Transition (cross-fade, see index.css), skipped for reduced
+// motion or without the API.
+function ThemeSwitch({ jit, away }) {
+  const { colorMode, setColorMode } = useColorMode();
+  const [sel, setSel] = useState(colorMode);
+  useEffect(() => setSel(colorMode), [colorMode]); // follow changes made elsewhere (OS theme, other tab)
+  const choose = (mode) => {
+    if (mode === sel) return;
+    setSel(mode);
+    setTimeout(() => {
+      const go = () => setColorMode(mode);
+      if (!document.startViewTransition || reduced()) go();
+      else document.startViewTransition(() => { go(); return new Promise((r) => setTimeout(r, 90)); });
+    }, 60);
+  };
+  const j = jit[sel === 'light' ? 0 : 1];
+  const marker = { left: 38 + j.l, top: j.t, width: 38 - j.l - j.r, height: 38 - j.t - j.b, transform: `rotate(${j.a}deg)` };
+  const btn = (mode, label, icon) => (
+    <button type="button" style={{ left: sel === mode ? 38 : 0 }} onClick={() => choose(mode)} aria-pressed={sel === mode} aria-label={label} title={label}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icon}</svg>
+    </button>
+  );
+  return (
+    <>
+      <div className={`dockzone${away ? ' on' : ''}`} aria-hidden="true" />
+      <div className={`dock${away ? ' away' : ''}`}>
+        <div className="pill" role="group" aria-label="Theme">
+          <div className="track">
+            <span className="ind" style={marker} />
+            {btn('light', 'Light theme', <><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2m-7.07-17.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></>)}
+            {btn('dark', 'Dark theme', <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />)}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
 export default function Home() {
+  const draw = useDraw();
+  const { scrolled, away } = useScroll();
   return (
-    <Layout title="Agentic Project Management" description="Manage complex projects with a team of AI agents, smoothly and efficiently." noFooter>
-      <HomeContent />
+    <Layout description={DESCRIPTION} noFooter>
+      <div className="landing-page">
+        <Header seed={draw?.seed} scrolled={scrolled} />
+
+        <section className="cover wrap">
+          <div className="cover-body">
+            <div>
+              <h1>Agentic Project Management</h1>
+              <p className="subtitle">A Spec-Driven Multi-Agent Framework for AI-Assisted Software Engineering</p>
+            </div>
+            <div className="cover-mark">{draw && <Mark seed={draw.seed} size={144} intro />}</div>
+            <p>{DESCRIPTION}</p>
+          </div>
+          <Wave w={draw?.waves[0]} />
+        </section>
+
+        <section className="wrap">
+          <div className="grid2">
+            <h2 className="label">Overview</h2>
+            <Overview />
+          </div>
+          <Wave w={draw?.waves[1]} />
+        </section>
+
+        <section className="wrap">
+          <div className="grid2">
+            <h2 className="label">Getting started</h2>
+            <GettingStarted />
+          </div>
+          <footer className="strip bar">
+            <nav>{FOOTER.map(([name, path]) => <a key={name} href={REPO + path}>{name}</a>)}</nav>
+            <span>APM is open source under the <a href={`${REPO}/blob/main/LICENSE`}>MPL-2.0</a> licence.</span>
+          </footer>
+        </section>
+
+        {draw && <ThemeSwitch jit={draw.jit} away={away} />}
+      </div>
     </Layout>
   );
 }
