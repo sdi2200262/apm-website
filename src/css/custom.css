@@ -178,8 +178,8 @@ html[data-theme] {
 .theme-doc-sidebar-container { border-right: 1px solid var(--apm-soft) !important; }
 /* Collapse bar / expand strip: part of the sidebar (its hairlines continue), no fills; only the thin
    chevron (src/theme/Icon/Arrow) brightens on hover/focus. button[...] so the *Icon classes don't match. */
-button[class*='collapseSidebarButton'] { border: 0 !important; border-top: 1px solid var(--apm-soft) !important; border-right: 1px solid var(--apm-soft) !important; background: var(--apm-paper) !important; color: var(--apm-ink); }
-[role='button'][class*='expandButton'] { background: none !important; color: var(--apm-ink); }
+button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !important; border-left: 0 !important; background: var(--apm-paper) !important; color: var(--apm-ink); }
+[role='button'][class*='expandButton'] { background: none !important; color: var(--apm-ink); border-bottom: 1px solid var(--apm-soft); }
 :is(button[class*='collapseSidebarButton'], [role='button'][class*='expandButton']):focus-visible { outline: 0; }
 /* Collapse/expand motion: Docusaurus animates only the sidebar width (0.2s) and snaps the main column's
    max-widths, which jerks the content. Here the main column just fills what the sidebar leaves, and the doc
