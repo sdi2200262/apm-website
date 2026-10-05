@@ -124,7 +124,9 @@ html[data-theme='dark'] .only-light, html[data-theme='light'] .only-dark { displ
   .dockzone.on:hover + .dock.away, .dock.away:hover { transform: none; }
 }
 .pill { position: relative; width: 38px; height: 38px; overflow: hidden; transition: width .14s cubic-bezier(.4, 0, 1, 1); }
-.pill:is(:hover, :has(:focus-visible)) { width: 76px; transition: width .3s cubic-bezier(.22, 1, .36, 1); }
+/* Open on hover (pointer devices), keyboard focus, or .open (touch: toggled by tapping the selected icon). */
+.pill:has(:focus-visible), .pill.open { width: 76px; transition: width .3s cubic-bezier(.22, 1, .36, 1); }
+@media (any-hover: hover) { .pill:hover { width: 76px; transition: width .3s cubic-bezier(.22, 1, .36, 1); } }
 .track { position: absolute; top: 0; right: 0; width: 76px; height: 38px; } /* right-anchored: the closed pill shows the right (selected) slot */
 .ind { position: absolute; background: var(--apm-paper); border: 1px solid var(--apm-ink); transition: all .5s cubic-bezier(.34, 1.45, .55, 1), background-color .45s ease-in-out .35s, border-color .45s ease-in-out .35s; }
 .landing-page .pill button { position: absolute; top: 0; width: 38px; height: 38px; display: grid; place-items: center; color: var(--apm-ink); opacity: .45; transition: opacity .35s ease .08s, color .45s ease-in-out .35s; }

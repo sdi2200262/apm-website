@@ -261,8 +261,12 @@ function ThemeSwitch({ jit, away }) {
   const [sel, setSel] = useState(colorMode);
   useEffect(() => setSel(colorMode), [colorMode]); // follow changes made elsewhere (OS theme, other tab)
   const icons = useRef({}); // mode -> <button>, for the swap animations
+  const [open, setOpen] = useState(false); // touch only: tapping the selected icon opens/closes the pill (no :hover there)
   const choose = (mode) => {
-    if (mode === sel) return;
+    if (mode === sel) {
+      if (matchMedia('(any-hover: none)').matches) setOpen(!open);
+      return;
+    }
     if (!reduced()) {
       icons.current[mode].animate([{ transform: 'translateX(-38px)' }, { transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.34, 1.45, .55, 1)' });
       icons.current[sel].animate([{ transform: 'translateX(38px)', opacity: 1 }, { transform: 'translateX(38px)', opacity: 0, offset: 0.4 }, { transform: 'none', opacity: 0, offset: 0.4 }, { opacity: 0.45 }], { duration: 500 });
@@ -285,7 +289,7 @@ function ThemeSwitch({ jit, away }) {
     <>
       <div className={`dockzone${away ? ' on' : ''}`} aria-hidden="true" />
       <div className={`dock${away ? ' away' : ''}`}>
-        <div className="pill" role="group" aria-label="Theme">
+        <div className={`pill${open ? ' open' : ''}`} role="group" aria-label="Theme">
           <div className="track">
             <span className="ind" style={marker} />
             {btn('light', 'Light theme', <><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2m-7.07-17.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></>)}
