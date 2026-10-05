@@ -2,13 +2,6 @@
 
 Documentation website for [Agentic Project Management](https://github.com/sdi2200262/agentic-project-management).
 
-## Stack
-
-- **[Docusaurus](https://docusaurus.io/)** - documentation framework
-- **React** - custom landing page
-- **Tailwind CSS** - utility styles
-- **shadcn/ui** - component primitives
-
 ## Development
 
 ```bash
@@ -26,16 +19,17 @@ Requires Node.js 20+.
 
 ```
 src/
-├── components/    # shared UI components (Grid, CommandBlock, ContentViewer, etc.)
-├── constants/     # URLs, assistant configs, grid region map
-├── css/           # global design system (custom.css)
-├── hooks/         # data-fetching hooks (useStats, useContributors)
-├── pages/         # landing page (custom React)
-├── theme/         # swizzled Docusaurus theme overrides
-└── utils/         # API fetching, caching, formatting
+├── components/    # Mark (logo), Brand, GitHub, ThemeSwitch, DocToolbar
+├── constants/     # GitHub URL, copy feedback timing
+├── css/           # custom.css: palette, fonts, docs styling, shared header/footer/switch
+├── pages/         # landing page (index.js + index.css)
+└── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, Icon/Arrow
 docs/              # documentation pages (Markdown/MDX)
-static/img/        # logos, diagrams, social card
+diagrams/          # build.py + Lucide icons -> static/img/diagrams/book-*-overview*.svg
+static/img/        # assistant logos, diagrams, favicon, social card
 ```
+
+Overview diagrams: edit `diagrams/build.py`, then run `python3 diagrams/build.py` (needs the `drawio` CLI on PATH).
 
 ## LLM Access
 
