@@ -252,16 +252,22 @@ function GettingStarted() {
 }
 
 // Bottom-right light/dark switch. The selected option always sits in the right slot (the one shown
-// when closed) under the marker; on a click the two icons swap places. The swap happens at once; the
-// page follows 60ms later through a View Transition (cross-fade, see index.css), skipped for reduced
-// motion or without the API.
+// when closed) under the marker. On a click the slots swap at once and two WAAPI animations hide the
+// jump: the new choice slides from the left slot into the right one, the old one fades out in place
+// and fades back in on the left. The page follows 60ms later through a View Transition (cross-fade,
+// see index.css); reduced motion or no API skips the effects.
 function ThemeSwitch({ jit, away }) {
   const { colorMode, setColorMode } = useColorMode();
   const [sel, setSel] = useState(colorMode);
   useEffect(() => setSel(colorMode), [colorMode]); // follow changes made elsewhere (OS theme, other tab)
+  const icons = useRef({}); // mode -> <button>, for the swap animations
   const choose = (mode) => {
     if (mode === sel) return;
-    setSel(mode);
+    if (!reduced()) {
+      icons.current[mode].animate([{ transform: 'translateX(-38px)' }, { transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.34, 1.45, .55, 1)' });
+      icons.current[sel].animate([{ transform: 'translateX(38px)', opacity: 1 }, { transform: 'translateX(38px)', opacity: 0, offset: 0.4 }, { transform: 'none', opacity: 0, offset: 0.4 }, { opacity: 0.45 }], { duration: 500 });
+    }
+    setSel(mode); // a click flushes before paint, so the animations start from the new slots
     setTimeout(() => {
       const go = () => setColorMode(mode);
       if (!document.startViewTransition || reduced()) go();
@@ -271,7 +277,7 @@ function ThemeSwitch({ jit, away }) {
   const j = jit[sel === 'light' ? 0 : 1];
   const marker = { left: 38 + j.l, top: j.t, width: 38 - j.l - j.r, height: 38 - j.t - j.b, transform: `rotate(${j.a}deg)` };
   const btn = (mode, label, icon) => (
-    <button type="button" style={{ left: sel === mode ? 38 : 0 }} onClick={() => choose(mode)} aria-pressed={sel === mode} aria-label={label} title={label}>
+    <button ref={(el) => { icons.current[mode] = el; }} type="button" style={{ left: sel === mode ? 38 : 0 }} onClick={() => choose(mode)} aria-pressed={sel === mode} aria-label={label} title={label}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icon}</svg>
     </button>
   );
