@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Link from '@docusaurus/Link';
 import Mark from './Mark';
+import { drawnSeed, pageSeed } from './seed';
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Header brand: Icon mark + name, linking home. The mark morphs into the cover mark on hover
-// (pointer devices) or keyboard focus. `seed` shares the landing cover's draw; without it, a fresh
-// draw per load (after mount, so SSR stays deterministic). Styles: .brand in src/css/custom.css.
+// (pointer devices) or keyboard focus. `seed` shares the landing cover's draw; without it, the page-load
+// seed (src/components/seed.js), set after mount so SSR stays deterministic. Styles: .brand in src/css/custom.css.
 // Pointer (not mouse) events: Docusaurus's Link overrides onMouseEnter with its own prefetch handler.
 export default function Brand({ seed: given, onClick, className = '' }) {
-  const [own, setOwn] = useState(null);
+  const [own, setOwn] = useState(drawnSeed);
   const [open, setOpen] = useState(false);
-  useEffect(() => { if (!given) setOwn(Math.floor(Math.random() * 4294967295) + 1); }, [given]);
+  useEffect(() => { if (!given) setOwn(pageSeed()); }, [given]);
   const seed = given || own;
   const morph = (on, e) => setOpen(on && !reduced() && (e.type === 'focus' ? e.target.matches(':focus-visible') : window.matchMedia('(any-hover: hover)').matches));
   return (

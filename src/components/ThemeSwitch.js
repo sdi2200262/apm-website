@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import { rng } from './Mark';
+import { pageSeed } from './seed';
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -20,7 +21,7 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
   useEffect(() => setSel(colorMode), [colorMode]); // follow changes made elsewhere (OS theme, other tab)
   const [jit, setJit] = useState(null); // marker insets/tilt: light selected, dark selected, up button
   useEffect(() => {
-    const rnd = rng(Math.floor(Math.random() * 4294967295) + 1);
+    const rnd = rng(pageSeed() ^ 0x85ebca6b); // page-load seed: same markers across navigation
     setJit([0, 1, 2].map(() => ({ l: 1.2 + rnd() * 2.4, t: 4.5 + rnd() * 2.6, r: 1.2 + rnd() * 2.4, b: 4.5 + rnd() * 2.6, a: (rnd() - 0.5) * 3.6 })));
   }, []);
   const icons = useRef({}); // mode -> <button>, for the swap animations

@@ -7,6 +7,7 @@ import { useColorMode } from '@docusaurus/theme-common';
 import Footer from '@theme/Footer';
 import Mark, { rng } from '../components/Mark';
 import Brand from '../components/Brand';
+import { drawnSeed, pageSeed } from '../components/seed';
 import GitHub from '../components/GitHub';
 import ThemeSwitch from '../components/ThemeSwitch';
 import './index.css';
@@ -18,7 +19,7 @@ import './index.css';
 
 // The cover text and the overview's captions are mirrored word for word in the APM repo's README; change both together.
 // Meta description; the cover renders the same text with definitions on its two terms (see Cover).
-const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM behind your agent suffers from context decay and context pressure as its conversation grows. APM counters the first by recording the project\'s intent in planning documents, and the second by splitting the work among agents in separate conversations. The agents coordinate through you, so each exchange is a chance to review and intervene. We call this productive friction.';
+const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM behind your agent suffers from context decay and context pressure as its conversation grows. APM counters the first by recording the project\'s intent in planning documents, and the second by splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each exchange a chance to review and intervene. We call this productive friction.';
 // Definitions for the cover's terms: key -> definition (the note shows it without repeating the term).
 const DEFS = {
   decay: 'The longer the conversation and the more context accumulates, the less reliably the LLM recalls earlier decisions and instructions, and the less consistently it reasons about them.',
@@ -88,14 +89,15 @@ function NoteWave({ w }) {
   );
 }
 
-// One random seed per load, plus everything derived from it. null during SSR and the first render.
+// The page-load seed (kept across client-side navigation, new on refresh), plus everything derived from it.
+// null during SSR and the hydrating first render.
+const drawFrom = (seed) => {
+  const rnd = rng(seed ^ 0x9e3779b9);
+  return { seed, waves: [wave(rnd), wave(rnd)], note: wave(rnd, 5 + Math.floor(rnd() * 2), 0.5, rnd() < 0.5 ? 1 : -1) };
+};
 function useDraw() {
-  const [draw, setDraw] = useState(null);
-  useEffect(() => {
-    const seed = Math.floor(Math.random() * 4294967295) + 1;
-    const rnd = rng(seed ^ 0x9e3779b9);
-    setDraw({ seed, waves: [wave(rnd), wave(rnd)], note: wave(rnd, 5 + Math.floor(rnd() * 2), 0.5, rnd() < 0.5 ? 1 : -1) });
-  }, []);
+  const [draw, setDraw] = useState(() => drawnSeed() && drawFrom(drawnSeed()));
+  useEffect(() => { if (!draw) setDraw(drawFrom(pageSeed())); }, [draw]);
   return draw;
 }
 
@@ -250,8 +252,8 @@ function Cover({ draw }) {
         APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM
         behind your agent suffers from {term('decay', <em>context decay</em>)} and {term('pressure', <em>context pressure</em>)} as
         its conversation grows. APM counters the first by recording the project&apos;s intent in planning documents, and the second by
-        splitting the work among agents in separate conversations. The agents coordinate through you, so each exchange is a chance to
-        review and intervene.
+        splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each
+        exchange a chance to review and intervene.
         We call this {term('friction', <em>productive friction</em>)}.
       </p>
       <p id="cover-note" className="cover-note" aria-live="polite" aria-hidden={!active} style={{ opacity: active ? 1 : 0 }}>
