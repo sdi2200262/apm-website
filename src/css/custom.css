@@ -135,6 +135,15 @@ html[data-theme] {
 .navbar__link, .navbar__link--active { font-size: 14px; color: var(--apm-ink); }
 .navbar__link:hover { color: var(--apm-ink); text-decoration: underline; text-underline-offset: 3px; }
 
+/* Docs type scale: 16px body (the landing page keeps 18px), with the sidebar, TOC and breadcrumbs a step
+   smaller, so the article reads at 100% zoom beside the 14px header and footer. */
+html.docs-wrapper { --ifm-font-size-base: 100%; }
+html.docs-wrapper .menu { font-size: 15px; }
+html.docs-wrapper :is(.table-of-contents, .breadcrumbs) { font-size: 14px; }
+html.docs-wrapper .markdown h1 { font-size: 2.25rem; }
+html.docs-wrapper .markdown h2 { font-size: 1.5rem; }
+html.docs-wrapper .markdown h3 { font-size: 1.25rem; }
+
 /* Docs article: links underlined like the landing page; headings regular h1, 600 below. */
 .markdown a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .markdown h1 { font-weight: 400; }
