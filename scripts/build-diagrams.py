@@ -1,13 +1,14 @@
 # Builds the site's diagrams into static/img/diagrams/ as <name>[-<variant>]-<theme>.svg, theme light or dark.
 # Run: python3 scripts/build-diagrams.py   (needs the `drawio` and `d2` CLIs on PATH, and network for the font)
-# Sources, in diagrams/:
+# Sources:
 # - Coded here (icons from diagrams/icons/): the overview (landing page, Introduction; desktop()/phone(), one
-#   SVG per highlight plus -phone, adapted from the thesis deck's gen.py) and the thesis's Message Bus, state
-#   compression and Handoff (FIGURES, each with -phone). Edit the layout functions, not the SVGs.
-# - Re-themed from the thesis: diagrams/drawio/*.drawio (restyle()) and diagrams/d2/*.d2 (d2_svg()). Edit the
-#   sources' layout and wording there, not their colours or fonts; one SVG per theme, no phone layout.
+#   SVG per highlight for desktop and -phone, adapted from the thesis deck's gen.py) and the thesis figures in
+#   FIGURES (Message Bus, state compression, Handoff with -phone; the two phase figures desktop only).
+#   Edit the layout functions, not the SVGs.
+# - Re-themed from the thesis: diagrams/d2/*.d2 (d2_svg()). Edit their layout and wording there, not their
+#   colours or fonts; one SVG per theme, no phone layout.
 # Pipeline: draw.io XML -> the drawio CLI exports SVG -> font_css() inlines a Literata subset so the SVG
-# renders right inside an <img> (HTML labels included). d2 embeds its own font subset from the TTFs fetched by literata_ttf().
+# renders right inside an <img>. d2 embeds its own font subset from the TTFs fetched by literata_ttf().
 import base64
 import html
 import os
@@ -16,7 +17,6 @@ import subprocess
 import tempfile
 import urllib.parse
 import urllib.request
-import xml.etree.ElementTree as ET
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 SRC = os.path.join(ROOT, 'diagrams')
@@ -24,9 +24,15 @@ OUT = os.path.join(ROOT, 'static', 'img', 'diagrams')
 # Book colours (Gruvbox), kept in sync with --apm-ink/-paper/-deep in src/css/custom.css.
 THEMES = {'light': {'ink': '#3C3836', 'paper': '#FBF1C7', 'deep': '#EBDBB2'},
           'dark': {'ink': '#EBDBB2', 'paper': '#282828', 'deep': '#3C3836'}}
-PARTS = (None, 'planning', 'implementation', 'state', 'user')  # None = no highlight
+PARTS = (None, 'planning', 'manager', 'workers', 'user', 'state')  # None = no highlight
 FADE = 'opacity=20;textOpacity=20;'  # appended to a cell's style to dim it
 FONT = 'Literata'
+
+
+def thin(svg, size):
+    # Sets a Lucide icon's stroke-width (2 in its 24-unit viewBox) to 36 / size, so it draws ~1.5px thick, a
+    # little heavier than the 1px edges so nodes still lead: 1.2 at 30px, ~1.06 at 34px. Only the root's attribute changes.
+    return re.sub(r'stroke-width="[^"]*"', f'stroke-width="{36 / size:.3g}"', svg, count=1)
 
 
 class D:
@@ -53,7 +59,7 @@ class D:
     def icon(self, name, x, y, label, fade=False):
         # A Lucide icon from diagrams/icons/<name>.svg, recoloured to ink and embedded, with its label below.
         size = self.isz
-        svg = open(os.path.join(SRC, 'icons', name + '.svg')).read().replace('currentColor', self.t['ink'])
+        svg = thin(open(os.path.join(SRC, 'icons', name + '.svg')).read().replace('currentColor', self.t['ink']), size)  # stroke 36/size (~1.5px)
         img = base64.b64encode(svg.encode()).decode()
         st = f"shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;image=data:image/svg+xml,{img};" + FADE * fade
         return self.add(label, st, f'<mxGeometry x="{x-size/2}" y="{y-size/2}" width="{size}" height="{size}" as="geometry"/>', vertex=1)
@@ -62,6 +68,13 @@ class D:
         # A free-standing label, w wide: italic for phase titles, upright for edge labels.
         st = f'text;html=0;align=center;verticalAlign=middle;fontStyle={2 if italic else 0};' + FADE * fade
         return self.add(label, st, f'<mxGeometry x="{x-w/2}" y="{y-10}" width="{w}" height="20" as="geometry"/>', vertex=1)
+
+    def shape(self, kind, x, y, w, h, label):
+        # An unfilled decision diamond or start/end circle, centred at (x, y).
+        if kind not in ('rhombus', 'ellipse'):
+            raise ValueError(f'unsupported shape: {kind}')
+        st = f'{kind};html=0;align=center;verticalAlign=middle;fillColor=none;'
+        return self.add(label, st, f'<mxGeometry x="{x-w/2}" y="{y-h/2}" width="{w}" height="{h}" as="geometry"/>', vertex=1)
 
     def point(self, x, y):
         # An invisible zero-size cell, used as an edge end where no shape sits (e.g. just under a label).
@@ -92,10 +105,12 @@ class D:
 
 
 def fades(hl):
-    # Which groups fade when `hl` is highlighted: P/I planning/implementation agents, PS/IS their files,
+    # Which groups fade when `hl` is highlighted: P/I planning/implementation agents, M/W the Manager/Workers,
+    # PS/IS their files (MS the Manager's Tracker, WS the Workers' Memory edge),
     # U the users and relays, H the Planning-to-Implementation arrow. Phase maps keep their own files.
-    return dict(P=hl not in (None, 'planning'), I=hl not in (None, 'implementation'),
-                PS=hl not in (None, 'planning', 'state'), IS=hl not in (None, 'implementation', 'state'),
+    return dict(P=hl not in (None, 'planning'), I=hl not in (None, 'manager', 'workers'), M=hl not in (None, 'manager'), W=hl not in (None, 'workers'),
+                PS=hl not in (None, 'planning', 'state'), IS=hl not in (None, 'state', 'manager', 'workers'),
+                MS=hl not in (None, 'state', 'manager'), WS=hl not in (None, 'state', 'workers'),
                 U=hl not in (None, 'user'), H=hl is not None and hl != 'user')
 
 
@@ -110,64 +125,66 @@ def desktop(t, hl):
     d.text(X[3], 0, 200, 'Implementation Phase', f['I'])
     pl = d.icon('bot', X[0], Y, 'Planner', f['P'])
     u1 = d.icon('user', X[1], Y, 'User', f['P'] and f['U'])
-    ma = d.icon('bot', X[2], Y, 'Manager', f['I'])
+    ma = d.icon('bot', X[2], Y, 'Manager', f['M'])
     u2 = d.icon('user', X[3], Y, 'User', f['I'] and f['U'])
-    wo = d.icon('bot', X[4], Y, 'Workers', f['I'])
+    wo = d.icon('bot', X[4], Y, 'Workers', f['W'])
     d.edge(pl, u1, (1, .5), (0, .5), both=True, fade=f['P'] and f['U'])
     d.edge(u1, ma, (1, .5), (0, .5), dashed=True, fade=f['H'])  # hand-off from Planning to Implementation
-    d.edge(ma, u2, (1, .5), (0, .5), both=True, fade=f['I'] and f['U'])
-    d.edge(u2, wo, (1, .5), (0, .5), both=True, fade=f['I'] and f['U'])
+    d.edge(ma, u2, (1, .5), (0, .5), both=True, fade=f['M'] and f['U'])
+    d.edge(u2, wo, (1, .5), (0, .5), both=True, fade=f['W'] and f['U'])
     sp = d.icon('file-cog', (X[0] + X[1]) / 2, FY, 'Spec, Plan, Rules', f['PS'])
     d.edge(d.point(X[0], LY), sp, en=(0, .5), line=True, dashed=True, fade=f['PS'], wp=[(X[0], FY)])
     d.edge(d.point(X[1], LY), sp, en=(1, .5), line=True, dashed=True, fade=f['PS'], wp=[(X[1], FY)])
     bus = d.icon('inbox', X[3], BY, 'Message Bus', f['IS'] and f['U'])
-    d.edge(ma, bus, (.5, 0), (0, .5), line=True, dashed=True, fade=f['IS'])
-    d.edge(wo, bus, (.5, 0), (1, .5), line=True, dashed=True, fade=f['IS'])
+    d.edge(ma, bus, (.5, 0), (0, .5), line=True, dashed=True, fade=f['MS'])
+    d.edge(wo, bus, (.5, 0), (1, .5), line=True, dashed=True, fade=f['WS'])
     d.edge(u2, d.point(X[3], BY + 34), (.5, 0), line=True, dashed=True, fade=f['IS'] and f['U'])
-    tr = d.icon('file-chart-column-increasing', (X[2] + X[3]) / 2, FY, 'Tracker', f['IS'])
+    tr = d.icon('file-chart-column-increasing', (X[2] + X[3]) / 2, FY, 'Tracker', f['MS'])
     me = d.icon('folder-tree', (X[3] + X[4]) / 2, FY, 'Memory', f['IS'])
-    d.edge(d.point(X[2], LY), tr, en=(0, .5), line=True, dashed=True, fade=f['IS'], wp=[(X[2], FY)])
-    d.edge(tr, me, (1, .5), (0, .5), line=True, dashed=True, fade=f['IS'])
-    d.edge(d.point(X[4], LY), me, en=(1, .5), line=True, dashed=True, fade=f['IS'], wp=[(X[4], FY)])
+    d.edge(d.point(X[2], LY), tr, en=(0, .5), line=True, dashed=True, fade=f['MS'], wp=[(X[2], FY)])
+    d.edge(tr, me, (1, .5), (0, .5), line=True, dashed=True, fade=f['MS'])
+    d.edge(d.point(X[4], LY), me, en=(1, .5), line=True, dashed=True, fade=f['WS'], wp=[(X[4], FY)])
     return d
 
 
-def phone(t):
+def phone(t, hl=None):
     # Portrait, 342 wide: Planning above Implementation, the hand-off down the right side.
-    # Implementation runs right to left so the Manager sits under the Planning User. No highlights.
+    # Implementation runs right to left so the Manager sits under the Planning User. Highlights as desktop().
     # Row y's: phase titles T1/T2, agents A/IM, files S/F, message bus B. LB = icon centre to just below its label.
     T1, A, S, T2, B, IM, F, LB = 0, 60, 150, 250, 305, 405, 500, 40
-    d = D(342, F + 30, t, 13, 34)
+    f, d = fades(hl), D(342, F + 30, t, 13, 34)
     L, M, R = 44, 171, 286  # columns: left, middle, right
-    d.text(M, T1, 300, 'Planning Phase')
-    pl = d.icon('bot', L, A, 'Planner')
-    u1 = d.icon('user', R, A, 'User')
-    d.edge(pl, u1, (1, .5), (0, .5), both=True)
-    sp = d.icon('file-cog', M, S, 'Spec, Plan, Rules')
-    d.edge(d.point(L, A + LB), sp, en=(0, .5), line=True, dashed=True, wp=[(L, S)])
-    d.edge(d.point(R, A + LB), sp, en=(1, .5), line=True, dashed=True, wp=[(R, S)])
-    d.text(M, T2, 300, 'Implementation Phase')
-    bus = d.icon('inbox', M, B, 'Message Bus')
-    wo = d.icon('bot', L, IM, 'Workers')
-    u2 = d.icon('user', M, IM, 'User')
-    ma = d.icon('bot', R, IM, 'Manager')
-    d.edge(u1, ma, (1, .5), (1, .5), dashed=True, wp=[(330, A), (330, IM)])
-    d.edge(ma, u2, (0, .5), (1, .5), both=True)
-    d.edge(u2, wo, (0, .5), (1, .5), both=True)
-    d.edge(ma, bus, (.5, 0), (1, .5), line=True, dashed=True)
-    d.edge(wo, bus, (.5, 0), (0, .5), line=True, dashed=True)
-    d.edge(u2, d.point(M, B + LB), (.5, 0), line=True, dashed=True)
-    me = d.icon('folder-tree', (L + M) / 2, F, 'Memory')
-    tr = d.icon('file-chart-column-increasing', (M + R) / 2, F, 'Tracker')
-    d.edge(d.point(L, IM + LB), me, en=(0, .5), line=True, dashed=True, wp=[(L, F)])
-    d.edge(me, tr, (1, .5), (0, .5), line=True, dashed=True)
-    d.edge(d.point(R, IM + LB), tr, en=(1, .5), line=True, dashed=True, wp=[(R, F)])
+    d.text(M, T1, 300, 'Planning Phase', f['P'])
+    pl = d.icon('bot', L, A, 'Planner', f['P'])
+    u1 = d.icon('user', R, A, 'User', f['P'] and f['U'])
+    d.edge(pl, u1, (1, .5), (0, .5), both=True, fade=f['P'] and f['U'])
+    sp = d.icon('file-cog', M, S, 'Spec, Plan, Rules', f['PS'])
+    d.edge(d.point(L, A + LB), sp, en=(0, .5), line=True, dashed=True, fade=f['PS'], wp=[(L, S)])
+    d.edge(d.point(R, A + LB), sp, en=(1, .5), line=True, dashed=True, fade=f['PS'], wp=[(R, S)])
+    d.text(M, T2, 300, 'Implementation Phase', f['I'])
+    bus = d.icon('inbox', M, B, 'Message Bus', f['IS'] and f['U'])
+    wo = d.icon('bot', L, IM, 'Workers', f['W'])
+    u2 = d.icon('user', M, IM, 'User', f['I'] and f['U'])
+    ma = d.icon('bot', R, IM, 'Manager', f['M'])
+    d.edge(u1, ma, (1, .5), (1, .5), dashed=True, fade=f['H'], wp=[(330, A), (330, IM)])  # hand-off
+    d.edge(ma, u2, (0, .5), (1, .5), both=True, fade=f['M'] and f['U'])
+    d.edge(u2, wo, (0, .5), (1, .5), both=True, fade=f['W'] and f['U'])
+    d.edge(ma, bus, (.5, 0), (1, .5), line=True, dashed=True, fade=f['MS'])
+    d.edge(wo, bus, (.5, 0), (0, .5), line=True, dashed=True, fade=f['WS'])
+    d.edge(u2, d.point(M, B + LB), (.5, 0), line=True, dashed=True, fade=f['IS'] and f['U'])
+    me = d.icon('folder-tree', (L + M) / 2, F, 'Memory', f['IS'])
+    tr = d.icon('file-chart-column-increasing', (M + R) / 2, F, 'Tracker', f['MS'])
+    d.edge(d.point(L, IM + LB), me, en=(0, .5), line=True, dashed=True, fade=f['WS'], wp=[(L, F)])
+    d.edge(me, tr, (1, .5), (0, .5), line=True, dashed=True, fade=f['MS'])
+    d.edge(d.point(R, IM + LB), tr, en=(1, .5), line=True, dashed=True, fade=f['MS'], wp=[(R, F)])
     return d
 
 
 # The figures below follow the overview's conventions: agents and files are labelled icons, solid arrows
 # carry a message or a write, dashed lines tie the User to what they mediate (or a file to what holds it).
 # Edge labels sit beside their line, never on it, mirrored above/below (or left/right) for symmetry.
+# A label always takes the outer side of its segment: above a top horizontal, below a bottom one, left of a left
+# vertical, right of a right one; on inner segments, the side facing away from the figure's centre.
 # Desktop: 9pt text, 30px icons, LB = icon centre to just below a one-line label; a 30px icon's .25/.75
 # exits sit 7.5px either side of its centre. Phone: 13pt, 34px icons, labels inside the column gaps.
 
@@ -319,29 +336,133 @@ def handoff_phone(t):
     return d
 
 
-# Coded figures: name -> (desktop layout, phone layout). Output <name>[-phone]-<theme>.svg.
+def planning_phase(t):
+    # Two left-to-right rows, as in the source: discovery above, documents below. The clarification loop
+    # returns over row 1; "Yes" runs down the left lane into the documents; the revision loop returns over row 2.
+    d, LB = D(720, 420, t, 9), 38
+    S, INITIATE, G, U, P, A = 45, 165, 285, 405, 525, 675  # row 1 columns
+    LANE, WRITE, REVIEW, CHECK, END = 45, 165, 320, 470, 610  # row 2 columns; LANE carries "Yes" down
+    TOP, MID, LOWER, FILE = 80, 160, 255, 365  # rows; MID is the "Yes" lane's turn
+    LOOP1, LOOP2 = 22, 205  # y's of the clarification and revision returns
+    start = d.shape('ellipse', S, TOP, 54, 54, 'Project\nbegins')
+    initiate = d.icon('user', INITIATE, TOP, 'User initiates\nPlanner')
+    gather = d.icon('bot', G, TOP, 'Planner gathers\ncontext and elicits\nrequirements')
+    requirements = d.icon('user', U, TOP, 'User articulates\nrequirements')
+    propose = d.icon('bot', P, TOP, 'Planner consolidates\nand proposes\napproaches')
+    aligned = d.shape('rhombus', A, TOP, 64, 50, 'Aligned?')
+    write = d.icon('bot', WRITE, LOWER, 'Planner creates\nplanning documents')
+    review = d.icon('user', REVIEW, LOWER, 'User reviews\nfor completeness')
+    checked = d.shape('rhombus', CHECK, LOWER, 64, 50, 'Aligned?')
+    done = d.shape('ellipse', END, LOWER, 60, 60, 'Planning\ncomplete')
+    specs = d.icon('file-cog', WRITE, FILE, 'Spec, Plan, Rules')
+
+    for source, target in ((start, initiate), (initiate, gather), (gather, requirements)):
+        d.edge(source, target, (1, .5), (0, .5))
+    d.edge(requirements, propose, (1, .25), (0, .25))
+    d.edge(propose, requirements, (0, .75), (1, .75))
+    d.edge(propose, aligned, (1, .5), (0, .5))
+    note(d, (P + 15 + A - 32) / 2, TOP - 22, 'Presents\nunderstanding', 90)
+    d.edge(aligned, requirements, (.5, 0), (.5, 0), wp=[(A, LOOP1), (U, LOOP1)])
+    note(d, (U + A) / 2, LOOP1 - 10, 'No, understanding gap: clarify', 170)
+    d.edge(aligned, write, (.5, 1), (0, .5), wp=[(A, MID), (LANE, MID), (LANE, LOWER)])
+    note(d, A + 14, TOP + 34, 'Yes', 30)
+
+    d.edge(write, review, (1, .5), (0, .5))
+    d.edge(review, checked, (1, .5), (0, .5))
+    d.edge(checked, write, (.5, 0), (.5, 0), wp=[(CHECK, LOOP2), (WRITE, LOOP2)])
+    note(d, (WRITE + CHECK) / 2, LOOP2 - 10, 'No, document issue: revise', 170)
+    d.edge(checked, done, (1, .5), (0, .5))
+    note(d, (CHECK + 32 + END - 30) / 2, LOWER - 12, 'Yes', 30)
+    d.edge(d.point(WRITE, LOWER + LB + 6), specs, en=(.5, 0), line=True, dashed=True)
+    return d
+
+
+def implementation_phase(t):
+    # The original workflow in bands: handoff across the top, assignment, execution, reporting. The first
+    # Aligned? sits above the Manager's update so its "Yes" drops straight in; "User initiates new Worker"
+    # hangs below the New Worker? decision and feeds the notification. Dashed channels: a spine down column M
+    # (Manager, Message Bus, Workers' reports) with the Tracker and Spec, Plan, Rules tied to it, and the
+    # Message Bus line across WORK with Memory and Deliverables hanging from it. Each dashed segment is drawn once.
+    d = D(770, 920, t, 9)
+    L, M, R, E = 100, 380, 535, 630  # columns: reviewer, main, New Worker?, Workers
+    LOOP, LANE = 742, 58  # x's of the retry loop and the project-complete lane
+    TR, PL = M - 120, M + 120  # Tracker and Spec, Plan, Rules (Memory and Deliverables share them)
+    INIT, ASSIGN, WORK, REPORT = 100, 290, 545, 790
+    DOC, STATE, LOOP1 = 460, 665, 205  # LOOP1: y of the revise loop and of User initiates new Worker
+    S = 9  # the top row sits 9px right, so its Yes drops straight into the update's top-right
+    start = d.shape('ellipse', 48 + S, INIT, 86, 86, 'Implementation\nbegins')
+    initiate_manager = d.icon('user', 148 + S, INIT, 'User initiates\nManager')
+    review_plan = d.icon('bot', 255 + S, INIT, 'Manager reviews\nplanning documents')
+    first_aligned = d.shape('rhombus', M + S, INIT, 64, 58, 'Aligned?')
+    update = d.icon('bot', M, ASSIGN, 'Manager updates Tracker,\nmaintains planning documents\nand writes assignments')
+    new_worker = d.shape('rhombus', R, ASSIGN, 74, 58, 'New Worker?')
+    initiate_worker = d.icon('user', R, LOOP1, '')
+    note(d, R, LOOP1 - 29, 'User initiates\nnew Worker', 100)  # above its icon, clear of the Yes line below
+    notify_workers = d.icon('user', E, ASSIGN, 'User notifies\nWorkers')
+    tracker = d.icon('file-chart-column-increasing', TR, DOC, 'Tracker')
+    plan = d.icon('file-cog', PL, DOC, 'Spec, Plan, Rules')
+    second_aligned = d.shape('rhombus', L, ASSIGN, 64, 58, 'Aligned?')
+    complete = d.shape('ellipse', LANE, 420, 64, 64, 'Project\ncomplete')
+    review_logs = d.icon('bot', L, WORK, 'Manager reviews\nlogs and reports')
+    bus = d.icon('inbox', M, WORK, 'Message Bus')
+    read_assignments = d.icon('bot', E, WORK, 'Workers read and\nexecute assignments')
+    memory = d.icon('folder-tree', TR, STATE, 'Memory')
+    deliverables = d.icon('boxes', PL, STATE, 'Deliverables')
+    notify_manager = d.icon('user', L, REPORT, 'User notifies\nManager')
+    write_reports = d.icon('bot', M, REPORT, 'Workers write\nlogs and reports')
+    success = d.shape('rhombus', E, REPORT, 72, 58, 'Success?')
+
+    d.edge(start, initiate_manager, (1, .5), (0, .5))
+    d.edge(initiate_manager, review_plan, (1, .5), (0, .5))
+    d.edge(review_plan, first_aligned, (1, .5), (0, .5))
+    note(d, (255 + 15 + M - 32) / 2 + S, INIT - 27, 'Presents\nunderstanding', 112)
+    d.edge(first_aligned, review_plan, (.5, 0), (.5, 0), wp=[(M + S, 35), (255 + S, 35)])
+    note(d, (255 + M) / 2 + S, 26, 'No, understanding gap: clarify', 180)
+    d.edge(first_aligned, update, (.5, 1), (.8, 0))  # into its top-right
+    note(d, M + S + 16, 160, 'Yes', 30)
+
+    d.edge(update, new_worker, (1, .5), (0, .5))
+    d.edge(new_worker, initiate_worker, (.5, 0), (.5, 1))
+    note(d, R + 16, ASSIGN - 49, 'Yes', 30)
+    d.edge(new_worker, notify_workers, (1, .5), (0, .5))
+    note(d, (R + 37 + E - 15) / 2, ASSIGN - 13, 'No', 30)
+    d.edge(initiate_worker, notify_workers, (1, .5), (.5, 0), wp=[(E, LOOP1)])  # into its top centre
+    d.edge(d.point(E, ASSIGN + 50), read_assignments, en=(.5, 0))
+
+    d.edge(d.point(M, ASSIGN + 69), bus, en=(.5, 0), line=True, dashed=True)  # below the three-line label
+    d.edge(d.point(M, DOC), tracker, en=(1, .5), line=True, dashed=True)
+    d.edge(d.point(M, DOC), plan, en=(0, .5), line=True, dashed=True)
+    d.edge(review_logs, bus, (1, .5), (0, .5), line=True, dashed=True)
+    d.edge(read_assignments, bus, (0, .5), (1, .5), line=True, dashed=True)
+    d.edge(d.point(TR, WORK), memory, en=(.5, 0), line=True, dashed=True)
+    d.edge(d.point(M, STATE), memory, en=(1, .5), line=True, dashed=True)
+    d.edge(d.point(PL, WORK), deliverables, en=(.5, 0), line=True, dashed=True)
+    d.edge(d.point(M, STATE), deliverables, en=(0, .5), line=True, dashed=True)
+    d.edge(write_reports, d.point(M, WORK + 48), (.5, 0), line=True, dashed=True)
+
+    d.edge(d.point(E, WORK + 54), success, en=(.5, 0))
+    d.edge(success, read_assignments, (1, .5), (1, .5), wp=[(LOOP, REPORT), (LOOP, WORK)])
+    note(d, (E + 15 + LOOP) / 2, WORK - 22, 'No, recoverable:\niterate', 90)
+    d.edge(success, write_reports, (0, .5), (1, .5))
+    note(d, E - 52, REPORT - 12, 'Yes', 30)
+    d.edge(success, d.point(M, REPORT + 49), (.5, 1), wp=[(E, 870), (M, 870)])  # up to just under the node's label
+    note(d, (E + M) / 2, 882, 'No, blocker: escalate', 130)
+    d.edge(write_reports, notify_manager, (0, .5), (1, .5))
+    d.edge(notify_manager, d.point(L, WORK + 54), (.5, 0))
+    d.edge(review_logs, second_aligned, (.5, 0), (.5, 1))
+    d.edge(second_aligned, complete, (0, .5), (.5, 0), wp=[(LANE, ASSIGN), (LANE, 380)])
+    note(d, LANE - 33, 335, 'Yes,\nno work\nremains', 48)
+    d.edge(second_aligned, update, (1, .5), (0, .5))
+    note(d, (L + 32 + M - 15) / 2, ASSIGN - 20, 'Yes, work remains', 135)
+    d.edge(second_aligned, update, (.5, 0), (.2, 0), wp=[(L, LOOP1), (M - 9, LOOP1)])  # into its top-left, beside the Yes drop
+    note(d, (L + M) / 2, LOOP1 - 12, 'No, planning or contained issue: revise or retry', 230)
+    return d
+
+
+# Coded figures: name -> (desktop layout, phone layout or None). Output <name>[-phone]-<theme>.svg.
 FIGURES = {'message-bus': (message_bus, message_bus_phone), 'state-compression': (state_compression, state_compression_phone),
-           'handoff': (handoff, handoff_phone)}
-
-
-def restyle(path, t):
-    # Re-themes a thesis .drawio for the site: ink text and lines in Literata, no fills, icons recoloured
-    # to ink, label backgrounds in paper so a label breaks the line it sits on. Labels stay HTML, so the
-    # browser wraps them and sizes their backgrounds with the real font. Returns the draw.io XML.
-    tree = ET.parse(path)
-    model = tree.find('.//mxGraphModel')
-    if model is not None:
-        model.attrib.pop('background', None)
-    base = f"fontFamily={FONT};fontColor={t['ink']};strokeColor={t['ink']};fillColor=none;labelBackgroundColor={t['paper']};"
-    icon = lambda m: 'image=data:image/svg+xml,' + base64.b64encode(  # noqa: E731
-        base64.b64decode(m.group(1)).replace(b'currentColor', t['ink'].encode())).decode()
-    for cell in tree.iter('mxCell'):
-        style = cell.get('style')
-        if style is None:
-            continue
-        style = re.sub(r'(labelBackgroundColor|fontFamily|fontColor|strokeColor|fillColor)=[^;]*;?', '', style)
-        cell.set('style', re.sub(r'image=data:image/svg\+xml,([^;]+)', icon, style) + base)
-    return ET.tostring(tree.getroot(), encoding='unicode')
+           'handoff': (handoff, handoff_phone),
+           'planning-phase': (planning_phase, None), 'implementation-phase': (implementation_phase, None)}
 
 
 def literata_ttf(tmp):
@@ -404,16 +525,16 @@ def main():
     # Collect every variant as draw.io XML, export each through drawio, inline a font subset per figure
     # (shared by its themes and variants), then render the d2 figures (which carry their own font).
     # Keys are (figure, variant, theme); the file is <figure><variant>-<theme>.svg.
-    drawio = lambda f: os.path.join(SRC, 'drawio', f)  # noqa: E731
     jobs = {}
     for theme, t in THEMES.items():
         for hl in PARTS:
             jobs['overview', '-' + hl if hl else '', theme] = desktop(t, hl).xml()
-        jobs['overview', '-phone', theme] = phone(t).xml()
+        for hl in PARTS:
+            jobs['overview', '-phone' + ('-' + hl if hl else ''), theme] = phone(t, hl).xml()
         for name, (wide, narrow) in FIGURES.items():
-            jobs[name, '', theme], jobs[name, '-phone', theme] = wide(t).xml(), narrow(t).xml()
-        for f in sorted(os.listdir(os.path.join(SRC, 'drawio'))):
-            jobs[f.removesuffix('.drawio'), '', theme] = restyle(drawio(f), t)
+            jobs[name, '', theme] = wide(t).xml()
+            if narrow:
+                jobs[name, '-phone', theme] = narrow(t).xml()
     svgs = {}
     with tempfile.TemporaryDirectory() as tmp:
         for key, xml in jobs.items():

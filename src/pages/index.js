@@ -18,10 +18,11 @@ import './index.css';
 
 const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI agents handle planning, coordination and execution as a team.';
 const CAPTION = 'An APM session. The Planning Phase, on the left, produces the planning documents; the Implementation Phase, on the right, carries them out.';
-// Overview parts: key = diagram variant (overview-<key>-<theme>.svg), value = caption. Order = Figure 2..5.
+// Overview parts: key = diagram variant (overview-<key>-<theme>.svg), value = caption. Order = Figure 2..6.
 const PARTS = {
   planning: 'The Planner conducts structured project discovery while reading your codebase, then decomposes requirements into three planning documents: a Spec (what to build), a Plan (how work is organised) and Rules (how work is performed).',
-  implementation: 'The Manager coordinates execution by assigning Tasks to Workers and reviewing completed work. Each Worker receives a self-contained Task Prompt, executes, validates, logs to Memory and reports back.',
+  manager: 'The Manager hands out assignments with the context each needs, reviews what comes back, and keeps the Tracker and Memory up to date.',
+  workers: 'Each Worker takes the assignments of one area of the project, carries them out, checks them, logs the work to Memory and reports back.',
   user: 'You mediate every exchange between agents by running commands in the right conversation. One command delivers a Task to a Worker; another brings the Worker\'s report back to the Manager.',
   state: 'Project state lives in structured files outside any agent\'s context. When an agent reaches its limits, a Handoff passes its working knowledge to a fresh instance of the same agent.',
 };
@@ -130,8 +131,8 @@ function Overview() {
     <div>
       <p className="lead">
         APM splits the work between three kinds of agent, each in its own conversation with only the context it needs.
-        The {term('planning', 'Planner')} turns your goals into a plan, the {term('implementation', 'Manager')} assigns its Tasks,
-        and {term('implementation', 'Workers')} carry them out. {term('user', 'You')} mediate every exchange between them,
+        The {term('planning', 'Planner')} turns your goals into a plan, the {term('manager', 'Manager')} assigns its Tasks,
+        and {term('workers', 'Workers')} carry them out. {term('user', 'You')} mediate every exchange between them,
         and the {term('state', 'project state')} lives in files that outlast any one conversation.
       </p>
       <figure className="plate">

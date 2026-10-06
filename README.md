@@ -25,7 +25,7 @@ src/
 ├── pages/         # landing page (index.js + index.css)
 └── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, Icon/Arrow
 docs/              # documentation pages (Markdown/MDX)
-diagrams/          # diagram sources: icons/ (Lucide), drawio/, d2/
+diagrams/          # diagram sources: icons/ (Lucide), d2/
 scripts/           # build-diagrams.py (diagrams), build-llms.js (llms.txt)
 static/img/        # assistants/ (logos), diagrams/ (generated), favicon, social card
 ```

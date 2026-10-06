@@ -219,6 +219,7 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 .diagram { margin: 32px 0; }
 .diagram img { display: block; width: 100%; height: auto; }
 html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light { display: none; }
+@media (max-width: 600px) { .diagram--wide { overflow-x: auto; } .diagram--wide img { min-width: 560px; } } /* no phone layout: scroll, don't shrink */
 
 /* Table of contents, breadcrumbs, prev/next. */
 .table-of-contents__link { color: var(--ifm-font-color-secondary); }

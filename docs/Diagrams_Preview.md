@@ -5,7 +5,7 @@ title: Diagrams (preview)
 
 import Diagram from '@site/src/components/Diagram';
 
-Temporary page for reviewing the diagrams. Delete after step 2. Coded (desktop + phone under 600px): Overview, Message Bus, State compression, Handoff. Restyled from the thesis (no phone layout): the two phases. d2: Stage progression, Task cycle.
+Temporary page for reviewing the diagrams. Delete after step 2. Diagrams without a phone layout scroll sideways on phones.
 
 ## Overview
 
