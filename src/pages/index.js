@@ -18,21 +18,21 @@ import './index.css';
 
 // The cover text and the overview's captions are mirrored word for word in the APM repo's README; change both together.
 // Meta description; the cover renders the same text with definitions on its two terms (see Cover).
-const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, a single conversation suffers from context decay and context pressure. APM counters the first by recording the project\'s intent in planning documents, and the second by splitting the work among agents in separate conversations, which communicate through you. Each exchange is a chance to review and intervene. We call this productive friction.';
-// Definitions for the cover's terms: key -> [name, definition].
+const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM behind your agent suffers from context decay and context pressure as its conversation grows. APM counters the first by recording the project\'s intent in planning documents, and the second by splitting the work among agents in separate conversations. The agents coordinate through you, so each exchange is a chance to review and intervene. We call this productive friction.';
+// Definitions for the cover's terms: key -> definition (the note shows it without repeating the term).
 const DEFS = {
-  decay: ['Context decay', 'As a conversation grows, the model recalls earlier decisions and instructions less reliably, and reasons about them less consistently.'],
-  pressure: ['Context pressure', 'Every call resends the whole conversation, so as it grows, each step costs more and it nears the context window\'s limit, where it must be cut or summarised.'],
-  friction: ['Productive friction', 'Interface design usually removes friction; some human–computer interaction research adds it on purpose, as pauses that invite reflection. APM\'s relays are such pauses, each a chance to check a decision and keep your grasp of the system.'],
+  decay: 'The longer the conversation and the more context accumulates, the less reliably the LLM recalls earlier decisions and instructions, and the less consistently it reasons about them.',
+  pressure: 'Every call to the LLM resends the whole conversation; each step costs more than the last and nears the context window\'s limit, where the conversation must be cut or summarised.',
+  friction: 'Influential human–computer interaction research places friction carefully at chosen points in an interface, as pauses that invite reflection. APM\'s user-mediated coordination aims to create such pauses, allowing you to keep authority over, and understanding of, the software you build.',
 };
-const CAPTION = 'The APM workflow. In the Planning Phase, on the left, you and the Planner settle what to build; in the Implementation Phase, on the right, the Manager and Workers build it, communicating through you.';
+const CAPTION = 'The APM workflow. In the Planning Phase, on the left, you and the Planner turn your goals into planning documents; in the Implementation Phase, on the right, the Manager and Workers implement them together.';
 // Overview parts: key = diagram variant (overview-<key>-<theme>.svg), value = caption. Order = Figure 2..6.
 const PARTS = {
   planning: 'The Planner explores your codebase and questions you about purpose, requirements and constraints. Once you approve its understanding, it writes the Spec (what to build), the Plan (how the work is divided) and the Rules (how the work is carried out), each for your review.',
-  manager: 'The Manager hands out assignments with the context each needs, reviews what comes back, and keeps the Tracker and Memory up to date.',
-  workers: 'Each Worker takes the assignments of one area of the project, carries them out, checks them, logs the work to Memory and reports back.',
-  user: 'Agents communicate through you. One command delivers an assignment to a Worker; another brings its report back to the Manager. You can read either and step in before passing it on.',
-  state: 'The planning documents, a progress tracker and the project\'s history are shared files outside any conversation. When an agent\'s context fills, a Handoff moves its role to a fresh conversation that picks up where it left off.',
+  manager: 'The Manager hands out assignments with the context each needs, reviews what comes back, keeps track of project state and keeps memory up to date.',
+  workers: 'Each Worker takes the assignments of one area of the project, completes and validates them, logs the work to memory and reports back.',
+  user: 'When an assignment is ready, you notify its Worker; when a report comes back, you notify the Manager. Each time, you can review, steer or intervene first.',
+  state: 'The planning documents, a progress tracker and the project\'s memory sit in shared files. When an agent\'s context fills, you can perform a Handoff to move its role to a fresh conversation that picks up where it left off using these files.',
 };
 // [init flag, name, logo in static/img/assistants]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
 const ASSISTANTS = [
@@ -170,10 +170,10 @@ function Overview() {
   return (
     <div>
       <p className="lead" ref={lead}>
-        The {term('planning', 'Planner')} works out the project with you and writes three planning documents: the Spec, the Plan and the Rules.
-        The {term('manager', 'Manager')} hands out assignments and {term('workers', 'Workers')} carry them out, each with only the context
-        its work needs. Their messages pass through {term('user', 'you')}, and the {term('state', 'project state')} lives in shared files that
-        outlast any conversation. Any agent can still hand heavy work to its own subagents.
+        The {term('planning', 'Planner')} writes three planning documents with you: the Spec, the Plan and the Rules.
+        The {term('manager', 'Manager')} hands out assignments and {term('workers', 'Workers')} carry them out. Their messages pass
+        through {term('user', 'you')}, and the {term('state', 'project state')} lives in shared files outside any conversation. Any agent
+        can still offload work to its own subagents for efficiency.
       </p>
       <figure className="plate">
         <div className="plate-images">
@@ -193,7 +193,7 @@ function Overview() {
           {!active && <><span className="hover-only"> Point at an underlined term to see its part.</span><span className="touch-only-inline"> Tap an underlined term to see its part.</span></>}
         </figcaption>
       </figure>
-      <p className="small">The <Link to="/docs/introduction">docs</Link> cover the agents, the workflow and the CLI in full.</p>
+      <p className="small">The <Link to="/docs/introduction">documentation</Link> covers the workflow and the framework's design in full.</p>
     </div>
   );
 }
@@ -244,19 +244,19 @@ function Cover({ draw }) {
   const last = useRef('decay');
   if (active) last.current = active;
   const term = (key, text) => <button type="button" className="term" aria-controls="cover-note" {...props(key)}>{text}</button>;
-  const [name, text] = DEFS[last.current];
   return (
     <div ref={ref}>
       <p>
-        APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, a single
-        conversation suffers from {term('decay', <em>context decay</em>)} and {term('pressure', <em>context pressure</em>)}.
-        APM counters the first by recording the project&apos;s intent in planning documents, and the second by splitting the work among
-        agents in separate conversations, which communicate through you. Each exchange is a chance to review and intervene.
+        APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM
+        behind your agent suffers from {term('decay', <em>context decay</em>)} and {term('pressure', <em>context pressure</em>)} as
+        its conversation grows. APM counters the first by recording the project&apos;s intent in planning documents, and the second by
+        splitting the work among agents in separate conversations. The agents coordinate through you, so each exchange is a chance to
+        review and intervene.
         We call this {term('friction', <em>productive friction</em>)}.
       </p>
       <p id="cover-note" className="cover-note" aria-live="polite" aria-hidden={!active} style={{ opacity: active ? 1 : 0 }}>
         {draw && <NoteWave w={draw.note} />}
-        <em>{name}.</em> {text}
+        {DEFS[last.current]}
       </p>
     </div>
   );
@@ -271,7 +271,7 @@ function GettingStarted() {
         <p>APM installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later.</p>
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
-        <p>In your project directory, run the command below. Pick your assistant here, or when APM asks.</p>
+        <p>In your project directory, run the command below. Pick your assistant's flag here, or run interactively and select when the CLI prompts you.</p>
         <div className="pick" role="group" aria-label="AI assistant">
           {ASSISTANTS.map(([id, name, file, mask]) => (
             <button key={id} type="button" aria-pressed={pick === id} onClick={() => setPick(pick === id ? null : id)}>
@@ -287,7 +287,7 @@ function GettingStarted() {
         <p>From there, each agent tells you what to run next and where. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
-        <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project from a terminal.</p>
+        <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project directory from your terminal.</p>
         <p><Link to="/docs/getting-started">Installation and first steps are in the docs.</Link></p>
       </div>
     </>
