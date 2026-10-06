@@ -197,7 +197,7 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
   .theme-doc-sidebar-container { transition: width .35s cubic-bezier(.65, 0, .35, 1) !important; }
   main[class*='docMainContainer'] { max-width: none !important; min-width: 0; }
   main[class*='docMainContainer'] > .container { transition: max-width .35s cubic-bezier(.65, 0, .35, 1); }
-  [role='button'][class*='expandButton'] { animation: apm-load .25s ease; }
+  [role='button'][class*='expandButton'] svg { animation: apm-load .25s ease; } /* fade the chevron only: the bottom rule stays put */
 }
 :is([class*='collapseSidebarButtonIcon'], [class*='expandButtonIcon']) { margin: 0 !important; opacity: .45; transition: opacity .2s; }
 :is(button[class*='collapseSidebarButton'], [role='button'][class*='expandButton']):is(:hover, :focus-visible) svg { opacity: 1; }
