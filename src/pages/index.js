@@ -18,21 +18,21 @@ import './index.css';
 
 const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI agents handle planning, coordination and execution as a team.';
 const CAPTION = 'An APM session. The Planning Phase, on the left, produces the planning documents; the Implementation Phase, on the right, carries them out.';
-// Overview parts: key = diagram suffix (book-<theme>-overview-<key>.svg), value = caption. Order = Figure 2..5.
+// Overview parts: key = diagram variant (overview-<key>-<theme>.svg), value = caption. Order = Figure 2..5.
 const PARTS = {
   planning: 'The Planner conducts structured project discovery while reading your codebase, then decomposes requirements into three planning documents: a Spec (what to build), a Plan (how work is organised) and Rules (how work is performed).',
   implementation: 'The Manager coordinates execution by assigning Tasks to Workers and reviewing completed work. Each Worker receives a self-contained Task Prompt, executes, validates, logs to Memory and reports back.',
   user: 'You mediate every exchange between agents by running commands in the right conversation. One command delivers a Task to a Worker; another brings the Worker\'s report back to the Manager.',
   state: 'Project state lives in structured files outside any agent\'s context. When an agent reaches its limits, a Handoff passes its working knowledge to a fresh instance of the same agent.',
 };
-// [init flag, name, logo in static/img]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
+// [init flag, name, logo in static/img/assistants]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
 const ASSISTANTS = [
-  ['claude', 'Claude Code', 'claude-logo.svg'],
-  ['codex', 'Codex CLI', ['codex-logo-light.svg', 'codex-logo-dark.svg']],
-  ['cursor', 'Cursor', 'cursor-logo.svg'],
-  ['copilot', 'GitHub Copilot', 'github-copilot-logo.svg', 'mask'],
-  ['antigravity', 'Antigravity', 'antigravity-logo.png'],
-  ['opencode', 'OpenCode', ['opencode-logo-light.svg', 'opencode-logo-dark.svg']],
+  ['claude', 'Claude Code', 'claude.svg'],
+  ['codex', 'Codex CLI', ['codex-light.svg', 'codex-dark.svg']],
+  ['cursor', 'Cursor', 'cursor.svg'],
+  ['copilot', 'GitHub Copilot', 'github-copilot.svg', 'mask'],
+  ['antigravity', 'Antigravity', 'antigravity.png'],
+  ['opencode', 'OpenCode', ['opencode-light.svg', 'opencode-dark.svg']],
 ];
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -117,7 +117,8 @@ function Header({ seed, scrolled }) {
 function Overview() {
   const [active, setActive] = useState(null);
   const { colorMode } = useColorMode();
-  const dir = useBaseUrl(`/img/diagrams/book-${colorMode}-overview`);
+  const dir = useBaseUrl('/img/diagrams/overview');
+  const svg = (variant = '') => `${dir}${variant}-${colorMode}.svg`; // overview[-<variant>]-<theme>.svg
   const isBrowser = useIsBrowser();
   const term = (part, text) => (
     <button type="button" className="term" onMouseEnter={() => setActive(part)} onMouseLeave={() => setActive(null)} onFocus={() => setActive(part)} onBlur={() => setActive(null)}>
@@ -136,10 +137,10 @@ function Overview() {
       <figure className="plate">
         <div className="plate-images">
           {isBrowser && <picture style={{ opacity: active ? 0 : 1 }}>
-            <source media="(any-hover: none)" srcSet={`${dir}-phone.svg`} />
-            <img src={`${dir}.svg`} alt="APM overview: the Planner, the Manager and Workers, coordinated through the user, with shared files" />
+            <source media="(any-hover: none)" srcSet={svg('-phone')} />
+            <img src={svg()} alt="APM overview: the Planner, the Manager and Workers, coordinated through the user, with shared files" />
           </picture>}
-          {isBrowser && keys.map((k) => <img key={k} className="hl" src={`${dir}-${k}.svg`} alt="" aria-hidden="true" style={{ opacity: active === k ? 1 : 0 }} />)}
+          {isBrowser && keys.map((k) => <img key={k} className="hl" src={svg(`-${k}`)} alt="" aria-hidden="true" style={{ opacity: active === k ? 1 : 0 }} />)}
         </div>
         <figcaption aria-live="polite">
           <em>Figure {active ? keys.indexOf(active) + 2 : 1}.</em> {active ? PARTS[active] : CAPTION}
@@ -183,7 +184,7 @@ function Code({ children }) {
 }
 
 function Logo({ file, mask }) {
-  const src = useBaseUrl('/img/');
+  const src = useBaseUrl('/img/assistants/');
   if (mask) return <span className="logo mask" style={{ maskImage: `url(${src}${file})`, WebkitMaskImage: `url(${src}${file})` }} />;
   if (Array.isArray(file)) return <><img className="logo only-light" src={src + file[0]} alt="" /><img className="logo only-dark" src={src + file[1]} alt="" /></>;
   return <img className="logo" src={src + file} alt="" />;

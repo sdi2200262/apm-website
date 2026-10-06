@@ -1,5 +1,6 @@
 const sidebars = {
   docsSidebar: [
+    'diagrams-preview', // temporary, step 2 review
     {
       type: 'category',
       label: 'Welcome',

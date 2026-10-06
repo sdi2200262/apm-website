@@ -1,0 +1,147 @@
+direction: right
+
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+    pad: 18
+    center: true
+  }
+}
+
+classes: {
+  stage: {
+    style: {
+      fill: "#ffffff"
+      stroke: "#000000"
+      stroke-width: 1
+      font-color: "#000000"
+      font-size: 16
+      bold: false
+      border-radius: 0
+      shadow: false
+    }
+  }
+  task: {
+    style: {
+      fill: "#ffffff"
+      stroke: "#000000"
+      stroke-width: 2
+      font-color: "#000000"
+      font-size: 17
+      bold: false
+      border-radius: 0
+      shadow: false
+    }
+  }
+  terminal: {
+    style: {
+      fill: "#ffffff"
+      stroke: "#000000"
+      stroke-width: 2
+      font-color: "#000000"
+      font-size: 19
+      bold: false
+      border-radius: 0
+      shadow: false
+    }
+  }
+}
+
+stage_1: {
+  label: "Stage 1: Core Service"
+  class: stage
+
+  task_1: {
+    label: "Task 1.1\nData models"
+    class: task
+    width: 160
+    height: 65
+  }
+  task_2: {
+    label: "Task 1.2\nStorage layer"
+    class: task
+    width: 160
+    height: 65
+  }
+  task_3: {
+    label: "Task 1.3\nAuth handler"
+    class: task
+    width: 160
+    height: 65
+  }
+  task_4: {
+    label: "Task 1.4\nAPI endpoints"
+    class: task
+    width: 160
+    height: 65
+  }
+  task_5: {
+    label: "Task 1.5\nIntegration tests"
+    class: task
+    width: 165
+    height: 65
+  }
+
+  task_1 -> task_2
+  task_1 -> task_3
+  task_2 -> task_4
+  task_3 -> task_4
+  task_3 -> task_5
+}
+
+stage_2: {
+  label: "Stage 2: Client Interface"
+  class: stage
+
+  tasks: {
+    label: Tasks
+    class: task
+    width: 145
+    height: 65
+    style.multiple: true
+  }
+}
+
+more: {
+  label: ···
+  shape: text
+  style: {
+    font-color: "#000000"
+    font-size: 24
+    bold: false
+  }
+}
+
+stage_n: {
+  label: "Stage n: Deployment"
+  class: stage
+
+  tasks: {
+    label: Tasks
+    class: task
+    width: 145
+    height: 65
+    style.multiple: true
+  }
+}
+
+complete: {
+  label: Complete
+  class: terminal
+  width: 165
+  height: 70
+}
+
+stage_1 -> stage_2
+stage_2 -> more
+more -> stage_n
+stage_n -> complete
+
+(** -> **)[*].style: {
+  stroke: "#000000"
+  stroke-width: 2
+  font-color: "#000000"
+  font-size: 16
+  border-radius: 10
+}

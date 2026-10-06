@@ -4,7 +4,7 @@ import styles from './DocToolbar.module.css';
 import { COPY_FEEDBACK_DURATION } from '../constants';
 
 // Doc actions under the table of contents (sticky with it): copy/download this page or all docs.
-// "All docs" is static/llms-full.txt, generated before each build by scripts/build-all-docs.js.
+// "All docs" is static/llms-full.txt, generated before each build by scripts/build-llms.js.
 export default function DocToolbar() {
   const [copied, setCopied] = useState(null);
   const all = useBaseUrl('/llms-full.txt');
