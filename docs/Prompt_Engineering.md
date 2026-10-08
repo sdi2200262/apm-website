@@ -7,7 +7,7 @@ sidebar_position: 6
 
 # Prompt Engineering
 
-APM's workflow runs on structured files that agents read and follow. This doc explains how those files are organised and why, which matters most when you read or [customise](Customization_Guide.md) them.
+APM's workflow runs on structured files that agents read and follow. This doc explains how those files are organised and why, which matters most when you read or [customise](Customisation_Guide.md) them.
 
 ## File Types
 
@@ -36,11 +36,11 @@ APM's files are written for two readers: the agent following them and the person
 
 APM's artifacts, such as Task Prompts, Task Logs, Handoff Logs, and the planning documents, pair YAML frontmatter with a Markdown body. The split follows how agents use the information.
 
-YAML carries facts an agent should not have to infer: flags, identifiers, and states that decide the next step. A Task Log whose `status` is anything but Success, or which sets `important_findings: true`, tells the Manager to investigate before accepting the work. The Manager still checks each flag against the body, and a mismatch is a warning sign/ Markdown carries everything that needs reading and judgement.
+YAML carries facts an agent should not have to infer: flags, identifiers, and states that decide the next step. A Task Log whose `status` is anything but Success, or which sets `important_findings: true`, tells the Manager to investigate before accepting the work. The Manager still checks each flag against the body, and a mismatch is a warning sign. Markdown carries everything that needs reading and judgement.
 
 ## Platform-Agnostic Design
 
-APM's files are written once and adapted to each assistant at build time. Placeholders in the source resolve to the platform's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others), its install paths, its argument syntax, and its way of launching subagents. Each assistant installs the files in its own place and format; Codex, for example, has no custom slash commands and receives APM's commands as skills. The workflow itself is identical everywhere: a Planner in Claude Code and a Planner in Cursor follow the same procedures and produce the same planning documents.
+APM's files are written once and adapted to each assistant at build time. Placeholders in the source resolve to the platform's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others), its install paths, its argument syntax, and its way of launching subagents. Each assistant installs the files in its own place and format; Codex, for example, has no custom slash commands: it receives APM's commands as skills, invoked with `$` instead of `/`. The workflow itself is identical everywhere: a Planner in Claude Code and a Planner in Cursor follow the same procedures and produce the same planning documents.
 
 ## Terminology
 
@@ -50,4 +50,4 @@ APM's files share a small formal vocabulary, always capitalised: Planner, Manage
 
 - [Context Engineering](Context_Engineering.md) - How APM manages what each agent sees and why
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customisation
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation

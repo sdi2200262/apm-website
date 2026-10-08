@@ -24,6 +24,8 @@ Switching models mid-conversation is generally safe for Workers, whose context i
 
 ## Cost Efficiency
 
+Thorough planning is the best saving. Time spent reviewing the planning documents before you approve them spares follow-ups and rework during implementation.
+
 ### Context Up Front
 
 The Planner's initiation command accepts project context, which makes its questions more targeted and spares follow-up rounds:
@@ -120,5 +122,5 @@ For large projects, several APM sessions with an archive between each keep every
 
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customisation
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
 - [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories

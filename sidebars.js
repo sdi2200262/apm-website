@@ -20,7 +20,7 @@ const sidebars = {
       type: 'category',
       label: 'Reference & Guides',
       collapsed: true,
-      items: ['cli-guide', 'troubleshooting-guide', 'customization-guide', 'security-guide', 'tips-and-tricks'],
+      items: ['cli-guide', 'troubleshooting-guide', 'customisation-guide', 'security-guide', 'tips-and-tricks'],
     },
   ],
 };

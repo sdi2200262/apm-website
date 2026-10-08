@@ -24,7 +24,7 @@ A coding agent is an LLM working in a loop with tools. LLMs keep no state betwee
 
 APM counters each problem, and keeps you in charge throughout.
 
-- **Planning documents, against decay** - APM is **spec-driven**. Before any code is written, a Planner works with you to record the project's intent, requirements, and constraints in three planning documents: the Spec (what to build), the Plan (how the work is divided), and the Rules (how the work is carried out). Agents check their work against these documents instead of relying only on what their long conversation holds.
+- **Planning documents, against decay** - APM is **spec-driven**. Before any code is written, a Planner works with you to record the project's intent, requirements, and constraints in three planning documents: the Spec (what to build), the Plan (how the work is divided), and the Rules (how the work is carried out). Agents work from these documents instead of relying only on what their long conversation holds.
 - **Separate agents, against pressure** - APM is a *multi-agent system* where a Manager hands out the work and Workers carry it out, each in its own conversation with only the context its work needs. Splitting the work this way keeps each conversation's context small and focused on its own job.
 - **Coordination through you** - The Planner, the Manager, and the Workers communicate only through you, by design. When one writes a message for another, it informs you, and you deliver it by running a command. Each exchange is a chance to review and intervene before the work moves on. We call this *productive friction*. These pauses are deliberate: they aim to keep your understanding of the software you are building, and to let you catch mistakes before they spread through the codebase.
 
@@ -32,7 +32,7 @@ What distinguishes this from subagent-based approaches: the agents doing impleme
 
 <Diagram name="overview" alt="The APM workflow: in the Planning Phase you and the Planner write the Spec, the Plan, and the Rules; in the Implementation Phase the Manager hands out assignments and Workers report back through you, with project state in shared files." phone />
 
-Throughout implementation, the Manager and Workers check their work against the Spec and follow the Rules, under your supervision. Shared files outside any conversation hold the project's state and history. When a session ends, you can archive it, and later Planners can build on the archive.
+Throughout implementation, the Manager checks the work against the planning documents and Workers follow the Rules, under your supervision. Shared files outside any conversation hold the project's state and history. When a session ends, you can archive it, and later Planners can build on the archive.
 
 ## Installation
 
@@ -54,4 +54,4 @@ For contribution guidelines, see [CONTRIBUTING.md](https://github.com/sdi2200262
 
 **Go deeper** - [Prompt Engineering](Prompt_Engineering.md) explains how APM's files are designed. [Context Engineering](Context_Engineering.md) explains why each agent sees what it sees.
 
-**Look things up** - [CLI Guide](CLI_Guide.md) for commands and options, [Troubleshooting](Troubleshooting_Guide.md) for common issues, [Tips and Tricks](Tips_and_Tricks.md) for model selection and workflow efficiency.
+**Look things up** - [CLI Guide](CLI_Guide.md) for commands and options, [Troubleshooting](Troubleshooting_Guide.md) for common issues, [Customisation](Customisation_Guide.md) for custom repositories, [Security](Security_Guide.md) for the trust model, and [Tips and Tricks](Tips_and_Tricks.md) for model selection and workflow efficiency.

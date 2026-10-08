@@ -35,11 +35,11 @@ The Planner operates once, at the start of a session, to turn your requirements 
 
 ## Manager
 
-The Manager coordinates execution using the three planning documents and the Tracker, recording Stage summaries and durable observations in the Index. It operates throughout the project, assigning Tasks to Workers based on the Plan, extracting context from the Spec into Task assignments, and reviewing completed work.
+The Manager coordinates execution using the three planning documents and the [Tracker](Agent_Orchestration.md#the-tracker), recording Stage summaries and durable observations in the [Index](Agent_Orchestration.md#the-index). It operates throughout the project, assigning Tasks to Workers based on the Plan, extracting context from the Spec into Task assignments, and reviewing completed work.
 
 <Diagram name="overview" variant="manager" alt="The overview diagram with the Manager and its Tracker highlighted." phone />
 
-**Operational Context:** Sees the planning documents, the Tracker, the Index, and the Message Bus, at a coordination level, going deeper when an investigation requires it or you ask.
+**Operational Context:** Sees the planning documents, the Tracker, the Index, and Task Logs, at a coordination level, going deeper when an investigation requires it or you ask.
 
 **Core Responsibilities:**
 

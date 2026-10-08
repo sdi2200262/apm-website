@@ -71,5 +71,5 @@ To report a vulnerability in the CLI or the official templates, open an issue at
 
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Customization Guide](Customization_Guide.md) - How to create and use custom repositories
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency

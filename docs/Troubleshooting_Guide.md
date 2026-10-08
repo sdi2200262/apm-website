@@ -140,6 +140,6 @@ Other assistants take the same file in their own skills directory; the [skills R
 ## Related Docs
 
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customisation
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
 - [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency

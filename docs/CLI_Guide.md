@@ -253,6 +253,6 @@ Each archive in `.apm/archives/` contains its own `metadata.json` with the same 
 ## Related Docs
 
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customisation
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
 - [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency

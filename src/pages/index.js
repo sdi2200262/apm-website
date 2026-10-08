@@ -167,7 +167,7 @@ function Overview() {
   return (
     <div>
       <p className="lead" ref={lead}>
-        The {term('planning', 'Planner')} writes three planning documents with you: the Spec, the Plan and the Rules.
+        The {term('planning', 'Planner')} writes three planning documents with you: the Spec, the Plan, and the Rules.
         The {term('manager', 'Manager')} hands out assignments and {term('workers', 'Workers')} carry them out. Their messages pass
         through {term('user', 'you')}, and the {term('state', 'project state')} lives in shared files outside any conversation. Any agent
         can still offload work to its own subagents for efficiency.
@@ -176,7 +176,7 @@ function Overview() {
         <div className="plate-images">
           {isBrowser && <picture style={{ opacity: active ? 0 : 1 }}>
             <source media="(any-hover: none)" srcSet={svg('-phone')} />
-            <img src={svg()} alt="APM overview: the Planner, the Manager and Workers, coordinated through the user, with shared files" />
+            <img src={svg()} alt="APM overview: the Planner, the Manager, and Workers, coordinated through the user, with shared files" />
           </picture>}
           {isBrowser && keys.map((k) => (
             <picture key={k} style={{ opacity: active === k ? 1 : 0 }}>

@@ -45,7 +45,7 @@ The initialisation command will:
 
 - **Prompt for AI Assistant** - Select your platform from supported assistants
 - **Download APM Assets** - Fetch the latest commands, guides, and skills
-- **Create `.apm/` directory** - Planning document templates, project Tracker, Memory Index, and installation metadata
+- **Create `.apm/` directory** - Planning document templates, project Tracker, Index, and installation metadata
 - **Install procedural files** - Commands, guides, skills, and agent configurations placed in your platform's directory (e.g. `.claude/` for Claude Code, `.cursor/` for Cursor, `.github/` for Copilot)
 
 After initialisation completes, you're ready to begin.
@@ -116,7 +116,7 @@ This procedure produces three planning documents:
 - **Plan** - Stages, Tasks, Worker assignments, and a Dependency Graph defining how work is organised
 - **Rules** - Universal execution patterns defining how work is performed (written to your assistant's rules file: `CLAUDE.md` for Claude Code, `AGENTS.md` for the others)
 
-You review and approve each document before the Planner proceeds to the next. Each document is settled before the next one builds on it. Request modifications and corrections as needed. Every later agent checks its work against these documents. A gap here carries into implementation. After all three approvals, the Planner initialises the Message Bus and the Planning Phase completes.
+You review and approve each document before the Planner proceeds to the next. Each document is settled before the next one builds on it. Request modifications and corrections as needed. The Manager checks the work against these documents, and Workers receive what they need from them through their Task Prompts. A gap here carries into implementation. After all three approvals, the Planner initialises the Message Bus and the Planning Phase completes.
 
 ## Step 3: Initiate the Manager
 
@@ -135,6 +135,7 @@ It then presents an Understanding Summary covering project scope, key design dec
 This is the core loop of the Implementation Phase. Each Task goes through four procedures - Task Assignment, Task Execution, Task Logging, and Task Review. Agents exchange messages through files in `.apm/bus/`, the **Message Bus**: the Manager writes assignments and Workers write reports. Each message waits there until you deliver it, and the agent tells you which command to run and in which conversation.
 
 **1. Manager dispatches a Task** - The Manager constructs a self-contained Task Prompt, carrying the context the Worker needs from the Spec and the Plan, and writes it to the Worker's Task Bus. It then tells you which Worker conversation to go to and what to run. The Worker works from this prompt, its working knowledge and the Rules.
+
 **2. Initialise the Worker** - Open a new agent for the assigned Worker and run the initiation command with the Worker's identifier. The Manager tells you the exact identifier to use.
 
 ```markdown
@@ -187,7 +188,7 @@ The process:
 
 1. Run `/apm-6-handoff-manager` or `/apm-7-handoff-worker` in the outgoing agent's conversation
 2. Open a new agent for the same role
-3. Run the same initialisation command (for a Worker, with its identifier) - the incoming agent detects the Handoff and reconstructs context
+3. Run the same initiation command (for a Worker, with its identifier) - the incoming agent detects the Handoff and reconstructs context
 4. Verify the incoming agent's Understanding Summary before continuing
 
 If the platform auto-compacts an agent's context and its behaviour degrades, or you lose a conversation, run `/apm-9-recover` instead of a full Handoff. The agent rereads its documents and reconstructs working context as the same instance. A Handoff leaves cleaner context than recovery. It writes what matters to files, which persist, whereas a compaction summary exists only in the conversation and each later compaction condenses it further. Prefer a Handoff when you can anticipate the limit.

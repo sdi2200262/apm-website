@@ -37,7 +37,7 @@ The Manager and Workers each have their own context, and only what the Message B
 
 This depends on where the project's state lives. All project state sits in files outside any agent's context window, so a conversation can end, fill, or be compacted without losing the project's state or history.
 
-The Manager coordinates every Task and reviews every outcome; its context grows with them. A compression pipeline is meant to prevent that, with each layer compressing the one below it. A Worker's Task Log reduces its reading, debugging, and iteration to the outcome and what the Manager needs to know. Additionally, at each Stage boundary, the Manager condenses the Stage's Task Logs into a summary in the Index and distils its working notes into Memory notes. Each layer is progressively smaller than the one before. For example,a future Manager uses the compressed Index to understand the big picture of the project and can operate from it, instead of reconstructing the project's entire coordination history from all the older Task Logs.
+The Manager coordinates every Task and reviews every outcome; its context grows with them. A compression pipeline is meant to prevent that, with each layer compressing the one below it. A Worker's Task Log reduces its reading, debugging, and iteration to the outcome and what the Manager needs to know. Additionally, at each Stage boundary, the Manager condenses the Stage's Task Logs into a summary in the Index and distils its working notes into Memory notes. Each layer is progressively smaller than the one before. For example, a future Manager uses the compressed Index to understand the big picture of the project and can operate from it, instead of reconstructing the project's entire coordination history from all the older Task Logs.
 
 The same reasoning explains why a Handoff is preferred to compaction. Compaction replaces the conversation's history with a summary, trading detail for space. Each later compaction condenses the summary further. A Handoff instead writes its record to files that persist. Successive Handoffs leave a durable history of the role's work, and you can invoke one early, before decay sets in.
 
@@ -47,4 +47,4 @@ The same reasoning explains why a Handoff is preferred to compaction. Compaction
 
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customisation
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation

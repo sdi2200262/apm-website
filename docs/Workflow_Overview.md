@@ -37,7 +37,7 @@ After all three rounds, the Planner presents a consolidated **Understanding Summ
 
 The Planner writes the three [planning documents](Agent_Orchestration.md#planning-documents) one at a time: the Spec, then the Plan, then the Rules. Before each, it presents its reasoning in chat, and you can redirect it before anything is written. It waits for your approval before starting the next.
 
-After all three approvals, the Planner initialises the [Message Bus](Agent_Orchestration.md#the-message-bus) and the Planning Phase is complete. Every later agent checks its work against these documents, and a gap here carries into implementation. To continue, open a new conversation and run `/apm-2-initiate-manager`.
+After all three approvals, the Planner initialises the [Message Bus](Agent_Orchestration.md#the-message-bus) and the Planning Phase is complete. The Manager checks the work against these documents, and Workers receive what they need from them through their Task Prompts. A gap here carries into implementation. To continue, open a new conversation and run `/apm-2-initiate-manager`.
 
 ## Implementation Phase
 
@@ -120,4 +120,4 @@ When an APM session ends, whether through project completion, a decision to paus
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
 - [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customisation
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation

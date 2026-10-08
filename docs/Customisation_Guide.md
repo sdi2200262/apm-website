@@ -1,11 +1,11 @@
 ---
-id: customization-guide
-slug: /customization-guide
-sidebar_label: Customization Guide
+id: customisation-guide
+slug: /customisation-guide
+sidebar_label: Customisation Guide
 sidebar_position: 10
 ---
 
-# Customization Guide
+# Customisation Guide
 
 You can customise APM through a custom repository: a copy of the official repository with your own changes to its templates, published as releases that install with `apm custom`.
 

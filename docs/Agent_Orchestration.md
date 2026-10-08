@@ -35,7 +35,7 @@ Each Worker's directory contains three bus files:
 - **Report Bus** (`report.md`) - The Worker writes Task Reports here. The Manager reads them when you run `/apm-5-check-reports` in the Manager's conversation.
 - **Handoff Bus** (`handoff.md`) - An outgoing agent writes its Handoff Prompt here. The incoming agent reads it during initialisation.
 
-Each bus is cleared by its reader once the message is handled. The Manager's own directory holds only a Handoff Bus.
+An agent clears its incoming bus before writing its reply, and the Handoff Bus is cleared once read. The Manager's own directory holds only a Handoff Bus.
 
 The delivery step is deliberate. Before you deliver a message, you can review the work behind it and ask for changes. That review keeps you informed about the code being built and helps you catch mistakes early. [Task Cycles](Workflow_Overview.md#task-cycles) walks through each exchange.
 
@@ -63,9 +63,11 @@ The Manager assesses all ready Tasks before each dispatch and chooses how to sen
 
 **Single dispatch** - One Task to one Worker. This is the default when only one Task is ready or when dependencies prevent grouping.
 
-**Batch dispatch** - Several Tasks to the same Worker in one message. The Worker runs them in order, logs each, stops at the first failure, and reports once.
+**Batch dispatch** - Several Tasks to the same Worker in one message: a sequential chain, or a group of independent Tasks that are ready together. The Worker runs them in order, logs each, stops at the first failure, and reports once.
 
-**Parallel dispatch** - Tasks to different Workers simultaneously when no unresolved cross-Worker dependencies exist. Requires version control: each dispatch unit operates on its own branch and its own git worktree, and the Manager coordinates all merges. Without version control, the Manager dispatches one Task at a time.
+**Parallel dispatch** - Tasks to different Workers simultaneously when no unresolved cross-Worker dependencies exist. Requires version control; without it, the Manager dispatches one Task at a time.
+
+With version control, each dispatch unit works on its own branch, and parallel units also get their own git worktree. The Manager coordinates all merges. Before dispatching, it may wait briefly for a pending report that would unlock Tasks that combine well with those already ready.
 
 ## Memory and Project State
 
@@ -136,7 +138,7 @@ If a platform auto-compacts an agent's context and its behaviour degrades - forg
 /apm-9-recover frontend-agent   # recover a Worker
 ```
 
-Recovery is distinct from Handoff. The agent rereads its procedural documents and explores project artifacts to rebuild working context, continuing as the same instance without incrementing the instance number. A Handoff leaves cleaner context than recovery. It writes what matters to files, which persist, whereas a compaction summary exists only in the conversation and each later compaction condenses it further. Prefer a Handoff when the context limit is approaching. For detailed recovery scenarios, see the [Troubleshooting Guide](Troubleshooting_Guide.md#context-recovery).
+Recovery is distinct from Handoff. The agent rereads its procedural documents and explores project artifacts to rebuild working context, and asks you for brief context where gaps remain. It continues as the same instance without incrementing the instance number. The Manager notes the recovery in the Tracker, and a Worker mentions it in its next Task Report. A Handoff leaves cleaner context than recovery. It writes what matters to files, which persist, whereas a compaction summary exists only in the conversation and each later compaction condenses it further. Prefer a Handoff when the context limit is approaching. For detailed recovery scenarios, see the [Troubleshooting Guide](Troubleshooting_Guide.md#context-recovery).
 
 ## Next Steps
 
