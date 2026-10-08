@@ -5,108 +5,53 @@ sidebar_label: Introduction
 sidebar_position: 1
 ---
 
-import ThemedImage from '@theme/ThemedImage';
+import Diagram from '@site/src/components/Diagram';
 
 # Agentic Project Management (APM)
 
-**A structured approach to building complex projects with AI Agents.**
+**A spec-driven multi-agent framework for AI-assisted software engineering.**
 
-APM is an open-source framework for managing ambitious software projects with AI assistants - Claude Code, Cursor, GitHub Copilot, Antigravity, OpenCode, and Codex. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI Agents handle planning, coordination, and execution as a team.
+APM is an open-source framework for managing ambitious software projects with AI assistants - Claude Code, Cursor, GitHub Copilot, Antigravity, OpenCode, and Codex. Instead of working in a single, increasingly long conversation, APM structures your work into a coordinated system where different agents handle planning, coordination, and execution, and their messages pass through you.
 
-## The Problem: Context Decay
+## The Problem
 
-Building complex projects with AI assistants hits a fundamental wall: **context window limits**.
+A coding agent is an LLM working in a loop with tools. LLMs don't store state, so the agent resends the whole conversation for each step of a task. On long tasks, LLMs suffer from two problems:
 
-As conversations grow, context degrades. The AI loses track of requirements and constraints, produces inconsistent code, and hallucinates details. Earlier parts of the conversation get compressed or discarded. For substantial projects, this makes sustained progress nearly impossible.
+- **Context decay** - The longer the conversation and the more context accumulates, the less reliably the LLM recalls earlier decisions and instructions, and the less consistently it reasons about them.
+- **Context pressure** - Every call costs more than the last and brings the conversation closer to the context window's limit, where it must be cut or summarised. Earlier detail is lost.
 
-## The Solution: Structured Multi-Agent Coordination
+## How APM Works
 
-APM treats the AI not as a single continuous assistant, but as a team of specialized Agents. Each is focused on a specific role with intentionally scoped context.
+APM counters each problem, and keeps you in charge throughout.
 
-- **Specialization** - Different Agents handle planning, coordination, and implementation. Each operates in its own context with only the information it needs.
+- **Planning documents, against decay** - APM is **spec-driven**. Before any code is written, a Planner works with you to record the project's intent, requirements, and constraints in three planning documents: the Spec (what to build), the Plan (how the work is divided), and the Rules (how the work is carried out). Agents check their work against these documents instead of relying only on what their long conversation holds.
+- **Separate agents, against pressure** - APM is a *multi-agent system* where a Manager hands out the work and Workers carry it out, each in its own conversation with only the context its work needs. Splitting the work this way keeps each conversation's context small and focused on its own job.
+- **Coordination through you** - The Planner, the Manager, and the Workers communicate only through you, by design. When one writes a message for another, it informs you, and you deliver it with a simple command. Each exchange is a chance to review and intervene before the work moves on. We call this *productive friction*. These pauses are deliberate: they aim to keep your understanding of the software you're building, and to let you catch mistakes before they spread through the codebase.
 
-- **Persistence** - Project state lives in structured documents outside Agent contexts.
-    - Planning documents define all work
-    - Memory tracks progression
-    - A file-based Message Bus enables cross-Agent communication
+What distinguishes this from subagent-based approaches: the agents doing implementation work are not restarted fresh on each task. They accumulate working context across assignments, building familiarity with their domain as the project progresses. When context fills, a Handoff transfers that working knowledge to a fresh instance rather than discarding it. Any APM agent can still hand heavy work to its own subagents.
 
-- **Continuity** - When an Agent's context fills, a Handoff transfers working knowledge to a fresh instance. After completion, APM sessions can be archived for future reference
+<Diagram name="overview" alt="The APM workflow: in the Planning Phase you and the Planner write the Spec, the Plan, and the Rules; in the Implementation Phase the Manager hands out assignments and Workers report back through you, with project state in shared files." phone />
 
-This mirrors how human teams collaborate: specialized roles, shared documentation, and explicit communication protocols.
+Throughout implementation, the Manager and Workers check their work against the Spec and follow the Rules, under your supervision. Shared files outside any conversation hold the project's state and history. When a session ends, you can archive it, and later Planners can build on the archive.
 
-What distinguishes this from subagent-based approaches: the agents doing implementation work are not restarted fresh on each task. They accumulate working context across assignments - building familiarity with their domain as the project progresses. When context fills, a structured Handoff transfers that working knowledge to a fresh instance rather than discarding it.
+## Installation
 
-## Agent Types
-
-APM coordinates three specialized Agent types:
-
-- **Planner** - Runs once at project start. Conducts structured discovery to gather requirements and constraints, then decomposes everything into three planning documents: Spec, Plan, and Rules. Acts as the project architect.
-
-- **Manager** - Receives planning documents from the Planner and coordinates execution. Assigns Tasks to Workers, reviews completed work, manages dependencies, and maintains the big picture.
-
-- **Workers** - Execute specific Tasks within defined domains (frontend, backend, API, etc.). Workers operate with tightly scoped context - they see their current Task and accumulated working context, not the full project scope.
-
-Each role is covered in depth in [Agent Types](Agent_Types.md).
-
-## Project State
-
-Structured files outside any Agent's context keep track of state and history, so nothing is lost when a chat ends or an Agent reaches its limits.
-
-- **Planning Documents** - Three documents created by the Planner that guide all subsequent work: the Spec (what to build), the Plan (how work is organized), and the Rules (how work is performed).
-
-- **Memory** - A file hierarchy that tracks project progression. Workers log their completed work; the Manager reads those logs to track progress without reviewing code directly. Durable observations accumulate across the project.
-
-- **Message Bus** - File-based message passing between Agent conversations. The Manager writes Task assignments; Workers write completion reports. You deliver messages by running simple commands, keeping APM platform-agnostic and every interaction auditable, so you may review each Task assignment before it reaches a Worker and each result before the Manager acts on it.
-
-- **Handoff** - When an Agent's context window fills up, you transfer its working knowledge to a fresh instance. The outgoing Agent captures what it knows in structured artifacts; the incoming Agent reads them and picks up where the previous left off.
-
-## Workflow
-
-APM operates in two distinct phases:
-
-- **Planning Phase** - The Planner runs two procedures back to back:
-  1. **Context Gathering** - The Planner asks you structured questions across three rounds to understand your project's vision, technical requirements, and implementation approach. After each round it iterates on gaps, and once all rounds are complete it presents an Understanding Summary for your approval.
-  2. **Work Breakdown** - The Planner decomposes everything it gathered into three planning documents: the Spec, the Plan, and the Rules. You review and approve each one before the Planner moves on.
-
-- **Implementation Phase** - The Manager and Workers execute the planning documents through repeating cycles:
-  1. **Task Assignment** - The Manager assesses which Tasks are ready, constructs a self-contained Task Prompt with all the context a Worker needs, and delivers it via the Message Bus.
-  2. **Task Execution** - The Worker receives the assignment, executes the work, and validates results against the criteria specified in the prompt.
-  3. **Task Logging** - The Worker documents the outcome in a structured Task Log and writes a brief report back to the Manager via the Message Bus.
-  4. **Task Review** - The Manager reviews the log and report, then decides the next step.
-
-  The cycle repeats until all Tasks complete. The Manager can dispatch Tasks in parallel when dependencies allow, or batch sequential Tasks to the same Worker.
-
-<ThemedImage
-  alt="APM session overview - Planning Phase produces Spec, Plan, and Rules; Implementation Phase cycles through Task Assignment, Execution, Logging, and Review"
-  sources={{
-    light: '/img/diagrams/overview-light.svg',
-    dark: '/img/diagrams/overview-dark.svg',
-  }}
-  style={{margin: '1.5rem 0'}}
-/>
-
-When an APM session completes (or at any point during one) you can archive it and start fresh. Archives live in `.apm/archives/` and are accessible to future Planners during Context Gathering, so subsequent APM sessions build on what came before rather than starting from zero.
-
-## Installation & Usage
-
-APM is installed via the [`agentic-pm`](https://www.npmjs.com/package/Agentic-pm) CLI, which scaffolds commands, guides, and skills into your project workspace.
-
-To get started, see [Getting Started](Getting_Started.md).
+APM is installed via the [`agentic-pm`](https://www.npmjs.com/package/agentic-pm) CLI, which scaffolds the commands, guides, and skills that APM agents use into your project workspace. To get started, see [Getting Started](Getting_Started.md).
 
 If you want your AI assistant to explain APM concepts or help with migration from an older version, the [`apm-assist`](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-assist) skill can be installed into any project and answers questions by reading the live documentation.
 
 ## Contributing
 
-APM is open source and welcomes contributions. Report bugs or request features via [GitHub Issues](https://github.com/sdi2200262/Agentic-project-management/issues), or submit improvements via Pull Requests.
+APM is open source and welcomes contributions. Report bugs or request features via [GitHub Issues](https://github.com/sdi2200262/agentic-project-management/issues), or submit improvements via Pull Requests.
 
-For contribution guidelines, see [CONTRIBUTING.md](https://github.com/sdi2200262/Agentic-project-management/blob/main/CONTRIBUTING.md).
+For contribution guidelines, see [CONTRIBUTING.md](https://github.com/sdi2200262/agentic-project-management/blob/main/CONTRIBUTING.md).
 
-## Recommended Reading Order
+## Reading Order
 
 **Start using APM** - [Getting Started](Getting_Started.md) walks you through installation and your first session end to end. There's also a [Quick Reference](Quick_Reference.md) with all the commands and workflows in one place if you want it handy.
 
 **Understand the architecture** - Three docs build on each other: [Agent Types](Agent_Types.md) covers the three roles, [Agent Orchestration](Agent_Orchestration.md) covers how they coordinate, and [Workflow Overview](Workflow_Overview.md) walks through every procedure.
 
-**Go deeper** - [Prompt Engineering](Prompt_Engineering.md) explains how APM's files are designed. [Context Engineering](Context_Engineering.md) explains why each Agent sees what it sees.
+**Go deeper** - [Prompt Engineering](Prompt_Engineering.md) explains how APM's files are designed. [Context Engineering](Context_Engineering.md) explains why each agent sees what it sees.
 
 **Look things up** - [CLI Guide](CLI_Guide.md) for commands and options, [Troubleshooting](Troubleshooting_Guide.md) for common issues, [Tips and Tricks](Tips_and_Tricks.md) for model selection and workflow efficiency.

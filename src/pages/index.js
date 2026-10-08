@@ -7,6 +7,7 @@ import { useColorMode } from '@docusaurus/theme-common';
 import Footer from '@theme/Footer';
 import Mark, { rng } from '../components/Mark';
 import Brand from '../components/Brand';
+import { CAPTIONS } from '../captions';
 import { drawnSeed, pageSeed } from '../components/seed';
 import GitHub from '../components/GitHub';
 import ThemeSwitch from '../components/ThemeSwitch';
@@ -26,15 +27,9 @@ const DEFS = {
   pressure: 'Every call to the LLM resends the whole conversation; each step costs more than the last and nears the context window\'s limit, where the conversation must be cut or summarised.',
   friction: 'Influential human–computer interaction research places friction carefully at chosen points in an interface, as pauses that invite reflection. APM\'s user-mediated coordination aims to create such pauses, allowing you to keep authority over, and understanding of, the software you build.',
 };
-const CAPTION = 'The APM workflow. In the Planning Phase, on the left, you and the Planner turn your goals into planning documents; in the Implementation Phase, on the right, the Manager and Workers implement them together.';
-// Overview parts: key = diagram variant (overview-<key>-<theme>.svg), value = caption. Order = Figure 2..6.
-const PARTS = {
-  planning: 'The Planner explores your codebase and questions you about purpose, requirements and constraints. Once you approve its understanding, it writes the Spec (what to build), the Plan (how the work is divided) and the Rules (how the work is carried out), each for your review.',
-  manager: 'The Manager hands out assignments with the context each needs, reviews what comes back, keeps track of project state and keeps memory up to date.',
-  workers: 'Each Worker takes the assignments of one area of the project, completes and validates them, logs the work to memory and reports back.',
-  user: 'When an assignment is ready, you notify its Worker; when a report comes back, you notify the Manager. Each time, you can review, steer or intervene first.',
-  state: 'The planning documents, a progress tracker and the project\'s memory sit in shared files. When an agent\'s context fills, you can perform a Handoff to move its role to a fresh conversation that picks up where it left off using these files.',
-};
+const CAPTION = CAPTIONS.overview; // shared with the docs (src/captions.js)
+// Overview parts, in figure order (Figure 2..6): key = diagram variant (overview-<key>-<theme>.svg). Captions: src/captions.js.
+const PARTS = Object.fromEntries(['planning', 'manager', 'workers', 'user', 'state'].map((k) => [k, CAPTIONS[`overview-${k}`]]));
 // [init flag, name, logo in static/img/assistants]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
 const ASSISTANTS = [
   ['claude', 'Claude Code', 'claude.svg'],

@@ -218,8 +218,13 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 /* Diagrams (src/components/Diagram.js): full column width, only the current theme's copy shown. */
 .diagram { margin: 32px 0; }
 .diagram img { display: block; width: 100%; height: auto; }
+.diagram figcaption { margin-top: 12px; font-size: .9em; line-height: 1.55; } /* shared captions: src/captions.js */
+/* Figures are numbered per page, as on the landing page ("Figure 1."): the counter restarts in each doc. */
+.markdown { counter-reset: figure; }
+.diagram:has(figcaption) { counter-increment: figure; }
+.diagram figcaption::before { content: 'Figure ' counter(figure) '. '; font-style: italic; }
 html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light { display: none; }
-@media (max-width: 600px) { .diagram--wide { overflow-x: auto; } .diagram--wide img { min-width: 560px; } } /* no phone layout: scroll, don't shrink */
+@media (max-width: 600px) { .diagram--wide .diagram-images { overflow-x: auto; } .diagram--wide img { min-width: 560px; } } /* no phone layout: scroll, don't shrink */
 
 /* Table of contents, breadcrumbs, prev/next. */
 .table-of-contents__link { color: var(--ifm-font-color-secondary); }
