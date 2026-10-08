@@ -7,202 +7,93 @@ sidebar_position: 10
 
 # Customization Guide
 
-APM supports customization through custom repositories. By forking or templating the official repository, Users can modify APM's templates, add new capabilities, and publish releases that install via `apm custom`.
+You can customise APM through a custom repository: a copy of the official repository with your own changes to its templates, published as releases that install with `apm custom`.
 
-## How Custom Repositories Work
+## Custom Repositories
 
-The official APM repository contains source templates that the build system processes into platform-specific bundles. A custom repository is a copy of this codebase where the User modifies the templates to fit their needs.
+The official repository holds source templates that a build turns into one bundle per assistant. A custom repository changes those templates and builds its own bundles.
 
-**Fork vs template:** The [APM repository](https://github.com/sdi2200262/agentic-project-management) supports both GitHub fork and "Use this template". Each has different tradeoffs:
+The [APM repository](https://github.com/sdi2200262/agentic-project-management) supports both a GitHub fork and "Use this template":
 
 | | Fork | Template |
 | :--- | :--- | :--- |
-| **Git history** | Carries the full upstream commit history | Starts with a clean, empty history |
-| **Upstream sync** | `git merge upstream/main` pulls in new APM releases | No upstream link - merging future changes requires manual diffing |
-| **Best for** | Incremental customization that tracks upstream improvements (e.g. a team adding domain-specific procedures while staying current with APM releases) | Deep divergence where the APM repo is a starting point, not an ongoing dependency (e.g. building a substantially different workflow that shares the build system but rewrites most templates) |
+| **History** | Carries the upstream history | Starts with a clean history |
+| **Upstream sync** | `git merge upstream/main` pulls in new APM releases | No upstream link; later changes need manual diffing |
+| **Best for** | Customisation that keeps up with APM releases | Deep divergence, using APM as a starting point |
 
 The workflow:
 
-1. Fork or template the [APM repository](https://github.com/sdi2200262/agentic-project-management) to create a copy
-2. Make changes to templates, add new skills, adjust procedures
-3. Build locally with `npm run build:release` to produce bundles in `dist/`
-4. Create a GitHub Release and attach the build artifacts
-5. Install with `apm custom -r owner/repo`
+1. Fork or template the repository.
+2. Change the templates, add skills, adjust procedures.
+3. Build with `npm run build:release`, which writes the bundles to `dist/`.
+4. Create a GitHub Release and attach every file from `dist/`.
+5. Install with `apm custom -r owner/repo`.
 
-The `agentic-pm` CLI handles custom repositories the same way it handles the official one at install time - it fetches the release manifest, presents available assistants, downloads the bundle, and extracts it into the project. The one difference is version filtering: `apm init` restricts official releases to the CLI's major version (e.g. CLI v1.x only fetches v1.x.x), while `apm custom` exposes all available releases regardless of CLI version.
+The CLI installs from a custom repository as it does from the official one. The one difference is version filtering: `apm init` fetches only releases matching the CLI's major version, while `apm custom` offers every release.
 
-## The Build Pipeline
+The repository includes a [customisation skill](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-customization) at `skills/apm-customization/SKILL.md`. Point your assistant to it for guidance on the repository's structure and conventions, making changes, building, and releasing.
 
-Running `npm run build:release` processes source templates into platform-specific bundles. The build system is configured by two key files:
+## The Build
 
-**`build/build-config.json`** defines an array of **targets**. In the official APM repository, each target corresponds to a supported assistant (Claude Code, Cursor, Copilot, Antigravity, OpenCode, Codex), but the build system itself is target-agnostic - a custom repository could define any set of targets. Each target specifies its output format (Markdown), config directory (e.g. `.claude/`, `.cursor/`, `.github/`), and directory layout for commands, guides, skills, and agents. It also defines platform-specific values like argument syntax and subagent invocation patterns.
+Two files configure the build:
 
-**`build/processors/placeholders.js`** resolves template placeholders to target-specific values at build time. Templates are authored once with placeholders like `{RULES_FILE}`, `{SKILL_PATH:name}`, `{ARGS}`, and `{SUBAGENT_GUIDANCE}`, and the build system replaces them per target. For example, `{RULES_FILE}` becomes `CLAUDE.md` for Claude Code but `AGENTS.md` for Antigravity, and `{ARGS}` becomes `$ARGUMENTS` for Markdown platforms but `{{args}}` for TOML. This is what makes APM's templates platform-agnostic at the source level.
+- **`build/build-config.json`** lists the targets. In the official repository each target is a supported assistant, with its config directory (such as `.claude/` or `.cursor/`), its directory layout, and its subagent guidance.
+- **`build/processors/placeholders.js`** resolves the placeholders in the templates, such as `{RULES_FILE}` and `{ARGS}`, to each target's values, and holds per-assistant rules such as argument syntax. A new target needs entries in both files. `{RULES_FILE}` becomes `CLAUDE.md` for Claude Code and `AGENTS.md` for the others.
 
-The build produces two types of output in `dist/`:
+The build writes to `dist/` one ZIP bundle per target, with all placeholders resolved, and a release manifest, `apm-release.json`. The CLI reads the manifest to list the available assistants, then downloads the chosen bundle. A release without the manifest cannot be installed.
 
-- **ZIP bundles** - One per target (e.g., `claude.zip`, `cursor.zip`). Each contains the commands, guides, skills, agent configurations, and `.apm/` artifact templates for that target, with all placeholders resolved.
-- **`apm-release.json`** - The release manifest that tells the CLI what is available in the release:
+## What You Can Change
 
-```json
-{
-  "version": "1.0.0",
-  "assistants": [
-    {
-      "id": "claude",
-      "name": "Claude Code",
-      "bundle": "claude.zip",
-      "configDir": ".claude"
-    }
-  ]
-}
-```
+| What | Where | Effect |
+| :--- | :--- | :--- |
+| **Procedures** | `templates/guides/` | How each procedure runs, from Context Gathering to Task Review |
+| **Commands** | `templates/commands/` | Each agent's role, what it reads, and how it initialises |
+| **Communication** | `templates/skills/apm-communication/` | The Message Bus protocol and how agents address you |
+| **Artifact templates** | `templates/apm/` | The starting structure of the Spec, the Plan, the Tracker, and the Index |
+| **New skills** | `templates/skills/<name>/SKILL.md` | Protocols your agents can load |
+| **New subagents** | `templates/agents/` | Subagents your agents can launch |
 
-When a User runs `apm init` or `apm custom`, the CLI fetches `apm-release.json` from the GitHub Release, reads the `assistants` array to present available options, then downloads and extracts the corresponding ZIP bundle. Without a valid `apm-release.json` attached to the release, the CLI cannot discover or install the bundles.
+For example, a team that wants every Task touching authentication checked for security might change two places:
 
-When creating a GitHub Release for a custom repository, attach all files from `dist/` - both the ZIP bundles and `apm-release.json`.
+- **`templates/agents/apm-security-reviewer.md`** - A new subagent that reviews code for security issues.
+- **`templates/guides/task-review.md`** - A new step in Task Review: for Tasks that touch authentication, the Manager launches the security reviewer before accepting the work.
 
-## The Customization Skill
+The conventions the templates follow are in `templates/_standards/`. They guide your edits and are not shipped in the bundles.
 
-The APM repository includes an optional customization skill at `skills/apm-customization/SKILL.md`. Since the skill lives in the repository itself, it is available in any fork or template without needing separate installation.
+## Installing and Sharing
 
-The skill guides an AI agent through navigating the repository structure, understanding the conventions, making changes, building, and releasing.
+Anyone with access to a custom repository can install from it with `apm custom -r owner/repo`, and `apm update` then updates from the same repository. Private repositories need a GitHub token, from `GITHUB_TOKEN` or a signed-in `gh` CLI. The [CLI Guide](CLI_Guide.md#apm-custom) covers every option, including saving repositories for later.
 
-## What Can Be Customized
-
-### Procedures
-
-APM's procedures (Context Gathering, Work Breakdown, Task Assignment, Task Execution, Task Review, Task Logging) are defined in guide files under `templates/guides/`. Each guide follows a structured pattern with operational standards, step-by-step actions, and output specifications. Modifying a guide changes how that procedure behaves for all Agents that read it.
-
-### Agent Behavior
-
-Initiation commands under `templates/commands/` define each Agent's role, what documents it reads, and its procedural flow. Changes here affect how Agents initialize, what they load into context, and how they structure their work.
-
-### Communication and Coordination
-
-The Communication Skill under `templates/skills/apm-communication/` defines the Message Bus protocol, Agent-to-User communication standards, and terminology boundaries. Custom repositories can modify these to change how Agents communicate.
-
-### Planning Document Structure
-
-Artifact templates under `templates/apm/` define the initial structure of the Spec, Plan, Tracker, and Memory Index. Custom repositories can adjust these templates to match specific project needs.
-
-### New Skills
-
-Custom skills can be added under `templates/skills/`. Each skill lives in its own directory with a `SKILL.md` file. Skills are loaded at initialization and are available to all Agents that reference them.
-
-### New Subagent Configurations
-
-Custom subagent configurations can be added under `templates/agents/`. These define specialized subagents that Agents can spawn during the workflow.
-
-## Using `apm custom`
-
-The `apm custom` command handles installation from custom repositories. See the [CLI Guide](CLI_Guide.md#apm-custom) for full details.
-
-Common workflows:
-
-**First-time install from a custom repo:**
-
-```bash
-apm custom -r owner/repo
-```
-
-The CLI fetches available releases, presents a security disclaimer (first time only), and prompts for assistant selection.
-
-**Install a specific version:**
-
-```bash
-apm custom -r owner/repo -t v1.0.0
-```
-
-**Save a custom repo for future use:**
-
-```bash
-apm custom --add-repo owner/repo
-```
-
-Saved repositories appear as options when running `apm custom` without `--repo`, and can skip the security disclaimer on subsequent use.
-
-**Update a custom installation:**
-
-```bash
-apm update
-```
-
-When an installation comes from a custom repository, `apm update` fetches newer releases from that same repository.
+When you share a repository, describe in its README what you changed, why, and how its behaviour differs from the official release.
 
 :::warning[Security]
-Custom repositories can write files anywhere within the project directory - not just prompt and procedural files, but also source code, configuration files, and dependency manifests. The `agentic-pm` CLI shows a security disclaimer the first time a custom repository is used. Saved repositories can skip the disclaimer on subsequent use, meaning a compromised repository produces no warning.
-
-There is no signature verification on releases. Review the repository contents before installing, particularly commands and guides that define Agent behavior. See the [Security Guide](Security_Guide.md) for full details on the trust model, risks, and mitigations.
+A custom bundle can write files anywhere in your project, and APM's maintainers have not reviewed it. Review a repository before installing it, especially the commands and guides that define agent behaviour. The [Security Guide](Security_Guide.md) covers the risks and mitigations.
 :::
 
-## Official Custom Adaptations
+## Official Adaptations
 
-### APM Auto - Autonomous Subagent Dispatch
+Two custom adaptations are maintained alongside APM. Each shifts the balance between your involvement and autonomy.
 
-[APM Auto](https://github.com/sdi2200262/apm-auto) is a Claude Code-only adaptation that replaces user-mediated Worker chats with Manager-driven subagent dispatch via Claude Code's `Agent()` tool. The Manager autonomously spawns ephemeral subagents to execute Tasks, reviews their output, merges branches, and continues - only pausing when genuine human judgment is needed.
+### APM Auto
 
-Key changes from the official workflow:
-- Workers become ephemeral subagents dispatched via a custom `apm-worker` agent definition
-- The Manager operates an autonomous coordination loop instead of waiting for User-mediated message delivery
-- Dependencies are classified at dispatch time (intra-batch vs cross-dispatch) instead of planning time
-- Commands reduced from 9 to 5 (Worker commands eliminated)
-- Single Claude Code target
-
-Best for prototyping, fast execution, and simpler projects where managing separate Worker chats adds friction without proportional value.
+[APM Auto](https://github.com/sdi2200262/apm-auto) is a Claude Code adaptation that replaces Worker conversations with subagents the Manager launches itself. The Manager dispatches each Task to a subagent, reviews its output, merges its branch, and continues, pausing only for decisions that need you. It has five commands and no Worker commands. It may suit prototypes and simpler projects, where separate Worker conversations add more overhead than value.
 
 ```bash
 apm custom -r sdi2200262/apm-auto
 ```
 
-### APM Semi - Collaborative Human-and-Agent Execution
+### APM Semi
 
-[APM Semi](https://github.com/sdi2200262/apm-semi) is an official custom adaptation that gives the User direct execution authority over any Task while keeping APM's structure and context management. The User can claim any Task at any point and execute it themselves; the agent on their side - the Manager during coordination or the paused Worker mid-execution - stays on standby, answering questions, running validation when the User returns, and writing the Task Log on the User's behalf.
-
-Key changes from the official workflow:
-- User-claimable Tasks during Plan review and dynamically throughout the Implementation Phase
-- Conversational claim, unclaim, takeover, and report-done with no slash commands needed
-- Sovereignty signal capture during Context Gathering, carried into Plan Analysis as User-owned assignments
-- Standby collaboration on User-held Tasks: validation iteration, residual handling, Task Log written on the User's behalf
-- Proactive claim suggestions at Stage boundaries based on accumulated session signal
-- All six APM platforms supported (Claude Code, Cursor, Copilot, Antigravity, OpenCode, Codex CLI)
-
-Best for users who want to author the substantive code themselves and lean on AI for boilerplate or peripheral Tasks - a collaborative way of working agentically rather than a fully delegated one.
+[APM Semi](https://github.com/sdi2200262/apm-semi) lets you claim any Task and do it yourself, at Plan review or at any point during implementation. While you work, the agent on your side, the Manager or a paused Worker, stays on standby: it answers questions, runs validation when you return, and writes the Task Log for you. It supports all six assistants. It may suit developers who want to write the substantial code themselves and give boilerplate and peripheral Tasks to agents.
 
 ```bash
 apm custom -r sdi2200262/apm-semi
 ```
 
-## Community Examples
-
-### Domain-Specific APM
-
-A team building data pipelines forks APM and adds domain-specific Workers and procedures:
-
-- `templates/guides/data-validation.md` - A new guide for a Data Validation Worker with pipeline-specific validation steps
-- `templates/skills/apm-data-quality/SKILL.md` - A shared skill defining data quality standards all Workers follow
-- Modified `templates/guides/work-breakdown.md` - Adjusted decomposition principles to favor stage-based pipeline architecture
-- Modified `templates/_standards/WORKFLOW.md` - Updated to reflect the new data validation procedure
-
-### Stricter Review Process
-
-An enterprise team forks APM to enforce additional review gates:
-
-- Modified `templates/guides/task-review.md` - Added mandatory security review steps to the Task Review procedure, requiring the Manager to spawn a security subagent for Tasks touching authentication or payment code
-- `templates/agents/apm-security-reviewer.md` - A custom subagent configuration for automated security review
-- Modified `templates/_standards/WORKFLOW.md` - Updated Task Review specification to include the security review step
-
-## Sharing Customizations
-
-Custom repositories can be shared with teams or the community. Anyone with access to the repository can install from it using `apm custom -r owner/repo`. For private repositories, the User needs a GitHub token configured for access.
-
-When sharing a custom repository, document what was changed and why in the repository's README. If the customization adds new commands or skills, note their purpose and usage. If it modifies existing procedures, describe how the behavior differs from the official release.
-
 ## Related Docs
 
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
 - [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
-- [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
+- [Context Engineering](Context_Engineering.md) - How APM manages what each agent sees and why
+- [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures

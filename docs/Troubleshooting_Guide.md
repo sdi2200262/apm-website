@@ -7,170 +7,127 @@ sidebar_position: 9
 
 # Troubleshooting Guide
 
-Common issues encountered during APM sessions and how to resolve them.
+Common issues in APM sessions and how to resolve them.
 
 ## Planning Phase
 
 ### Omitted Requirements
 
-If important requirements were missed during Context Gathering, the impact depends on when the omission is caught and how significant it is.
+If Context Gathering missed an important requirement, the fix depends on when you notice:
 
-**During Context Gathering** - Provide the missing information in the current round or follow-up. The Planner iterates on gaps naturally.
+- **During Context Gathering:** give the missing information in the current round. The Planner follows up on gaps.
+- **At the Understanding Summary:** ask for changes before approving. The Planner loops through targeted follow-ups until the summary is accurate.
+- **During Work Breakdown:** give a minor addition directly, and the Planner adjusts the current document. An omission that reshapes the scope or design needs the Planner to rebuild its understanding. Start a new Planner conversation with the omission included:
 
-**After the understanding summary** - Request modifications before approving. The Planner loops through targeted follow-ups until the summary is accurate.
+  ```
+  /apm-1-initiate-planner A previous Planner completed Context Gathering and started Work Breakdown but a critical requirement was missed: [describe the requirement]. Read any documents already written in .apm/, explore the codebase, then ask targeted questions to rebuild understanding with this new requirement incorporated before resuming Work Breakdown or modifying existing documents that may need correction.
+  ```
 
-**During Work Breakdown** - For minor additions, provide the missing requirement directly and the Planner can adjust the current document. For major omissions that reshape the project's scope or design, the Planner needs to reconstruct its understanding before continuing. Start a new Planner conversation with the omission included:
-
-```
-/apm-1-initiate-planner A previous Planner completed Context Gathering and started Work Breakdown but a critical requirement was missed: [describe the requirement]. Read any documents already written in .apm/, explore the codebase, then ask targeted questions to rebuild understanding with this new requirement incorporated before resuming Work Breakdown or modifying existing documents that may need correction.
-```
-
-**During Implementation** - Inform the Manager, which can modify the Spec, Plan, or Rules to incorporate new requirements. Small contained changes are within the Manager's authority. Significant changes (multiple Tasks affected, scope changes, design direction shifts) require User collaboration. See [planning document maintenance](Agent_Orchestration.md#planning-documents) for how the Manager handles modifications.
+- **During implementation:** tell the Manager, which can update the Spec, the Plan, or the Rules. Small, contained changes are its call; larger ones need your approval (see [Planning Documents](Agent_Orchestration.md#planning-documents)). If a change it proposes seems too large or too small for the issue, redirect it.
 
 ### Interrupted Work Breakdown
 
-If Work Breakdown is interrupted (model limitations, platform issues, or network errors), instruct the Planner to continue from where it stopped. Be specific about which document was being written and what remains.
+1. If Work Breakdown stopped on a platform or network error, ask the Planner to continue. Name the document it was writing and what remains.
+2. If the Planner seems confused about what it has finished, or the platform has compacted its conversation, start a new Planner conversation. The new Planner sees the documents already in `.apm/` but none of the gathered context. Tell it what was completed, adapting this prompt to the actual state:
 
-If the interruption caused significant context loss (the Planner seems confused about what was already completed), or if the platform auto-compacted the conversation because the Planner reached its context window limit, recovery requires a new Planner conversation. A new Planner will have the partially written documents in `.apm/` but not the gathered context from the previous conversation. The User needs to re-initiate the Planner and provide context about what was already completed so it can resume Context Gathering or Work Breakdown from the right point:
+   ```
+   /apm-1-initiate-planner A previous Planner conversation was lost after completing Context Gathering and writing the Spec. Read .apm/spec.md for the approved Spec, explore the codebase to rebuild understanding, then ask targeted questions to reconstruct any missing context before resuming Work Breakdown.
+   ```
 
-```
-/apm-1-initiate-planner A previous Planner conversation was lost after completing Context Gathering and writing the Spec. Read .apm/spec.md for the approved Spec, explore the codebase to rebuild understanding, then ask targeted questions to reconstruct any missing context before resuming Work Breakdown.
-```
-
-Adapt the prompt to match the actual state. The new Planner reads whatever exists in `.apm/`, explores the codebase, and conducts targeted questions to reconstruct the gathered context. Once the Planner has sufficient understanding (confirmed through a summary the User approves), it resumes Work Breakdown from where the previous Planner left off.
+3. Approve its summary, and the Planner resumes Work Breakdown where the previous one left off.
 
 ## Implementation Phase
 
-### Worker Execution Issues
+### Stuck Workers
 
-Workers may get stuck during Task execution for several reasons: missing dependency context, persistent bugs, iteration spirals, or systemic issues in the codebase. The general pattern is the same regardless of the cause. If the Worker cannot resolve the issue within its own scope, it should return to the Manager for coordination-level resolution.
+A Worker may get stuck on missing dependency context, a persistent bug, or a systemic issue in the codebase. Whatever the cause, if the Worker cannot resolve it within its own scope, the issue goes back to the Manager.
 
-#### Integration Issues with Prior Work
+#### Integration with Earlier Work
 
-A Worker may struggle when its Task depends on work done by another Worker. The Worker might not understand why it is struggling, and the User may not immediately recognize the root cause either. Symptoms include the Worker failing to connect with expected interfaces, making incorrect assumptions about how prior work is structured, or producing output that conflicts with what another Worker built.
+A Worker may struggle when its Task depends on another Worker's output. It may fail to connect with expected interfaces, assume the wrong structure for the earlier work, or produce output that conflicts with it. Neither the Worker nor you may see the cause at first.
 
-These issues often stem from insufficient dependency context in the Task Prompt. The Manager is responsible for providing that context, and the resolution happens at the Manager level. Ask the Worker to log early and report back:
+Such issues usually come from thin dependency context in the Task Prompt, which is the Manager's to fix.
 
-```
-Stop execution and log what you have so far with Partial status. Describe what you are struggling with, what assumptions you are making about the prior work, and where things are not matching up. Write the Task Report and direct me to the Manager.
-```
+1. Ask the Worker to log early and report back:
 
-The Manager reviews the log with full project awareness, identifies the gap (often missing or insufficient dependency context from the producer Task), and issues a follow-up Task Prompt with the context the Worker needs.
+   ```
+   Stop execution and log what you have so far with Partial status. Describe what you are struggling with, what assumptions you are making about the prior work, and where things are not matching up. Write the Task Report and direct me to the Manager.
+   ```
 
-#### Persistent Bugs or Iteration Spirals
+2. Deliver the report. The Manager reviews the log with the whole project in view, finds the gap, and issues a follow-up Task Prompt with the missing context.
 
-A Worker may enter a cycle of repeated debugging attempts without making progress, or produce fixes that keep causing new issues. The Worker's context is being consumed without resolution, and the longer this continues the less useful context remains for actual execution.
+#### Persistent Bugs
 
-If the Worker is persisting without using subagents, direct it to offload the investigation to a debug subagent before continuing. The subagent runs in its own context window so the Worker's context is preserved:
+A Worker may cycle through debugging attempts without progress, or produce fixes that cause new issues. Each attempt spends context the Worker needs for execution.
 
-```
-Spawn a debug subagent to isolate this issue in a fresh context. Pass it the specific error, relevant file paths, and what you have tried so far.
-```
+1. If the Worker has not used a subagent, ask it to hand the investigation to one:
 
-If the Worker has already used subagents and the issue remains unresolved, the problem likely exceeds what can be solved within the Worker's scope. It may be a systemic issue, a planning gap, or something that requires the Manager's coordination-level perspective. Intervene and ask the Worker to log early and return:
+   ```
+   Spawn a debug subagent to isolate this issue in a fresh context. Pass it the specific error, relevant file paths, and what you have tried so far.
+   ```
 
-```
-Stop execution and log with Partial status (or Failed if no progress was made). Describe the issue clearly, what was attempted, what the subagent found if applicable, and your assessment of the root cause. Write the Task Report and direct me to the Manager.
-```
+2. If a subagent has not solved it either, the problem likely lies beyond the Worker's scope: a systemic issue or a gap in the plan. Ask the Worker to log early and return:
 
-The Manager reviews the log with full project awareness and determines the next step: issuing a follow-up with a revised approach, modifying planning documents if the issue is systemic, or restructuring the Task entirely.
+   ```
+   Stop execution and log with Partial status (or Failed if no progress was made). Describe the issue clearly, what was attempted, what the subagent found if applicable, and your assessment of the root cause. Write the Task Report and direct me to the Manager.
+   ```
 
-### Planning Document Revisions
+3. Deliver the report. The Manager decides the next step: a follow-up with a revised approach, a change to the planning documents, or a restructured Task.
 
-When execution reveals issues with the planning documents, the Manager can modify them. See [planning document maintenance](Agent_Orchestration.md#planning-documents) for how the three documents relate to each other.
+### Message Bus
 
-| Change scope | Who handles it |
+| Issue | Cause and fix |
 | :--- | :--- |
-| Single Task clarification, adding a missing dependency, isolated Spec addition | Manager (within authority) |
-| Multiple Tasks affected, design direction change, scope change, new Stage | Manager with User collaboration |
-
-If the Manager proposes changes that seem too large or too small for the situation, redirect it. The Manager explains its reasoning visibly in chat, so the User can assess whether the proposed modification matches the actual issue.
-
-### Message Bus Issues
-
-**Empty bus** - If `/apm-4-check-tasks` or `/apm-5-check-reports` returns no content, the bus file is empty. The Manager may not have written the Task Prompt yet, or the Worker may not have written the report yet. Check with the other Agent's conversation to confirm the message was sent.
-
-**Wrong agent receives a task** - Workers validate the `agent` field in the Task Prompt against their registered identity. If there is a mismatch, the Worker declines and directs the User to the correct Worker. This typically means the User ran `/apm-4-check-tasks` in the wrong conversation.
+| `/apm-4-check-tasks` or `/apm-5-check-reports` finds nothing | The other agent has not written its message yet. Check its conversation. |
+| A Worker declines a Task Prompt and names another Worker | The prompt was meant for that Worker. You likely ran `/apm-4-check-tasks` in the wrong conversation. |
 
 ## Context Recovery
 
-APM is designed so that project state lives in files, not in any single Agent's context window. When context is lost, whether through platform compaction, a closed conversation, or a degraded Handoff, the state can be reconstructed from those files. This section covers the different recovery scenarios and when to use each approach.
-
-### Handoff vs Recovery
-
-[Handoff](Agent_Orchestration.md#handoff-and-continuity) is a formal APM procedure performed *before* context limits are reached. The User triggers it proactively when the conversation is getting long or the Agent signals context pressure. The outgoing Agent creates structured artifacts (Handoff Log and Handoff Prompt), the incoming Agent reads them and reconstructs context cleanly. Instance numbers increment. This is the intended way to transfer context in APM.
-
-Recovery is a troubleshooting measure for when Handoff was not performed in time. This happens when the platform auto-compacts the conversation, the User accidentally closes or clears a session, or a newly initiated Agent needs to reconstruct context without Handoff artifacts in place. The instance number does not increment because no formal context transfer occurred.
+A [Handoff](Agent_Orchestration.md#handoff-and-continuity) is the planned way to move an agent to a fresh conversation. [Recovery](Agent_Orchestration.md#recovery) is for when context was lost without one: the platform compacted the conversation, or you closed or cleared it.
 
 ### Recovery
 
-When an Agent's context is lost without a Handoff (auto-compaction, lost conversation, accidental clear), use the recovery command:
+Recovery covers the Manager and Workers; for a Planner, see Interrupted Work Breakdown above. Run the recovery command in the agent's conversation, or in a new one if the old one is gone:
 
 ```markdown
 /apm-9-recover manager          # recover the Manager
 /apm-9-recover frontend-agent   # recover a Worker by its identifier
 ```
 
-The Agent re-reads its procedural documents and explores project artifacts to reconstruct working context. When gaps remain that exploration cannot fill, the Agent asks the User for brief context before continuing. The Agent notes the recovery event in its next communication so the Manager is aware that some working context is reconstructed rather than first-hand.
+The agent rebuilds its context from the project's files and asks you for brief context where gaps remain. The Manager notes the recovery in the Tracker, and a Worker mentions it in its next Task Report. If the agent still seems confused or inconsistent afterwards, perform a Handoff to start a clean instance.
 
-If recovery does not restore adequate context (the Agent still seems confused or produces inconsistent output), perform a full Handoff instead to start a clean instance.
+### Faulty Handoff
 
-### Corrupted Handoff
+A Handoff written by an agent whose context had already degraded, after a compaction or past its context limit, may record inaccuracies. If compaction has already happened, recover first, continue in that conversation, and hand off later.
 
-A corrupted Handoff happens when the outgoing Agent's context was already degraded before the Handoff was triggered. This occurs if the User performed a Handoff after auto-compaction instead of using Recovery, or if the Agent exceeded its context window limit before the Handoff command was run. The Handoff artifacts themselves may contain inaccuracies or hallucinations because the outgoing Agent's context was unreliable when it created them.
+If the incoming agent's Understanding Summary shows errors anyway:
 
-In general, if auto-compaction has already occurred, Recovery (`/apm-9-recover`) is the better first step. Recover working context, continue working in that conversation, and Handoff later when context limits approach again.
-
-If the User has already proceeded with a Handoff and the incoming Agent's understanding summary reveals corruption:
-
-**Minor gaps** - Provide corrections directly in the incoming Agent's conversation. The Agent integrates them and continues.
-
-**Major issues** - The Handoff artifacts themselves are unreliable. Review and correct them before reinitializing:
-
-- **Handoff Log** in `.apm/memory/handoffs/` - correct any inaccurate working context, decisions, or coordination notes
-- **Handoff Prompt** in `.apm/bus/<agent-slug>/handoff.md` - correct current state, outstanding Tasks, or reconstruction instructions
-
-After editing, start a new conversation for the same role and run the initiation command. The incoming Agent reads the corrected artifacts during initialization.
+- **Minor gaps:** correct them in the incoming agent's conversation.
+- **Major errors:** fix the Handoff artifacts, then open a new conversation for the same role and run its initiation command. The incoming agent reads the corrected artifacts.
+  - The **Handoff Log**, in `.apm/memory/handoffs/`, holds the working context, decisions, and notes.
+  - The **Handoff Prompt**, in `.apm/bus/<agent-slug>/handoff.md`, holds the current state and outstanding Tasks. The incoming agent clears it once read. Rewrite it from the corrected Handoff Log, since the next agent detects a Handoff only when the file has content.
 
 ## CLI Issues
 
-### Already Initialized
-
-Running `apm init` when APM is already initialized shows the current state and suggests alternatives.
-
-If an active APM session exists (planning documents, Tracker, Memory with content), use `apm archive` first to preserve the session before reinitializing.
-
-If the `.apm/` artifacts are still templates (no session has started), there is nothing worth archiving. Delete the contents of `.apm/` except `archives/` if it exists, remove the assistant directory files installed by APM, and run `apm init`.
-
-### Version Mismatches
-
-The `agentic-pm` CLI and template releases share major version for compatibility. CLI v1.x fetches only v1.x.x template releases.
-
-If `apm update` reports no compatible releases, the `agentic-pm` CLI may need updating:
-
-```bash
-npm update -g agentic-pm
-apm update
-```
+| Issue | Fix |
+| :--- | :--- |
+| `apm init` reports that APM is already installed | To start fresh, run `apm archive`, then `apm init`. |
+| `apm update` finds no compatible release | Update the CLI with `npm update -g agentic-pm`, then run `apm update` again. CLI v1.x fetches only v1.x.x releases (see [Versioning](CLI_Guide.md#versioning)). |
 
 ## Migrating from v0.5.x
 
-v0.5.x installations have a different file structure, metadata format, and CLI. The `agentic-pm` CLI v1.0.0+ cannot directly manage them. For a full list of what changed, see the [CHANGELOG](https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md).
+v0.5.x installations differ in file structure, metadata format, and CLI, and the v1 CLI cannot manage them directly. The [CHANGELOG](https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md) lists the changes.
 
-### Recommended Approach
+1. Move the existing `.apm/` artifacts (Implementation Plan, Memory directory, metadata) into a directory under `.apm/archives/`, for example `.apm/archives/my-project/`.
+2. Convert the old `metadata.json` to the v1 [archive schema](CLI_Guide.md#archive-metadata) and place it in that directory. Map `templateVersion` to `releaseVersion` and full assistant names to short IDs, and add `archivedAt` and `reason: "migration"`.
+3. Optionally, write a session summary into the same directory.
+4. Remove `.apm/guides/`, `.apm/metadata.json`, and the APM-installed files in your assistant's directories (in v0.5.x, usually prefixed `apm-`), keeping your own files.
+5. Install the current CLI: `npm install -g agentic-pm`.
+6. Run `apm init`. The new Planner detects the migration archive during Context Gathering.
 
-1. Move existing `.apm/` artifacts (Implementation Plan, Memory directory, metadata) into an archive directory under `.apm/archives/` (any name works, e.g. `my-awesome-apm-project`)
-2. Convert the old `metadata.json` to the v1 archive schema and place it inside the archive directory. The schema is documented in the [CLI Guide](CLI_Guide.md#workspace-metadata). Map `templateVersion` to `releaseVersion`, full assistant names to short IDs, and add `archivedAt` and `reason: "migration"` fields
-3. Optionally generate a session summary and place it in the same archive directory
-4. Remove the `.apm/guides/` directory - v1 scaffolds guides into the platform directory instead
-5. Remove only APM-installed files from assistant directories (v0.5.x files typically have `apm-` prefixes), preserving any non-APM content
-6. Remove `.apm/metadata.json` from the root so the current CLI sees a clean state
-7. Update the CLI: `npm install -g agentic-pm`
-8. Reinitialize: `apm init` - the new Planner detects the migration archive during Context Gathering
+The optional [apm-assist](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-assist) skill can do this for you. Install it in your workspace and mention it in your assistant's chat: the agent detects your version, proposes a migration plan, and carries it out after your approval. It can also answer questions about APM from the live docs.
 
-APM provides an optional **[apm-assist](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-assist)** skill that can handle migration (among other things). Install it into your workspace and reference it in your assistant's chat - the Agent assesses the current state, detects your version, proposes a migration plan, and executes after your approval. It can also explain APM concepts and answer questions by reading the live documentation.
-
-**Installation (Claude Code example):**
+For example, in Claude Code:
 
 ```bash
 mkdir -p .claude/skills/apm-assist
@@ -178,11 +135,11 @@ curl -sL https://raw.githubusercontent.com/sdi2200262/agentic-project-management
   -o .claude/skills/apm-assist/SKILL.md
 ```
 
-For other platforms, see the [standalone skills directory](https://github.com/sdi2200262/agentic-project-management/tree/main/skills) for installation commands.
+Other assistants take the same file in their own skills directory; the [skills README](https://github.com/sdi2200262/agentic-project-management/tree/main/skills) lists the paths.
 
 ## Related Docs
 
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [Customization Guide](Customization_Guide.md) - Custom repositories and template customisation
 - [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency

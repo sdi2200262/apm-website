@@ -7,46 +7,40 @@ sidebar_position: 11
 
 # Security Guide
 
-APM installs template files into project directories. These templates define how AI Agents behave - what they read, what commands they follow, and how they structure their work. When installing from custom repositories, these files come from an unreviewed source, which introduces trust decisions the User should understand.
+APM installs template files into your project. These templates define how your agents behave: what they read, which commands they follow, and how they structure their work. Files from a custom repository come from an unreviewed source, and installing them is a trust decision.
 
 ## Trust Model
 
-APM has two installation sources:
+APM installs from two sources:
 
-- **Official** (`apm init`) - Templates from the [APM repository](https://github.com/sdi2200262/agentic-project-management), maintained and reviewed by the APM maintainers.
-- **Custom** (`apm custom`) - Templates from any GitHub repository in `owner/repo` format. These are not reviewed by APM maintainers.
+- **Official** (`apm init`) - Templates from the [APM repository](https://github.com/sdi2200262/agentic-project-management), reviewed by its maintainers.
+- **Custom** (`apm custom`) - Templates from any GitHub repository, which APM's maintainers have not reviewed.
 
-The CLI treats both sources identically after installation. The only difference is the trust boundary: official templates have been reviewed, custom templates have not.
+After installation, the CLI treats both alike. Review is the only difference.
 
 ## What Custom Bundles Can Do
 
-Custom bundles are ZIP archives extracted into the project directory. A malicious bundle could:
+A custom bundle is a ZIP archive extracted into your project. A malicious one could:
 
-- **Write files anywhere within the project directory** - Not just prompt and procedural files. A bundle can include entries like `src/malicious.js`, `package.json`, `.env`, or any other path within the project root. Official bundles only write to the assistant config directory (e.g., `.claude/`, `.cursor/`) and `.apm/`, but this is a convention, not an enforcement.
-
-- **Overwrite existing APM files** - A bundle could replace existing APM commands, skills, or guides with modified versions that appear identical but contain altered instructions.
-
-- **Install malicious Agent instructions** - APM templates define AI Agent behavior. Malicious templates could instruct Agents to execute harmful commands, exfiltrate data, modify code in subtle ways, or behave differently than the User expects.
+- **Write files anywhere in the project** - A bundle can include `src/malicious.js`, `package.json`, `.env`, or any other path in the project. Official bundles write only to the assistant's directory (such as `.claude/`) and `.apm/`, by convention; the CLI does not enforce it.
+- **Overwrite APM's files** - It can replace commands, skills, or guides with versions that look the same but carry altered instructions.
+- **Instruct your agents** - Its templates can tell your agents to run harmful commands, exfiltrate data, or change code in subtle ways.
 
 ## What Custom Bundles Cannot Do
 
-- **Execute code during installation** - The CLI only extracts ZIP contents. No scripts, hooks, or executables run during `apm init`, `apm custom`, `apm add`, or `apm update`.
-
-- **Write files outside the project directory** - The CLI validates that all extracted file paths resolve within the project directory. ZIP entries that attempt path traversal (e.g., `../../etc/passwd`) are blocked with a warning.
-
-- **Delete or modify files not in the bundle** - Only files explicitly included in the ZIP are written. Existing files outside the bundle's paths are untouched.
+- **Run code during installation** - The CLI only extracts files. No scripts, hooks, or executables run during `apm init`, `apm custom`, `apm add`, or `apm update`.
+- **Write outside the project** - The CLI checks that every extracted path resolves inside the project, and blocks entries such as `../../etc/passwd` with a warning.
+- **Touch files outside the bundle** - Only the bundle's own files are written; nothing else is changed or deleted.
 
 ## The Security Disclaimer
 
-The first time a custom repository is used, the CLI displays a security disclaimer warning that the content has not been reviewed by APM maintainers. The User must accept before installation proceeds.
+Each time you install, add, or update from a custom repository, the CLI warns that APM's maintainers have not reviewed it, and continues only once you accept.
 
-**How `skipDisclaimer` works:**
+After installation, the CLI offers to save the repository and to skip the disclaimer for it from then on.
 
-After installation, the CLI offers to save the repository for future use. Saved repositories can be configured to skip the security disclaimer on subsequent use. This applies to `apm custom`, `apm add`, and `apm update`.
+The risk is that a repository compromised later, through account takeover, a malicious maintainer, or a supply chain attack, then installs and updates without any warning.
 
-**The risk:** When a saved repository has the disclaimer skip enabled, no security warning is shown for that repository. If the repository is later compromised - through account takeover, a malicious maintainer, or a supply chain attack - the User receives no warning when installing or updating. The disclaimer is a one-time gate, not continuous monitoring.
-
-**Managing saved repositories:**
+To manage saved repositories:
 
 ```bash
 apm custom --list              # Review saved repos and disclaimer status
@@ -56,35 +50,26 @@ apm custom --clear             # Remove all saved repos
 
 ## Known Limitations
 
-- **No release signature verification** - The CLI does not verify cryptographic signatures on releases. Security relies on GitHub's HTTPS transport and the integrity of the source repository. A compromised GitHub account could serve malicious bundles that appear legitimate.
-
-- **No content scanning** - The CLI does not inspect or validate the contents of extracted files. It enforces path boundaries but does not analyze what the files contain or whether Agent instructions are safe.
-
-- **The disclaimer is a one-time gate** - The security disclaimer appears once per repository (or not at all for saved repos with `skipDisclaimer`). There is no ongoing monitoring, version diffing, or alerting when a repository's content changes between releases.
+- **No release signatures** - The CLI relies on GitHub's HTTPS transport and the integrity of the source repository. A compromised GitHub account could serve malicious bundles that look legitimate.
+- **No content scanning** - The CLI enforces path boundaries but does not inspect what the files contain or whether their instructions are safe.
+- **Skippable disclaimer** - A saved repository that skips the disclaimer installs and updates silently. Nothing flags changes between releases.
 
 ## Mitigation Strategies
 
-1. **Review the repository before installation** - Check the repository's README, issues, and commit history. Look for signs of active maintenance and community trust.
-
-2. **Inspect bundle contents after installation** - Review the extracted files in your project's `.claude/`, `.github/`, or equivalent directory before using them with an AI Agent. Pay particular attention to commands and guides that define Agent behavior.
-
-3. **Use specific tags** - Instead of relying on "latest", specify a known-good release tag with `--tag` to avoid pulling unexpected changes.
-
-4. **Check the installation metadata** - After installation, review `.apm/metadata.json` to verify the source repository and version.
-
-5. **Prefer official repositories** - When possible, use `apm init` for official, reviewed templates.
-
-6. **Audit saved repositories** - Periodically review saved repositories with `apm custom --list`. Consider removing repositories you have not recently audited, so the security disclaimer reappears on next use.
+1. **Review the repository before installing** - Check its README, issues, and commit history for signs of active maintenance and trust.
+2. **Inspect the installed files** - Read the commands and guides in your assistant's directory before your agents use them.
+3. **Pin a release** - Install a known-good tag with `--tag` instead of the latest.
+4. **Check the metadata** - Confirm the repository and version in `.apm/metadata.json`.
+5. **Prefer the official release** - Use `apm init` where you can.
+6. **Audit saved repositories** - Review them with `apm custom --list`, and remove those you have not checked recently so the disclaimer returns.
 
 ## Reporting Security Issues
 
-If you discover a security vulnerability in the `agentic-pm` CLI or official templates, please report it by opening an issue at [github.com/sdi2200262/agentic-project-management/issues](https://github.com/sdi2200262/agentic-project-management/issues) with the "security" label, or contact the maintainers directly.
-
-Do not publicly disclose vulnerabilities until they have been addressed.
+To report a vulnerability in the CLI or the official templates, open an issue at [github.com/sdi2200262/agentic-project-management/issues](https://github.com/sdi2200262/agentic-project-management/issues) with the "security" label, or contact the maintainers directly. Please do not disclose a vulnerability publicly until it has been addressed.
 
 ## Related Docs
 
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
 - [Customization Guide](Customization_Guide.md) - How to create and use custom repositories
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency
