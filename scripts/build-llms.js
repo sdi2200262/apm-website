@@ -10,7 +10,7 @@ const DOC_ORDER = [
   { file: 'Introduction.md', slug: '/docs/introduction', desc: 'What APM is, the multi-agent coordination model, and how it solves context window degradation' },
   { file: 'Getting_Started.md', slug: '/docs/getting-started', desc: 'Installing the agentic-pm CLI, initializing a project, and running your first APM session step by step' },
   { file: 'Quick_Reference.md', slug: '/docs/quick-reference', desc: 'All APM slash commands, CLI commands, .apm/ file structure, and workflow steps in one page' },
-  { file: 'Agent_Types.md', slug: '/docs/agent-types', desc: 'The three AI agent roles (Planner, Manager, Worker) - their responsibilities, context scopes, and how they interact' },
+  { file: 'Agent_Roles.md', slug: '/docs/agent-roles', desc: 'The three AI agent roles (Planner, Manager, Worker) - their responsibilities, context scopes, and how they interact' },
   { file: 'Agent_Orchestration.md', slug: '/docs/agent-orchestration', desc: 'How agents coordinate through planning documents, file-based Message Bus, Task Prompts, structured Memory, and Handoff' },
   { file: 'Workflow_Overview.md', slug: '/docs/workflow-overview', desc: 'Detailed walkthrough of every procedure in the Planning Phase and Implementation Phase' },
   { file: 'Prompt_Engineering.md', slug: '/docs/prompt-engineering', desc: 'How APM prompt files (commands, guides, skills) are designed and why they are structured the way they are' },

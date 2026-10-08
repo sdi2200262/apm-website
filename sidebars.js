@@ -9,7 +9,7 @@ const sidebars = {
     {
       type: 'category',
       label: 'Core Concepts',
-      items: ['agent-types', 'agent-orchestration', 'workflow-overview'],
+      items: ['agent-roles', 'agent-orchestration', 'workflow-overview'],
     },
     {
       type: 'category',

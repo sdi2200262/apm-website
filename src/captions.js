@@ -9,4 +9,12 @@ export const CAPTIONS = {
   'overview-workers': 'Each Worker takes the assignments of one area of the project, completes and validates them, logs the work to memory and reports back.',
   'overview-user': 'When an assignment is ready, you notify its Worker; when a report comes back, you notify the Manager. Each time, you can review, steer or intervene first.',
   'overview-state': 'The planning documents, a progress tracker and the project\'s memory sit in shared files. When an agent\'s context fills, you can perform a Handoff to move its role to a fresh conversation that picks up where it left off using these files.',
+  // Core Concepts diagrams.
+  'planning-phase': 'The Planning Phase. The Planner gathers context and questions you until you approve its understanding, then writes the Spec, the Plan, and the Rules for your review. A gap at either check sends it back.',
+  'implementation-phase': 'The Implementation Phase. Once you approve its understanding, the Manager writes assignments and keeps the Tracker. You notify the Workers, who execute, log to Memory, and report back, and you notify the Manager, who reviews each log and report before the next assignment.',
+  'task-cycle': 'One Task through the cycle. The Task Prompt and the Task Report travel through the Message Bus, while the Task Log is written to Memory and reviewed from there.',
+  'stage-progression': 'A project moves through its Stages in order, each starting once the previous one is complete. Within a Stage, Tasks whose dependencies are done can proceed together.',
+  'message-bus': 'The Message Bus between the Manager and a Worker. The Manager writes Task Prompts to the Worker\'s Task Bus, and the Worker writes Task Reports to its Report Bus. Each is read when you deliver it with a command.',
+  'state-compression': 'From execution detail to project history. Workers record execution detail in Task Logs and the Manager records coordination detail in the Tracker. Both are condensed into Memory\'s Index as summaries and durable observations.',
+  'handoff': 'A Handoff. The outgoing agent writes a Handoff Log to Memory and a Handoff Prompt to the Handoff Bus. In a fresh conversation, the incoming agent reads both, with other relevant project state, and continues.',
 };

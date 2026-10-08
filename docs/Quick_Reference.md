@@ -7,7 +7,7 @@ sidebar_position: 3
 
 # Quick Reference
 
-A handy cheat sheet for APM sessions. All the commands, file paths, and workflows in one place.
+A reference for APM sessions: the commands, file paths, and workflows in one place.
 
 ## Commands
 
@@ -73,7 +73,7 @@ This is what `.apm/` looks like during a session:
     └── index.md          # One row per archived session
 ```
 
-The Rules live outside `.apm/` - they're written to your assistant's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others) so your assistant reads them automatically.
+The Rules live outside `.apm/` - they are written to your assistant's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others), where your assistant reads them automatically.
 
 ## Planning Phase
 
@@ -102,11 +102,11 @@ When an agent's context fills or quality degrades:
 3. Run the same initiation command - the incoming agent auto-detects the Handoff
 4. Verify the incoming agent's Understanding Summary before continuing
 
-Handoff produces cleaner context than recovery (`/apm-9-recover`), so prefer it when you can anticipate the limit.
+Handoff produces cleaner context than recovery (`/apm-9-recover`). Prefer it when the context limit is approaching.
 
 ## After Completion
 
-When the Manager finishes all Stages, you can archive the session and start fresh. Archives are preserved so future Planners can build on past work. To leave them a summary, run `/apm-8-summarize-session` in a new conversation first.
+When the Manager finishes all Stages, you can archive the session and begin a new one. To leave future Planners a summary, run `/apm-8-summarize-session` in a new conversation first.
 
 ```bash
 apm archive                        # move .apm/ artifacts to archives, clean workspace

@@ -67,7 +67,7 @@ Each APM agent runs in its own isolated conversation. What this looks like varie
 - **OpenCode** - Open a new terminal and start OpenCode
 - **Codex** - Open a new terminal and start Codex
 
-Throughout this guide, **"open a new agent"** means whichever of the above applies to your platform. The key is that each agent gets its own context, separate from every other agent. Keep active agent conversations open during the APM session for easy switching between them. Don't delete conversations until the agent has handed off or the session is complete.
+Throughout this guide, **"open a new agent"** means whichever of the above applies to your platform. Keep active agent conversations open during the APM session for easy switching between them. Don't delete conversations until the agent has handed off or the session is complete.
 :::
 
 ## Step 1: Initiate the Planner
@@ -78,7 +78,7 @@ Open a new agent and run:
 /apm-1-initiate-planner
 ```
 
-The Planner will introduce itself, confirm its role, and outline its two procedures: Context Gathering (structured project discovery) followed by Work Breakdown (decomposition into planning documents).
+The Planner will introduce itself, confirm its role, and outline its two procedures, Context Gathering and Work Breakdown.
 
 You can optionally pass project context as an argument to give the Planner a head start:
 
@@ -86,15 +86,15 @@ You can optionally pass project context as an argument to give the Planner a hea
 /apm-1-initiate-planner We're building Horse Tinder, a dating app for horses: owners swipe through profiles and match horses from nearby stables. Next.js frontend, Firebase backend. Here's the PRD: @docs/prd.md
 ```
 
-This context is incorporated before Context Gathering begins - the discovery process isn't skipped, but questions become more targeted.
+This context is incorporated before Context Gathering begins - the discovery process isn't skipped, but its questions become more targeted.
 
 ## Step 2: Work Through the Planning Phase
 
-This step covers both procedures that produce the planning documents. Take your time here. The quality of these documents directly shapes how well implementation goes.
+This step covers both procedures that produce the planning documents. Take your time here: the quality of these documents directly shapes how well implementation goes.
 
 ### Context Gathering
 
-Context Gathering starts with a workspace scan (directory structure, git repositories, existing materials) followed by three question rounds:
+Context Gathering starts with a workspace scan, followed by three question rounds:
 
 - **Round 1** - Existing materials and vision
 - **Round 2** - Technical requirements
@@ -126,7 +126,7 @@ Open a new agent and run:
 /apm-2-initiate-manager
 ```
 
-As the first Manager instance, the Manager reads all planning documents and its procedural guides, then explores the workspace's git state: current branches, commit history, and branching patterns for each working repository. If `.apm/` is inside a repository, it adds `.apm/` to `.gitignore` by default and asks whether you want to track any `.apm/` artifacts in git.
+As the first Manager instance, the Manager reads the planning documents, then explores the git state of each working repository: branches, commit history, and branching patterns. If `.apm/` is inside a repository, it adds `.apm/` to `.gitignore` by default and asks whether you want to track any `.apm/` artifacts in git.
 
 It then presents an Understanding Summary covering project scope, key design decisions, Workers, and Stage structure. Alongside this it proposes version control conventions for your approval. Review both carefully - if they accurately reflect your project, authorise the Manager to proceed. It then populates the Tracker, assesses which Tasks are ready, and begins dispatching work.
 
@@ -134,24 +134,24 @@ It then presents an Understanding Summary covering project scope, key design dec
 
 This is the core loop of the Implementation Phase. Each Task goes through four procedures - Task Assignment, Task Execution, Task Logging, and Task Review. Agents exchange messages through files in `.apm/bus/`, the **Message Bus**: the Manager writes assignments and Workers write reports. Each message waits there until you deliver it, and the agent tells you which command to run and in which conversation.
 
-**1. Manager dispatches a Task** - The Manager constructs a self-contained Task Prompt (objective, instructions, validation criteria, and all the context a Worker needs from the Spec and the Plan) and writes it to the Worker's Task Bus. It then tells you which Worker conversation to go to and what to run. The Worker works from this prompt, its working knowledge and the Rules.
+**1. Manager dispatches a Task** - The Manager constructs a self-contained Task Prompt, carrying the context the Worker needs from the Spec and the Plan, and writes it to the Worker's Task Bus. It then tells you which Worker conversation to go to and what to run. The Worker works from this prompt, its working knowledge and the Rules.
 **2. Initialise the Worker** - Open a new agent for the assigned Worker and run the initiation command with the Worker's identifier. The Manager tells you the exact identifier to use.
 
 ```markdown
 /apm-3-initiate-worker frontend-agent
 ```
 
-The Worker resolves its identity against the Message Bus and detects the pending Task Prompt. It then begins execution - following the instructions, validating results against the criteria in the prompt, and iterating if validation fails.
+The Worker picks up the pending Task Prompt, executes it, validates the result against the prompt's criteria, and iterates if validation fails.
 
 :::tip
 Workers pause when the Task requires your review or action. You can also interrupt or steer the Worker at any point during execution.
 :::
 
-**3. Worker logs and reports** - Once execution is complete, the Worker writes a structured Task Log to Memory (status, validation results, deliverables, and any flags for the Manager), then writes a brief Task Report to its Report Bus and tells you to deliver it to the Manager.
+**3. Worker logs and reports** - Once execution is complete, the Worker writes a structured Task Log to Memory (status, validation results, deliverables, and any flags for the Manager). It then writes a brief Task Report to its Report Bus and tells you to deliver it to the Manager.
 
 **4. Carry the report to the Manager** - Run `/apm-5-check-reports` in the Manager's conversation. Use the targeted version (e.g. `/apm-5-check-reports frontend-agent`) when multiple Workers are active. Before you deliver it, review whatever you need - the Worker's code changes, its summary, the tests - and ask for changes. For example, if the Worker reports that its tests pass but some edge cases were skipped, you may ask it to cover them before you deliver the report.
 
-The Manager reviews the Task Report and Task Log sceptically, as an outsider to the code: it checks the work against what it assigned and against the planning documents, confirms that the log supports the reported status, and investigates any flag or inconsistency before accepting the work. It then determines the next step:
+The Manager reviews the Task Report and Task Log sceptically, as an outsider to the code. It checks the work against what it assigned and against the planning documents, confirms that the log supports the reported status, and investigates any flag or inconsistency before accepting the work. It then determines the next step:
 
 - **Proceed** - Task successful, dispatch any newly ready Tasks
 - **Follow-up** - Task needs retry with refined instructions
@@ -181,7 +181,7 @@ For efficiency, the Manager may dispatch multiple Tasks at once:
 
 ## Context Limits
 
-When an agent's context window approaches its limit, perform a Handoff to transfer working knowledge to a fresh instance that keeps what the agent learned. Look for signs of context decay: the agent repeating questions, forgetting constraints, or producing degraded responses. Hand off early, before quality collapses.
+When an agent's context window approaches its limit, perform a Handoff to transfer working knowledge to a fresh instance that keeps what the agent learned. Look for signs of context decay: the agent repeating questions, forgetting constraints, or producing degraded responses. Hand off early, before the quality of the work declines.
 
 The process:
 
@@ -190,7 +190,7 @@ The process:
 3. Run the same initialisation command (for a Worker, with its identifier) - the incoming agent detects the Handoff and reconstructs context
 4. Verify the incoming agent's Understanding Summary before continuing
 
-If the platform auto-compacts an agent's context and its behaviour degrades, or you lose a conversation, run `/apm-9-recover` instead of a full Handoff. The agent rereads its documents and reconstructs working context as the same instance. Handoff produces cleaner context than recovery: it writes what matters to files, which stay, while compaction's summary lives only in the conversation and the next compaction condenses it further. Prefer a Handoff when you can anticipate the limit.
+If the platform auto-compacts an agent's context and its behaviour degrades, or you lose a conversation, run `/apm-9-recover` instead of a full Handoff. The agent rereads its documents and reconstructs working context as the same instance. A Handoff leaves cleaner context than recovery. It writes what matters to files, which persist, whereas a compaction summary exists only in the conversation and each later compaction condenses it further. Prefer a Handoff when you can anticipate the limit.
 
 For the full mechanics, see [Handoff and Continuity](Agent_Orchestration.md#handoff-and-continuity). For recovery scenarios, see the [Troubleshooting Guide](Troubleshooting_Guide.md#context-recovery).
 
@@ -206,13 +206,13 @@ apm archive                        # auto-named session-YYYY-MM-DD-NNN
 apm archive --name horse-tinder-v1 # custom archive directory name
 ```
 
-Archival moves the current `.apm/` artifacts into `.apm/archives/`, removes installed assistant files, and deletes installation metadata. Run `apm init` afterward to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance - so each APM session can build on what came before.
+Archival moves the current `.apm/` artifacts into `.apm/archives/`, removes installed assistant files, and deletes installation metadata. Run `apm init` afterward to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance. Each APM session can then build on what came before.
 
 ## Next Steps
 
-- [Agent Types](Agent_Types.md) - How Planner, Manager, and Worker roles work in depth
+- [Agent Roles](Agent_Roles.md) - How Planner, Manager, and Worker roles work in depth
 - [Agent Orchestration](Agent_Orchestration.md) - Communication, Memory, dispatch, and Handoff mechanics
 - [Workflow Overview](Workflow_Overview.md) - Detailed walkthrough of every procedure
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency

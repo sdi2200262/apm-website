@@ -9,7 +9,7 @@ sidebar_position: 7
 
 APM's multi-agent design is built around a specific constraint: AI context windows are finite, and they degrade as they fill. This doc explains how APM engineers each Agent's context - how scoping is designed per role, how context flows between Agents during implementation, and how project state persists as a layered compression archive.
 
-For the coordination mechanisms themselves, see [Agent Orchestration](Agent_Orchestration.md). For Agent roles and responsibilities, see [Agent Types](Agent_Types.md). This doc explains the reasoning underneath.
+For the coordination mechanisms themselves, see [Agent Orchestration](Agent_Orchestration.md). For Agent roles and responsibilities, see [Agent Types](Agent_Roles.md). This doc explains the reasoning underneath.
 
 ## Context Scoping
 

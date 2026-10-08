@@ -208,6 +208,7 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 .menu__link--active:not(.menu__link--sublist) { background: none; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .menu__link:hover, .menu__caret:hover, .menu__list-item-collapsible:hover { background: none; }
 .menu__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.menu__link [class*='linkLabel'] { overflow: visible; } /* Docusaurus clips labels to two lines, which also clipped the underline below them */
 .menu__caret:before, .menu__link--sublist-caret:after {
   background: var(--apm-ink);
   filter: none;
@@ -215,9 +216,15 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
 }
 
-/* Diagrams (src/components/Diagram.js): full column width, only the current theme's copy shown. */
+/* Diagrams (src/components/Diagram.js): full column width (or compact, via the corner button), only the current theme's copy shown. */
 .diagram { margin: 32px 0; }
 .diagram img { display: block; width: 100%; height: auto; }
+.diagram-images { position: relative; margin: 0 auto; transition: max-width .25s ease; max-width: 100%; } /* centred, so compact shrinks towards the middle */
+.diagram--compact .diagram-images { max-width: max(60%, 300px); }
+.diagram--compact img { min-width: 0 !important; }
+.diagram-size { position: absolute; top: 0; right: 0; z-index: 1; display: flex; padding: 4px; border: 0; background: var(--apm-paper); color: var(--apm-ink); opacity: .45; cursor: pointer; transition: opacity .2s; }
+.diagram-size:is(:hover, :focus-visible) { opacity: 1; }
+.diagram-size:focus-visible { outline: 2px solid var(--apm-link); outline-offset: 2px; }
 .diagram figcaption { margin-top: 12px; font-size: .9em; line-height: 1.55; } /* shared captions: src/captions.js */
 /* Figures are numbered per page, as on the landing page ("Figure 1."): the counter restarts in each doc. */
 .markdown { counter-reset: figure; }
