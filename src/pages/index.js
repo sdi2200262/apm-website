@@ -141,7 +141,7 @@ function Code({ children }) {
 
 function Logo({ file, mask }) {
   const src = useBaseUrl('/img/assistants/');
-  if (mask) return <span className="logo mask" style={{ maskImage: `url(${src}${file})`, WebkitMaskImage: `url(${src}${file})` }} />;
+  if (mask) return <span className="logo mask" style={{ maskImage: `url(${src}${file})` }} />;
   if (Array.isArray(file)) return <><img className="logo only-light" src={src + file[0]} alt="" /><img className="logo only-dark" src={src + file[1]} alt="" /></>;
   return <img className="logo" src={src + file} alt="" />;
 }
