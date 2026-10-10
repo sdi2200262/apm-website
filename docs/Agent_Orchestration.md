@@ -69,6 +69,8 @@ The Manager assesses all ready Tasks before each dispatch and chooses how to sen
 
 With version control, each dispatch unit works on its own branch, and parallel units also get their own git worktree. The Manager coordinates all merges. Before dispatching, it may wait briefly for a pending report that would unlock Tasks that combine well with those already ready.
 
+Task size and dispatch mode set how often exchanges pass through you. Ask the Planner for smaller or larger Tasks, and the Manager for the dispatch mode you want.
+
 ## Memory and Project State
 
 Project state lives in structured files outside any agent's context. The Manager is the primary consumer and maintainer of this state.

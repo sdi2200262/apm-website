@@ -36,7 +36,7 @@ The Planner's initiation command accepts project context, which makes its questi
 
 ### Batch-Friendly Planning
 
-On platforms that bill per request, batch dispatch saves exchanges. Mention during Context Gathering that you prefer batch-friendly Tasks, and the Planner favours sequential chains for the same Worker. You can also ask the Manager to prefer batch dispatch when several Tasks for one Worker are ready.
+On platforms that bill per request, batch dispatch saves exchanges. Mention during Context Gathering that you prefer batch-friendly Tasks, and the Planner favours sequential chains for the same Worker. You can also ask the Manager to prefer batch dispatch when several Tasks for one Worker are ready. Batches also mean fewer exchanges pass through you, each covering more work.
 
 ### Handoff Timing
 

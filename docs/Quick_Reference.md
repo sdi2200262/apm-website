@@ -89,7 +89,7 @@ The Rules live outside `.apm/` - they are written to your assistant's rules file
 2. **Manager dispatches** - It writes a Task Prompt and tells you which Worker to go to
 3. **Start or switch to the Worker** - Run `/apm-3-initiate-worker <id>` for new Workers, or `/apm-4-check-tasks` for existing ones
 4. **Worker executes** - It follows the Task Prompt, validates results, and logs the outcome
-5. **Carry the report** - Run `/apm-5-check-reports` in the Manager's conversation
+5. **Deliver the report** - Run `/apm-5-check-reports` in the Manager's conversation
 6. **Manager reviews** - Proceeds, issues a follow-up, or modifies planning documents
 7. **Repeat** - Steps 2-6 cycle until all Stages complete
 

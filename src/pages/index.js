@@ -29,7 +29,8 @@ const DEFS = {
 };
 const CAPTION = CAPTIONS.overview; // shared with the docs (src/captions.js)
 // Overview parts, in figure order (Figure 2..6): key = diagram variant (overview-<key>-<theme>.svg). Captions: src/captions.js.
-const PARTS = Object.fromEntries(['planning', 'manager', 'workers', 'user', 'state'].map((k) => [k, CAPTIONS[`overview-${k}`]]));
+// A no-break space ties each caption's last two words, so no line ends on a lone word (Safari before 26 ignores text-wrap: pretty).
+const PARTS = Object.fromEntries(['planning', 'manager', 'workers', 'user', 'state'].map((k) => [k, CAPTIONS[`overview-${k}`].replace(/ (\S+)$/, '\u00a0$1')]));
 // [init flag, name, logo in static/img/assistants]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
 const ASSISTANTS = [
   ['claude', 'Claude Code', 'claude.svg'],

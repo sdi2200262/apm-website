@@ -7,7 +7,7 @@ export const CAPTIONS = {
   'overview-planning': 'The Planner explores your codebase and questions you about purpose, requirements, and constraints. Once you approve its understanding, it writes the Spec (what to build), the Plan (how the work is divided), and the Rules (how the work is carried out), each for your review.',
   'overview-manager': 'The Manager hands out assignments with the context each needs, reviews what comes back, keeps track of project state, and keeps memory up to date.',
   'overview-workers': 'Each Worker takes the assignments of one area of the project, completes and validates them, logs the work to memory, and reports back.',
-  'overview-user': 'When an assignment is ready, you notify its Worker; when a report comes back, you notify the Manager. Each time, you can review, steer, or intervene first.',
+  'overview-user': 'When an assignment is ready, you notify its Worker; when a report comes back, you notify the Manager. Before you pass either on, you can review the work, steer, or intervene. You choose how often this happens through how the work is divided and assigned to Workers.',
   'overview-state': 'The planning documents, a progress tracker, and the project\'s memory sit in shared files. When an agent\'s context fills, you can perform a Handoff to move its role to a fresh conversation that picks up where it left off using these files.',
   // Core Concepts diagrams.
   'planning-phase': 'The Planning Phase. The Planner gathers context and questions you until you approve its understanding, then writes the Spec, the Plan, and the Rules for your review. A gap at either check sends it back.',

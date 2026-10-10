@@ -150,7 +150,7 @@ Workers pause when the Task requires your review or action. You can also interru
 
 **3. Worker logs and reports** - Once execution is complete, the Worker writes a structured Task Log to Memory (status, validation results, deliverables, and any flags for the Manager). It then writes a brief Task Report to its Report Bus and tells you to deliver it to the Manager.
 
-**4. Carry the report to the Manager** - Run `/apm-5-check-reports` in the Manager's conversation. Use the targeted version (e.g. `/apm-5-check-reports frontend-agent`) when multiple Workers are active. Before you deliver it, review whatever you need - the Worker's code changes, its summary, the tests - and ask for changes. For example, if the Worker reports that its tests pass but some edge cases were skipped, you may ask it to cover them before you deliver the report.
+**4. Deliver the report to the Manager** - Run `/apm-5-check-reports` in the Manager's conversation. Use the targeted version (e.g. `/apm-5-check-reports frontend-agent`) when multiple Workers are active. Before you deliver it, review whatever you need - the Worker's code changes, its summary, the tests - and ask for changes. For example, if the Worker reports that its tests pass but some edge cases were skipped, you may ask it to cover them before you deliver the report.
 
 The Manager reviews the Task Report and Task Log sceptically, as an outsider to the code. It checks the work against what it assigned and against the planning documents, confirms that the log supports the reported status, and investigates any flag or inconsistency before accepting the work. It then determines the next step:
 
@@ -178,7 +178,7 @@ For efficiency, the Manager may dispatch multiple Tasks at once:
 
 **Batch dispatch** - Sequential Tasks to the same Worker in a single message. The Worker executes each Task in order, logs immediately after each, stops at the first Task that fails, and reports once for the batch.
 
-**Parallel dispatch** - Tasks to different Workers simultaneously when no cross-Worker dependencies exist. You manage multiple Worker conversations, carrying messages as each completes. Each dispatch gets its own git branch, and parallel dispatches also get separate git worktrees. Parallel dispatch needs version control; without it, the Manager dispatches one at a time.
+**Parallel dispatch** - Tasks to different Workers simultaneously when no cross-Worker dependencies exist. You manage multiple Worker conversations, delivering messages as each completes. Each dispatch gets its own git branch, and parallel dispatches also get separate git worktrees. Parallel dispatch needs version control; without it, the Manager dispatches one at a time.
 
 ## Context Limits
 
