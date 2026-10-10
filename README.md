@@ -25,12 +25,15 @@ src/
 ├── pages/         # landing page (index.js + index.css)
 └── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, Icon/Arrow
 docs/              # documentation pages (Markdown/MDX)
-diagrams/          # diagram sources: icons/ (Lucide), d2/
-scripts/           # build-diagrams.py (diagrams), build-llms.js (llms.txt)
-static/img/        # assistants/ (logos), diagrams/ (generated), favicon, social card
+diagrams/          # diagram icons (Lucide)
+scripts/           # build-diagrams.py (diagrams), build-figures.py (thesis charts), build-llms.js (llms.txt)
+static/img/        # assistants/ (logos), diagrams/ and figures/ (generated), favicon, social card
 ```
 
-Diagrams: edit `scripts/build-diagrams.py` or the sources in `diagrams/`, then run `python3 scripts/build-diagrams.py` (needs the `drawio` and `d2` CLIs on PATH). Output goes to `static/img/diagrams/<name>[-<variant>]-<light|dark>.svg`; don't edit it by hand.
+Diagrams and charts are built offline from a local checkout of the [thesis](https://github.com/sdi2200262/bsc-apm-thesis) and committed; don't edit the output by hand. Both keep the thesis figure's file name.
+
+- Diagrams: edit `scripts/build-diagrams.py` (the d2 diagrams are read from the thesis), then run `python3 scripts/build-diagrams.py <thesis>` (needs the `drawio` and `d2` CLIs on PATH). Output: `static/img/diagrams/<name>[-<variant>]-<light|dark>.svg`.
+- Charts: run `<thesis>/.venv/bin/python scripts/build-figures.py <thesis>`. It runs the thesis's own figure scripts on its local data, restyled for the site. Output: `static/img/figures/<name>-<light|dark>.svg`.
 
 ## LLM Access
 

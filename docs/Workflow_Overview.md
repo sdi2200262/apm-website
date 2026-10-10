@@ -15,7 +15,7 @@ This doc walks through every procedure in both phases of an APM session, in orde
 
 The Planning Phase produces the planning documents that guide all subsequent work. The [Planner](Agent_Roles.md#planner) works through two sequential procedures: Context Gathering, then Work Breakdown.
 
-<Diagram name="planning-phase" alt="The Planner gathers context and elicits requirements from you, consolidates them and presents its understanding; once you agree, it creates the planning documents, which you review for completeness before planning completes." />
+<Diagram name="planning-phase-overview" alt="The Planner gathers context and elicits requirements from you, consolidates them and presents its understanding; once you agree, it creates the planning documents, which you review for completeness before planning completes." />
 
 ### Context Gathering
 
@@ -43,7 +43,7 @@ After all three approvals, the Planner initialises the [Message Bus](Agent_Orche
 
 The Implementation Phase executes the planning documents, with the [Manager](Agent_Roles.md#manager) coordinating and [Workers](Agent_Roles.md#workers) executing Tasks.
 
-<Diagram name="implementation-phase" alt="The Manager reviews the planning documents and writes assignments, keeping the Tracker; you notify the Workers, who execute, log to Memory, and report through the Message Bus; you notify the Manager, who reviews logs and reports, until the project is complete." />
+<Diagram name="implementation-phase-overview" alt="The Manager reviews the planning documents and writes assignments, keeping the Tracker; you notify the Workers, who execute, log to Memory, and report through the Message Bus; you notify the Manager, who reviews logs and reports, until the project is complete." />
 
 ### First Manager Initialisation
 

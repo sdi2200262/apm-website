@@ -1,19 +1,21 @@
 # Builds the site's diagrams into static/img/diagrams/ as <name>[-<variant>]-<theme>.svg, theme light or dark.
-# Run: python3 scripts/build-diagrams.py   (needs the `drawio` and `d2` CLIs on PATH, and network for the font)
+# Run: python3 scripts/build-diagrams.py <thesis checkout>   (needs the `drawio` and `d2` CLIs on PATH, and network for the font)
 # Sources:
 # - Coded here (icons from diagrams/icons/): the overview (landing page, Introduction; desktop()/phone(), one
 #   SVG per highlight for desktop and -phone, adapted from the thesis deck's gen.py) and the thesis figures in
 #   FIGURES (Message Bus, state compression, Handoff with -phone; the two phase figures desktop only).
 #   Edit the layout functions, not the SVGs.
-# - Re-themed from the thesis: diagrams/d2/*.d2 (d2_svg()). Edit their layout and wording there, not their
-#   colours or fonts; one SVG per theme, no phone layout.
+# - Re-themed from the thesis: its diagrams/framework-design/*.d2 (d2_svg()), read from the checkout; one SVG
+#   per theme, no phone layout. Figures take their thesis file names, so the thesis reader maps them by name.
 # Pipeline: draw.io XML -> the drawio CLI exports SVG -> font_css() inlines a Literata subset so the SVG
 # renders right inside an <img>. d2 embeds its own font subset from the TTFs fetched by literata_ttf().
 import base64
+import glob
 import html
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import urllib.parse
 import urllib.request
@@ -462,7 +464,7 @@ def implementation_phase(t):
 # Coded figures: name -> (desktop layout, phone layout or None). Output <name>[-phone]-<theme>.svg.
 FIGURES = {'message-bus': (message_bus, message_bus_phone), 'state-compression': (state_compression, state_compression_phone),
            'handoff': (handoff, handoff_phone),
-           'planning-phase': (planning_phase, None), 'implementation-phase': (implementation_phase, None)}
+           'planning-phase-overview': (planning_phase, None), 'implementation-phase-overview': (implementation_phase, None)}
 
 
 def literata_ttf(tmp):
@@ -548,8 +550,8 @@ def main():
         svgs = {k: inject(svg, styles[k[0]]) for k, svg in svgs.items()}
         fonts = literata_ttf(tmp)
         for theme, t in THEMES.items():
-            for f in sorted(os.listdir(os.path.join(SRC, 'd2'))):
-                svgs[f.removesuffix('.d2'), '', theme] = d2_svg(os.path.join(SRC, 'd2', f), t, fonts, tmp)
+            for f in sorted(glob.glob(os.path.join(sys.argv[1], 'diagrams', 'framework-design', '*.d2'))):
+                svgs[os.path.basename(f).removesuffix('.d2'), '', theme] = d2_svg(f, t, fonts, tmp)
     os.makedirs(OUT, exist_ok=True)
     for (fig, variant, theme), svg in svgs.items():
         name = f'{fig}{variant}-{theme}.svg'
