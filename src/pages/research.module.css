@@ -1,0 +1,19 @@
+/* Research overview (src/pages/research.js). The book grid (.wrap, .grid2) holds a screen-tall cover with no label:
+   the text in the content column, and the mark with the publication links in a rail, below the text, or beside it
+   from 1200px. */
+.cover { align-content: center; min-height: calc(100svh - 57px); } /* 57px: the header */
+.text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; max-width: 640px; } /* minmax: long content stays within the column */
+.text h1 { font-size: 32px; font-weight: 400; line-height: 1.2; text-wrap: balance; }
+.text :global(.note-wave) { margin-left: 0; } /* the note's rule starts with the text, as the text is not centred here */
+.meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 24px; margin: 0; font-size: 15px; }
+.meta dt { font-weight: 400; }
+.meta dd { margin: 0; }
+.rail { display: flex; align-items: flex-start; gap: 32px; }
+.mark { flex: none; }
+.links { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; font-size: 15px; }
+@media (min-width: 900px) { .text, .rail { grid-column: 2; } }
+@media (min-width: 1200px) {
+  .cover { grid-template-columns: 200px minmax(0, 640px) 144px; }
+  .text { grid-row: 1; }
+  .rail { grid-column: 3; grid-row: 1; flex-direction: column; }
+}

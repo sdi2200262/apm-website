@@ -79,6 +79,7 @@ async function main() {
   const [first, last, initial] = ['authorFirstEn', 'authorLastEn', 'authorFirstAbrEn'].map((m) => arg(master, m));
   const [month, year] = arg(master, 'dateEn').split(' ').map((w) => w[0] + w.slice(1).toLowerCase());
   const institution = 'National and Kapodistrian University of Athens'; // set in apmthesis.cls
+  const school = `Department of Informatics and Telecommunications, ${institution}`;
   fs.writeFileSync(path.join(root, 'research', 'thesis.json'), JSON.stringify({
     title,
     author: `${first} ${last}`,
@@ -86,7 +87,18 @@ async function main() {
     institution,
     date: `${month} ${year}`,
     abstract: plain(arg(master, 'abstractEn')).split(/\n\s*\n/),
-    citation: `${initial} ${last}, “${title},” BSc thesis, Department of Informatics and Telecommunications, ${institution}, Athens, Greece, ${month.length > 4 ? `${month.slice(0, 3)}.` : month} ${year}.`,
+    citation: `${initial} ${last}, “${title},” BSc thesis, ${school}, Athens, Greece, ${month.length > 4 ? `${month.slice(0, 3)}.` : month} ${year}.`,
+    // In the thesis's own references.bib style (biblatex): @thesis with its type, institution and location. Inner
+    // braces keep the title's case (IEEE sentence-cases titles) and the institution whole (its "and"s split a list).
+    biblatex: `@thesis{${last.toLowerCase()}${year}apm,
+    author = {${last}, ${first}},
+    title = {{${title}}},
+    type = {BSc thesis},
+    institution = {{${school}}},
+    location = {Athens, Greece},
+    month = ${month.slice(0, 3).toLowerCase()},
+    year = {${year}},
+}`,
     commit,
   }, null, 2));
   fs.mkdirSync(path.join(root, 'static', 'research'), { recursive: true });

@@ -1,17 +1,11 @@
 /* Landing page parts. The book style it shares with Research (page base, column, label grid, waves, terms, notes)
-   is "Book pages" in src/css/custom.css; component classes here (.cover-body, .code, ...) are only rendered here. */
+   is "Book pages" in src/css/custom.css; component classes here (.cover-body, .plate, ...) are only rendered here. */
 
-/* Header strip: plain ink links, underline on hover. (Footer: .site-footer in custom.css.) */
-.strip { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 24px; min-height: 56px; font-size: 14px; }
-.strip nav { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 24px; }
-.landing-page .strip a { color: var(--apm-ink); text-decoration: none; }
-.landing-page .strip a:hover { text-decoration: underline; }
-.topbar { position: sticky; top: 0; z-index: 20; background: var(--apm-paper); border-bottom: 1px solid transparent; transition: border-color .3s ease; }
-.topbar.scrolled { border-color: var(--apm-soft); }
 
 /* Cover: title, mark and description in one centred 640px column, about a screen tall. */
 .cover-body { display: grid; grid-template-columns: minmax(0, 640px); justify-content: center; align-content: center; gap: 56px; min-height: max(640px, calc(100svh - 57px)); padding: 72px 0; text-align: center; }
 .cover h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 400; line-height: 1.04; text-wrap: balance; }
+.cover-body .subtitle { margin-inline: auto; }
 /* Cover definitions (Cover in index.js): a quiet line under the paragraph. Its box keeps a fixed height, so nothing shifts;
    the longest note runs two lines past it into the cover's bottom padding, so the cover centres on what is always shown. */
 .cover .note { height: calc(3em + 20px); }
@@ -27,16 +21,12 @@
 .plate figcaption { max-width: 640px; min-height: 6.6em; margin-top: 24px; font-size: 17px; line-height: 1.55; text-wrap: pretty; }
 .more { max-width: 640px; margin-top: 32px !important; } /* the overview's pointer onward, at body size */
 
-/* Getting started: steps, code blocks with Copy, assistant picker (3 x 2). */
+/* Getting started: steps, commands (src/components/Code.js), assistant picker (3 x 2). */
 .steps { max-width: 640px; }
 .steps h3 { margin-top: 40px; font-size: 1rem; font-weight: 600; }
 .steps h3:first-child { margin-top: 0; }
 .steps h3 + p { margin-top: 8px; }
 .steps p + p { margin-top: 16px; }
-.code { display: flex; align-items: center; gap: 16px; margin: 12px 0 24px; padding: 10px 16px; background: var(--apm-deep); border: 1px solid var(--apm-soft); font: 15px 'JetBrains Mono', ui-monospace, monospace; }
-.landing-page .code pre { flex: 1; min-width: 0; margin: 0; padding: 0; overflow-x: auto; background: none; color: inherit; font: inherit; }
-.landing-page .copy { flex: none; font: 14px 'Literata', Georgia, serif; color: var(--apm-link); text-decoration: underline; text-underline-offset: 3px; }
-.landing-page .copy:hover { color: var(--apm-hover); }
 .pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
 .landing-page .pick button { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 6px; border: 1px solid var(--apm-soft); font-size: 14px; line-height: 1.25; }
 .landing-page .pick button:is(:hover, :focus-visible) { border-color: var(--apm-ink); }

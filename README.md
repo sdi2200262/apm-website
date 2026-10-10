@@ -19,13 +19,14 @@ Requires Node.js 20+.
 
 ```
 src/
-├── components/    # Mark (logo), Brand, GitHub, ThemeSwitch, DocToolbar, Diagram, Thesis (reader tables, references)
+├── components/    # Mark (logo), Brand, GitHub, ThemeSwitch, DocToolbar, Diagram, Thesis (reader tables, references),
+│                  # Drawn, Terms, Code (book page parts)
 ├── constants/     # GitHub URL, copy feedback timing
 ├── css/           # custom.css: palette, fonts, docs styling, shared header/footer/switch; research.css: thesis reader
-├── pages/         # landing page (index.js + index.css)
-└── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, DocItem/Layout (TOC column on every page), Icon/Arrow, MDXComponents
+├── pages/         # landing page (index.js + index.css), Research overview (research.js)
+└── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, DocItem/Layout (TOC column on every page), DocBreadcrumbs (Research crumb), Icon/Arrow, MDXComponents
 docs/              # documentation pages (Markdown/MDX)
-research/          # thesis reader pages (generated, see Thesis Reader)
+research/          # thesis reader pages (generated, see Thesis Reader) and the paper placeholder
 diagrams/          # diagram icons (Lucide)
 scripts/           # build-diagrams.py (diagrams), build-figures.py (thesis charts), build-llms.js (llms.txt)
 static/img/        # assistants/ (logos), diagrams/ and figures/ (generated), favicon, social card

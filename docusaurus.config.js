@@ -4,7 +4,7 @@ import rehypeKatex from 'rehype-katex';
 
 // Site config. Look and feel lives in src/css/custom.css; theme overrides in src/theme/
 // (Navbar/Logo = brand, NavbarItem/ComponentTypes = 'custom-github', Footer, Layout = theme switch, TOC = doc actions,
-// DocItem/Layout = TOC column on every page,
+// DocItem/Layout = TOC column on every page, DocBreadcrumbs/Items/Home = Research crumb in the readers,
 // MDXComponents = full-width tables and thesis reader parts). The thesis reader is a second docs instance over research/ (scripts/build-thesis.js).
 export default {
   title: 'APM - Agentic Project Management',

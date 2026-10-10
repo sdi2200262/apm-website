@@ -6,12 +6,11 @@ import useIsBrowser from '@docusaurus/useIsBrowser';
 import { useColorMode } from '@docusaurus/theme-common';
 import Footer from '@theme/Footer';
 import Mark from '../components/Mark';
-import Brand from '../components/Brand';
+import Header from '../components/Header';
 import { CAPTIONS } from '../captions';
 import { Wave, useDraw } from '../components/Drawn';
 import { Note, useTerms } from '../components/Terms';
-import { copyText, reduced } from '../browser';
-import GitHub from '../components/GitHub';
+import Code from '../components/Code';
 import ThemeSwitch from '../components/ThemeSwitch';
 import './index.css';
 
@@ -43,37 +42,17 @@ const ASSISTANTS = [
   ['opencode', 'OpenCode', ['opencode-light.svg', 'opencode-dark.svg']],
 ];
 
-// scrolled: header rule shows after 4px. away: the cover's bottom is above 40% of the viewport (hides the switch).
-function useScroll() {
-  const [s, setS] = useState({ scrolled: false, away: false });
+// The cover's bottom is above 40% of the viewport: the theme switch slides away.
+function useAway() {
+  const [away, setAway] = useState(false);
   useEffect(() => {
-    const on = () => {
-      const cover = document.querySelector('.cover');
-      const next = { scrolled: window.scrollY > 4, away: !!cover && cover.getBoundingClientRect().bottom < window.innerHeight * 0.4 };
-      setS((p) => (p.scrolled === next.scrolled && p.away === next.away ? p : next));
-    };
+    const on = () => setAway(document.querySelector('.cover').getBoundingClientRect().bottom < window.innerHeight * 0.4);
     on();
     window.addEventListener('scroll', on, { passive: true });
     window.addEventListener('resize', on);
     return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); };
   }, []);
-  return s;
-}
-
-// Landing header: the shared brand (clicking it scrolls to the top here) + Docs and GitHub.
-function Header({ seed, scrolled }) {
-  const toTop = (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }); };
-  return (
-    <header className={`topbar${scrolled ? ' scrolled' : ''}`}>
-      <div className="wrap strip">
-        <Brand seed={seed} onClick={toTop} />
-        <nav>
-          <Link to="/docs/introduction">Docs</Link>
-          <GitHub />
-        </nav>
-      </div>
-    </header>
-  );
+  return away;
 }
 
 // Stacked diagram variants that cross-fade; the active term (useTerms) picks its variant and caption.
@@ -114,27 +93,6 @@ function Overview() {
         </figcaption>
       </figure>
       <p className="more">The <Link to="/docs/introduction">documentation</Link> covers the workflow and the framework's design in full.</p>
-    </div>
-  );
-}
-
-// A one-line command with a Copy link ("Select and copy" if the clipboard refuses).
-function Code({ children }) {
-  const [label, setLabel] = useState('Copy');
-  const timer = useRef();
-  useEffect(() => () => clearTimeout(timer.current), []);
-  const copy = () => {
-    const done = (ok) => {
-      setLabel(ok ? 'Copied' : 'Select and copy');
-      clearTimeout(timer.current);
-      timer.current = setTimeout(() => setLabel('Copy'), 1600);
-    };
-    copyText(children).then(() => done(true), () => done(false));
-  };
-  return (
-    <div className="code">
-      <pre>{children}</pre>
-      <button type="button" className="copy" onClick={copy}>{label}</button>
     </div>
   );
 }
@@ -203,11 +161,11 @@ function GettingStarted() {
 
 export default function Home() {
   const draw = useDraw();
-  const { scrolled, away } = useScroll();
+  const away = useAway();
   return (
     <Layout description={DESCRIPTION} noFooter>
       <div className="landing-page book">
-        <Header seed={draw?.seed} scrolled={scrolled} />
+        <Header seed={draw?.seed} home />
 
         <section className="cover wrap">
           <div className="cover-body">

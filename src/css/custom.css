@@ -337,6 +337,14 @@ html { scrollbar-width: none; }
 .book :is(a, button):focus-visible { outline: 2px solid var(--apm-link); outline-offset: 3px; }
 .book code { font: 85% 'JetBrains Mono', ui-monospace, monospace; background: none; border: 0; padding: 0; color: inherit; }
 .book button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+/* Header (src/components/Header.js) in place of the navbar: plain ink links, underline on hover, a rule once scrolled. */
+html:has(.book) .navbar { display: none !important; }
+.strip { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 24px; min-height: 56px; font-size: 14px; }
+.strip nav { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 24px; }
+.book .strip a { color: var(--apm-ink); text-decoration: none; }
+.book .strip a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: var(--apm-paper); border-bottom: 1px solid transparent; transition: border-color .3s ease; }
+.topbar.scrolled { border-color: var(--apm-soft); }
 /* Layout: 1200px content, 24px gutters (40px from 900px), 200px label column + content from 900px. */
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .grid2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 32px; padding: 88px 0; }
@@ -345,7 +353,7 @@ html { scrollbar-width: none; }
   .wrap { padding: 0 40px; }
   .grid2 { grid-template-columns: 200px minmax(0, 840px); }
 }
-.subtitle { margin: 20px auto 0 !important; max-width: 520px; font-size: 20px; font-style: italic; line-height: 1.4; text-wrap: balance; }
+.book .subtitle { margin-top: 20px; max-width: 520px; font-size: 20px; font-style: italic; line-height: 1.4; text-wrap: balance; }
 .wave { display: flex; justify-content: center; min-height: 20px; padding-bottom: 48px; color: var(--apm-ink); }
 /* Terms: dotted-underlined buttons; their note is a quiet line under the text, ruled by a small calm wave. */
 .term { cursor: help !important; text-decoration: underline dotted 1px; text-underline-offset: 4px; }
@@ -353,9 +361,14 @@ html { scrollbar-width: none; }
 @media (any-hover: hover) { .term:hover { text-decoration-style: solid; } } /* touch :hover sticks after a tap */
 .book .note { margin-top: 24px; font-size: 15px; line-height: 1.5; transition: opacity .25s ease; }
 .note-wave { display: block; margin: 0 auto 8px; color: var(--apm-ink); opacity: .6; }
+/* Text with a Copy link (src/components/Code.js): commands on one scrolling line; blocks (citations) wrapped under their link. */
+.code { display: flex; align-items: center; gap: 16px; margin: 12px 0 24px; padding: 10px 16px; background: var(--apm-deep); border: 1px solid var(--apm-soft); font: 15px 'JetBrains Mono', ui-monospace, monospace; }
+.book .code pre { flex: 1; min-width: 0; margin: 0; padding: 0; overflow-x: auto; background: none; color: inherit; font: inherit; }
+.book .copy { flex: none; font: 14px 'Literata', Georgia, serif; color: var(--apm-link); text-decoration: underline; text-underline-offset: 3px; }
+.book .copy:hover { color: var(--apm-hover); }
+.code--block { flex-direction: column; align-items: stretch; gap: 4px; } /* the Copy link on its own row, so its label changes never reflow the text */
+.book .code--block pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.book .code--block .copy { align-self: flex-end; order: -1; }
 @media (prefers-reduced-motion: reduce) {
   .book, .book * { transition: none !important; animation: none !important; }
 }
-
-/* Landing page draws its own header; hide the Docusaurus navbar there. */
-html:has(.landing-page) .navbar { display: none !important; }
