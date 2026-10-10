@@ -4,6 +4,7 @@ import { useActivePlugin } from '@docusaurus/plugin-content-docs/client';
 import thesis from '@site/research/thesis.json';
 import styles from './DocToolbar.module.css';
 import { COPY_FEEDBACK_DURATION } from '../constants';
+import { copyText } from '../browser';
 
 // Doc actions under the table of contents (sticky with it): copy/download this page or all docs.
 // "All docs" is static/llms-full.txt, generated before each build by scripts/build-llms.js. In the thesis reader
@@ -14,11 +15,9 @@ export default function DocToolbar() {
   const pdf = useBaseUrl('/research/thesis.pdf');
   const research = useActivePlugin()?.pluginId === 'research';
   const pageText = () => document.querySelector('.theme-doc-markdown')?.innerText ?? '';
-  // Clipboard writes must start inside the click: a ClipboardItem takes the text as a promise, so the
-  // copy of all docs can still be fetching (Safari drops the gesture after an awaited fetch). Label: Copied / Copy failed.
+  // Label: Copied / Copy failed. All docs can still be fetching when the write starts (copyText in src/browser.js).
   const copy = (key, text) => {
-    const blob = Promise.resolve(text()).then((t) => new Blob([t], { type: 'text/plain' }));
-    navigator.clipboard.write([new ClipboardItem({ 'text/plain': blob })]).then(() => key, () => `${key}-failed`).then((state) => {
+    copyText(text()).then(() => key, () => `${key}-failed`).then((state) => {
       setCopied(state);
       setTimeout(() => setCopied(null), COPY_FEEDBACK_DURATION);
     });

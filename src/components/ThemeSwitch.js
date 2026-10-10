@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import { rng } from './Mark';
 import { pageSeed } from './seed';
+import { reduced } from '../browser';
 
-const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Bottom-right light/dark switch (styles: "Theme switch" in src/css/custom.css). The selected option
 // always sits in the right slot (the one shown when closed) under a hand-drawn marker. On a click the

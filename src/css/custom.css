@@ -282,7 +282,7 @@ html.docs-wrapper .site-footer { margin-top: 88px; } /* same gap above the foote
   .site-footer nav { justify-content: center; }
 }
 
-/* Page fade, shared with the landing page (.landing-page in index.css): the docs fade in when you
+/* Page fade, shared with the book pages (.book, below): the docs fade in when you
    arrive (load, or from the landing page). Docs keep one Layout across doc pages, so moving between
    docs does not re-fade. No fill-mode: the animation is dropped once done. */
 @keyframes apm-load { from { opacity: 0; } }
@@ -326,6 +326,37 @@ html.docs-wrapper :is(.navbar, .main-wrapper) { animation: apm-load .8s cubic-be
 
 /* No page scrollbar anywhere (as in the design), so landing and docs line up exactly. */
 html { scrollbar-width: none; }
+
+/* Book pages (landing, Research; class .book): paper, ink and Literata at 20px, with the column, label grid,
+   hand-drawn rules (src/components/Drawn.js) and term notes (src/components/Terms.js) they share. Global, so a
+   book page opened directly still has them. They fade in on load; no fill-mode, so the animation is dropped once done. */
+.book { background: var(--apm-paper); color: var(--apm-ink); font: 20px/1.6 'Literata', Georgia, serif; animation: apm-load .8s cubic-bezier(.4, 0, .2, 1); }
+.book :is(h1, h2, h3, p, figure) { margin: 0; color: inherit; font-family: inherit; }
+.book a { color: var(--apm-link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.book a:hover { color: var(--apm-hover); }
+.book :is(a, button):focus-visible { outline: 2px solid var(--apm-link); outline-offset: 3px; }
+.book code { font: 85% 'JetBrains Mono', ui-monospace, monospace; background: none; border: 0; padding: 0; color: inherit; }
+.book button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+/* Layout: 1200px content, 24px gutters (40px from 900px), 200px label column + content from 900px. */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 32px; padding: 88px 0; }
+.label { font-size: 1rem; font-weight: 600; }
+@media (min-width: 900px) {
+  .wrap { padding: 0 40px; }
+  .grid2 { grid-template-columns: 200px minmax(0, 840px); }
+}
+.subtitle { margin: 20px auto 0 !important; max-width: 520px; font-size: 20px; font-style: italic; line-height: 1.4; text-wrap: balance; }
+.small { max-width: 640px; margin-top: 32px !important; font-size: 17px; line-height: 1.55; }
+.wave { display: flex; justify-content: center; min-height: 20px; padding-bottom: 48px; color: var(--apm-ink); }
+/* Terms: dotted-underlined buttons; their note is a quiet line under the text, ruled by a small calm wave. */
+.term { cursor: help !important; text-decoration: underline dotted 1px; text-underline-offset: 4px; }
+.term:is(:focus-visible, [aria-pressed='true']) { text-decoration-style: solid; }
+@media (any-hover: hover) { .term:hover { text-decoration-style: solid; } } /* touch :hover sticks after a tap */
+.book .note { margin-top: 24px; font-size: 15px; line-height: 1.5; transition: opacity .25s ease; }
+.note-wave { display: block; margin: 0 auto 8px; color: var(--apm-ink); opacity: .6; }
+@media (prefers-reduced-motion: reduce) {
+  .book, .book * { transition: none !important; animation: none !important; }
+}
 
 /* Landing page draws its own header; hide the Docusaurus navbar there. */
 html:has(.landing-page) .navbar { display: none !important; }

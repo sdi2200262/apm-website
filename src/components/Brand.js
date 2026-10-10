@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Link from '@docusaurus/Link';
 import Mark from './Mark';
 import { drawnSeed, pageSeed } from './seed';
+import { reduced } from '../browser';
 
-const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Header brand: Icon mark + name, linking home. The mark morphs into the cover mark on hover
 // (pointer devices) or keyboard focus. `seed` shares the landing cover's draw; without it, the page-load
