@@ -346,7 +346,6 @@ html { scrollbar-width: none; }
   .grid2 { grid-template-columns: 200px minmax(0, 840px); }
 }
 .subtitle { margin: 20px auto 0 !important; max-width: 520px; font-size: 20px; font-style: italic; line-height: 1.4; text-wrap: balance; }
-.small { max-width: 640px; margin-top: 32px !important; font-size: 17px; line-height: 1.55; }
 .wave { display: flex; justify-content: center; min-height: 20px; padding-bottom: 48px; color: var(--apm-ink); }
 /* Terms: dotted-underlined buttons; their note is a quiet line under the text, ruled by a small calm wave. */
 .term { cursor: help !important; text-decoration: underline dotted 1px; text-underline-offset: 4px; }

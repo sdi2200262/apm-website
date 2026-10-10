@@ -25,6 +25,7 @@
 .plate-images > * { grid-area: 1 / 1; transition: opacity .2s ease; }
 .plate-images img { display: block; width: 100%; min-width: 560px; height: auto; }
 .plate figcaption { max-width: 640px; min-height: 6.6em; margin-top: 24px; font-size: 17px; line-height: 1.55; text-wrap: pretty; }
+.more { max-width: 640px; margin-top: 32px !important; } /* the overview's pointer onward, at body size */
 
 /* Getting started: steps, code blocks with Copy, assistant picker (3 x 2). */
 .steps { max-width: 640px; }
