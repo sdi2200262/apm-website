@@ -195,7 +195,7 @@ function GettingStarted() {
       </div>
       <div className="steps touch-only">
         <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project directory from your terminal.</p>
-        <p><Link to="/docs/getting-started">Installation and first steps are in the docs.</Link></p>
+        <p>For installation and first steps, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
     </>
   );
