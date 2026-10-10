@@ -92,7 +92,7 @@ function Overview() {
           {!active && <><span className="hover-only"> Point at an underlined term to see its part.</span><span className="touch-only-inline"> Tap an underlined term to see its part.</span></>}
         </figcaption>
       </figure>
-      <p className="more">The <Link to="/docs/introduction">documentation</Link> covers the workflow and the framework's design in full.</p>
+      <p className="more">The <Link to="/docs/introduction">documentation</Link> covers the workflow and the framework's design in full. APM v1 has also been evaluated in a comparative study: <Link to="/research">read the research</Link>.</p>
     </div>
   );
 }

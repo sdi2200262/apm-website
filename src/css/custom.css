@@ -134,7 +134,7 @@ html[data-theme] {
 .navbar__items--right { gap: 24px; }
 .navbar__item { padding: 0; }
 .navbar__link, .navbar__link--active { font-size: 14px; color: var(--apm-ink); }
-.navbar__link:hover { color: var(--apm-ink); text-decoration: underline; text-underline-offset: 3px; }
+.navbar__link:hover, .navbar__link--active { color: var(--apm-ink); text-decoration: underline; text-underline-offset: 3px; }
 
 /* Docs type scale: 16px body (the landing page keeps 18px), with the sidebar, TOC and breadcrumbs a step
    smaller, so the article reads at 100% zoom beside the 14px header and footer. */
@@ -251,7 +251,7 @@ html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light {
 .pagination-nav__link:hover { border-color: var(--apm-ink); }
 .pagination-nav__sublabel { color: var(--ifm-font-color-secondary); }
 
-/* Phones/tablets (<997px): keep Docs + GitHub in the bar, as on the landing page (Infima hides them),
+/* Phones/tablets (<997px): keep Docs, Research and GitHub in the bar, as on the landing page (Infima hides them),
    so the drawer only holds the docs navigation and its "Back to main menu" panel is dropped. */
 @media (max-width: 996px) {
   .navbar__items--right > .navbar__item { display: inline-flex; }
@@ -264,6 +264,13 @@ html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light {
   .navbar__search-input::placeholder { color: transparent; }
   .navbar [class*='searchHintContainer'] { display: none; } /* no (⌘ + K) next to the icon */
   .navbar__search-input:focus { width: 220px; padding: 0 12px; color: var(--apm-ink); background: var(--apm-paper); }
+}
+/* Narrow phones: the menu button, brand, Docs, Research, GitHub and search share one row, so the star count goes
+   and the gaps narrow; the brand keeps its size (squeezed, its mark overlapped Docs). */
+@media (max-width: 429px) {
+  .navbar .stars { display: none; }
+  .navbar__items--right { gap: 12px; }
+  .navbar__brand { flex-shrink: 0; }
 }
 .navbar-sidebar { background: var(--apm-paper); }
 .navbar-sidebar__brand { border-bottom: 1px solid var(--apm-soft); }
@@ -342,7 +349,7 @@ html:has(.book) .navbar { display: none !important; }
 .strip { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 24px; min-height: 56px; font-size: 14px; }
 .strip nav { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 24px; }
 .book .strip a { color: var(--apm-ink); text-decoration: none; }
-.book .strip a:hover { text-decoration: underline; }
+.book .strip a:is(:hover, [aria-current='page']) { text-decoration: underline; }
 .topbar { position: sticky; top: 0; z-index: 20; background: var(--apm-paper); border-bottom: 1px solid transparent; transition: border-color .3s ease; }
 .topbar.scrolled { border-color: var(--apm-soft); }
 /* Layout: 1200px content, 24px gutters (40px from 900px), 200px label column + content from 900px. */

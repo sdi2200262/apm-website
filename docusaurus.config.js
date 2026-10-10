@@ -54,10 +54,11 @@ export default {
       respectPrefersColorScheme: true,
       disableSwitch: true, // replaced by src/components/ThemeSwitch (bottom-right, as on the landing page)
     },
-    // Same right-hand links as the landing header (Docs, GitHub + stars), then search.
+    // Same right-hand links as the book pages' header (Docs, Research, GitHub + stars), then search; the current section underlined.
     navbar: {
       items: [
-        { to: '/docs/introduction', label: 'Docs', position: 'right' },
+        { to: '/docs/introduction', label: 'Docs', activeBasePath: '/docs', position: 'right' },
+        { to: '/research', label: 'Research', activeBasePath: '/research', position: 'right' },
         { type: 'custom-github', position: 'right' },
         { type: 'search', position: 'right' },
       ],
