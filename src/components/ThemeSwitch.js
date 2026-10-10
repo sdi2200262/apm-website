@@ -9,7 +9,7 @@ const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matc
 // always sits in the right slot (the one shown when closed) under a hand-drawn marker. On a click the
 // slots swap at once and two WAAPI animations hide the jump: the new choice slides from the left slot
 // into the right one, the old one fades out in place and back in on the left. The page follows 60ms
-// later through a View Transition cross-fade; reduced motion or no API skips the effects.
+// later through a View Transition cross-fade; reduced motion skips the effects.
 // `away` (landing: once the cover scrolls away) slides the dock off the right edge. `toTop` adds an up button
 // with its own random marker; past 400px of scroll it shows and also counts as away. Either way the dock
 // stays while the mouse is in the 160x180 bottom-right corner, tracked from its last position, so scrolling
@@ -56,7 +56,7 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
     setTimeout(() => setOpen(false), 500); // touch: fold the pill once the swap has played
     setTimeout(() => {
       const go = () => setColorMode(mode);
-      if (!document.startViewTransition || reduced()) go();
+      if (reduced()) go();
       else document.startViewTransition(() => { go(); return new Promise((r) => setTimeout(r, 90)); });
     }, 60);
   };

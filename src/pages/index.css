@@ -73,7 +73,7 @@
 .landing-page .pick button:is(:hover, :focus-visible) { border-color: var(--apm-ink); }
 .landing-page .pick button[aria-pressed='true'] { background: var(--apm-deep); border-color: var(--apm-ink); box-shadow: inset 0 0 0 1px var(--apm-ink); }
 .logo { width: 22px; height: 22px; object-fit: contain; }
-.logo.mask { background: var(--apm-ink); mask: center / contain no-repeat; -webkit-mask: center / contain no-repeat; }
+.logo.mask { background: var(--apm-ink); mask: center / contain no-repeat; }
 html[data-theme='dark'] .only-light, html[data-theme='light'] .only-dark { display: none; }
 
 /* Touch screens get a shorter page: phone diagrams, tap-to-toggle terms, two-line Getting started. */

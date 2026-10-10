@@ -196,7 +196,7 @@ function Overview() {
   );
 }
 
-// A one-line command with a Copy link: clipboard API, then execCommand, else "Select and copy".
+// A one-line command with a Copy link ("Select and copy" if the clipboard refuses).
 function Code({ children }) {
   const [label, setLabel] = useState('Copy');
   const timer = useRef();
@@ -207,17 +207,7 @@ function Code({ children }) {
       clearTimeout(timer.current);
       timer.current = setTimeout(() => setLabel('Copy'), 1600);
     };
-    const legacy = () => {
-      const ta = Object.assign(document.createElement('textarea'), { value: children });
-      document.body.appendChild(ta);
-      ta.select();
-      let ok = false;
-      try { ok = document.execCommand('copy'); } catch { /* blocked */ }
-      ta.remove();
-      done(ok);
-    };
-    if (navigator.clipboard) navigator.clipboard.writeText(children).then(() => done(true), legacy);
-    else legacy();
+    navigator.clipboard.writeText(children).then(() => done(true), () => done(false));
   };
   return (
     <div className="code">

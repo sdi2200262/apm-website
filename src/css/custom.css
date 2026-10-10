@@ -212,7 +212,6 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 .menu__caret:before, .menu__link--sublist-caret:after {
   background: var(--apm-ink);
   filter: none;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
 }
 
@@ -318,7 +317,6 @@ html.docs-wrapper :is(.navbar, .main-wrapper) { animation: apm-load .8s cubic-be
 
 /* No page scrollbar anywhere (as in the design), so landing and docs line up exactly. */
 html { scrollbar-width: none; }
-html::-webkit-scrollbar { display: none; }
 
 /* Landing page draws its own header; hide the Docusaurus navbar there. */
 html:has(.landing-page) .navbar { display: none !important; }
