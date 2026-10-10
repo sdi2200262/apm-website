@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import { useActivePlugin } from '@docusaurus/plugin-content-docs/client';
+import thesis from '@site/research/thesis.json';
 import styles from './DocToolbar.module.css';
 import { COPY_FEEDBACK_DURATION } from '../constants';
 
 // Doc actions under the table of contents (sticky with it): copy/download this page or all docs.
-// "All docs" is static/llms-full.txt, generated before each build by scripts/build-llms.js.
+// "All docs" is static/llms-full.txt, generated before each build by scripts/build-llms.js. In the thesis reader
+// (the research docs instance) the actions are the thesis PDF and its citation, from scripts/build-thesis.js.
 export default function DocToolbar() {
   const [copied, setCopied] = useState(null);
   const all = useBaseUrl('/llms-full.txt');
+  const pdf = useBaseUrl('/research/thesis.pdf');
+  const research = useActivePlugin()?.pluginId === 'research';
   const pageText = () => document.querySelector('.theme-doc-markdown')?.innerText ?? '';
   // Clipboard writes must start inside the click: a ClipboardItem takes the text as a promise, so the
   // copy of all docs can still be fetching (Safari drops the gesture after an awaited fetch). Label: Copied / Copy failed.
@@ -24,7 +29,10 @@ export default function DocToolbar() {
     download(url, `${document.title.split(' | ')[0].trim()}.txt`);
     URL.revokeObjectURL(url);
   };
-  const actions = [
+  const actions = research ? [
+    ['dl-pdf', 'Download PDF', () => download(pdf, 'apm-thesis.pdf')],
+    ['cite', 'Copy citation', () => copy('cite', () => thesis.citation)],
+  ] : [
     ['page', 'Copy page', () => copy('page', pageText)],
     ['all', 'Copy all docs', () => copy('all', () => fetch(all).then((r) => r.text()))],
     ['dl-page', 'Download page', downloadPage],

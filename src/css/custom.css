@@ -83,6 +83,7 @@ html[data-theme] {
   --ifm-hr-border-color: var(--apm-soft);
   --ifm-table-border-color: var(--apm-soft);
   --ifm-table-stripe-background: transparent;
+  --ifm-hr-background-color: var(--apm-soft);
   --ifm-code-background: var(--apm-deep);
   --ifm-code-font-size: 85%;
   --ifm-breadcrumb-item-background-active: var(--apm-deep);
@@ -148,6 +149,10 @@ html.docs-wrapper .markdown h3 { font-size: 1.25rem; }
 .markdown a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .markdown h1 { font-weight: 400; }
 .markdown table th { background: var(--apm-deep); }
+/* Tables (src/theme/MDXComponents.js): full column width; a wider table scrolls inside its box, not the page. */
+.table-scroll { overflow-x: auto; margin-bottom: var(--ifm-leading); }
+.table-scroll table { display: table; width: 100%; margin: 0; }
+.footnotes li { scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem); } /* a footnote link's target clears the header */
 .markdown blockquote { border-left-color: var(--apm-soft); color: inherit; }
 :not(pre) > code { border: 1px solid var(--apm-soft); padding: 1px 4px; }
 .alert { --ifm-alert-background-color: var(--apm-deep); --ifm-alert-background-color-highlight: var(--apm-soft); --ifm-alert-foreground-color: var(--apm-ink); border: 1px solid var(--apm-soft); border-left-width: 3px; }
@@ -220,7 +225,8 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 /* Diagrams (src/components/Diagram.js): full column width (or compact, via the corner button), only the current theme's copy shown. */
 .diagram { margin: 32px 0; }
 .diagram img { display: block; width: 100%; height: auto; }
-.diagram-images { position: relative; margin: 0 auto; transition: max-width .25s ease; max-width: 100%; } /* centred, so compact shrinks towards the middle */
+.diagram-images { position: relative; display: flex; gap: 16px; margin: 0 auto; transition: max-width .25s ease; max-width: 100%; } /* centred, so compact shrinks towards the middle */
+.diagram-images picture { flex: 1; min-width: 0; } /* several images (thesis panels) share the row */
 .diagram--compact .diagram-images { max-width: max(60%, 300px); }
 .diagram--compact img { min-width: 0 !important; }
 .diagram-size { position: absolute; top: 0; right: 0; z-index: 1; display: flex; padding: 4px; border: 0; background: var(--apm-paper); color: var(--apm-ink); opacity: .45; cursor: pointer; transition: opacity .2s; }
@@ -231,8 +237,9 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 .markdown { counter-reset: figure; }
 .diagram:has(figcaption) { counter-increment: figure; }
 .diagram figcaption::before { content: 'Figure ' counter(figure) '. '; font-style: italic; }
+.diagram figcaption[data-number]::before { content: 'Figure ' attr(data-number) '. '; } /* the thesis's own numbers */
 html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light { display: none; }
-@media (max-width: 600px) { .diagram--wide .diagram-images { overflow-x: auto; } .diagram--wide img { min-width: 560px; } } /* no phone layout: scroll, don't shrink */
+@media (max-width: 600px) { .diagram--wide .diagram-images { flex-direction: column; overflow-x: auto; } .diagram--wide img { min-width: 560px; } } /* no phone layout: stack panels, scroll, don't shrink */
 
 /* Table of contents, breadcrumbs, prev/next. */
 .table-of-contents__link { color: var(--ifm-font-color-secondary); }

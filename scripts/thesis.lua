@@ -2,12 +2,12 @@
 -- thesis reader's MDX, one page per chapter, into THESIS_OUT. THESIS_SRC is the thesis checkout with its compiled
 -- build/, THESIS_CSL the IEEE citation style; runs from the site root. Numbers chapters, sections, figures and
 -- tables as LaTeX does and checks them against thesis.aux; links \ref and \cite; formats the bibliography with
--- citeproc in thesis.bbl's citation order. Figures become <Figure>, tables <Table>, references <Reference>
+-- citeproc in thesis.bbl's citation order. Figures become <Diagram>, tables <Table>, references <Reference>
 -- (src/theme/MDXComponents.js). Stops on any LaTeX command it does not handle.
 local OUT, SRC, CSL = os.getenv('THESIS_OUT'), os.getenv('THESIS_SRC'), os.getenv('THESIS_CSL')
 local WRITER = 'commonmark_x-smart-superscript-subscript-fenced_divs-bracketed_spans-raw_attribute'
 local SKIP = { centering = 1, small = 1, footnotesize = 1, setlength = 1, frontmatter = 1, mainmatter = 1,
-  backmatter = 1, hfill = 1, arraybackslash = 1, label = 1, addlinespace = 1, cmidrule = 1, endlastfoot = 1 }
+  backmatter = 1, hfill = 1, arraybackslash = 1, label = 1, addlinespace = 1, endlastfoot = 1 }
 local unknown = {}
 
 local function read(path) local f = assert(io.open(path)); local s = f:read('a'); f:close(); return s end
@@ -30,8 +30,7 @@ local aux, cites, keys = {}, {}, {}
 for label, number in read(SRC .. '/build/thesis.aux'):gmatch('\\newlabel{([^}]+)}{{([^}]*)}') do aux[label] = number end
 for key in read(SRC .. '/build/thesis.bbl'):gmatch('\\entry{([^}]+)}') do keys[#keys + 1] = key; cites[key] = #keys end
 
--- A threeparttable stays raw LaTeX: parse its table and notes separately. Body \midrules after the header's
--- become a one-cell RULE row, which <Table> draws as a rule above the next row; \tnote{a} becomes a superscript.
+-- A threeparttable stays raw LaTeX: parse its table and notes separately; \tnote{a} becomes a superscript.
 local function threeparttable(raw)
   local notes = pandoc.List()
   local tex = raw:gsub('\\begin{tablenotes}.-\\end{tablenotes}', function(block)
@@ -40,8 +39,6 @@ local function threeparttable(raw)
     end
     return ''
   end)
-  local head, body = tex:match('^(.-\\midrule)(.*)$')
-  tex = head .. body:gsub('\\midrule', '\\multicolumn{1}{l}{RULE}\\\\')
   tex = tex:gsub('\\tnote{([^}]+)}', '\\textsuperscript{%1}'):gsub('\\begin{threeparttable}', '\\begin{table}')
     :gsub('\\end{threeparttable}', '\\end{table}')
   local blocks = pandoc.read(tex, 'latex+raw_tex').blocks
@@ -136,6 +133,15 @@ function Pandoc(doc)
         if #run > 0 then out:insert(pandoc.Para(run)) end
         return out
       end,
+      Math = function(m) -- plain numbers and lone variables stay in the page's font; formulas go to KaTeX
+        if m.mathtype ~= 'InlineMath' or m.text:match('[\\^_{}]') then return end
+        local out = pandoc.Inlines({})
+        for text, letters in (m.text:gsub('%-', '−')):gmatch('([^%a]*)(%a*)') do
+          if text ~= '' then out:insert(pandoc.Str(text)) end
+          if letters ~= '' then out:insert(pandoc.Emph(letters)) end
+        end
+        return out
+      end,
       Str = function(s) -- MDX reads braces as expressions
         if s.text:match('[{}]') then return pandoc.RawInline('commonmark_x', (s.text:gsub('[{}]', '\\%0'))) end
       end,
@@ -183,53 +189,46 @@ function Pandoc(doc)
   assert(#refs == #keys, ('citeproc formatted %d of %d references'):format(#refs, #keys))
   bibliography.mdx = table.concat(refs, '\n\n')
 
-  -- Figures map to the committed SVGs named after the thesis file: static/img/diagrams/ or static/img/figures/.
+  -- Figures map to the committed SVGs named after the thesis file, in static/img/diagrams/ or static/img/figures/;
+  -- a lone diagram with a -phone layout gets it on phones.
+  local function svg(path) local f = io.open('static/img/' .. path .. '-light.svg'); if f then f:close() end; return f end
   local function figure(f)
     local images = pandoc.List()
     f:walk({ Image = function(i)
       local name = i.src:match('([^/]+)%.pdf$')
-      local dir = io.open('static/img/diagrams/' .. name .. '-light.svg') and 'diagrams' or 'figures'
-      assert(io.open('static/img/' .. dir .. '/' .. name .. '-light.svg'), 'no website SVG for ' .. i.src)
-      images:insert(dir .. '/' .. name)
+      local path = svg('diagrams/' .. name) and 'diagrams/' .. name or 'figures/' .. name
+      assert(svg(path), 'no website SVG for ' .. i.src)
+      images:insert(path)
     end })
     local caption = f.caption.long
-    return ('<Figure id=%s number="%s" images=%s alt=%s>\n\n%s\n\n</Figure>'):format(jsx(anchor(f.identifier)),
-      f.attributes.number, jsx(table.concat(images, ' ')), jsx(pandoc.utils.stringify(caption)), md(caption))
+    return ('<Diagram id=%s number="%s" images=%s alt=%s%s>%s</Diagram>'):format(jsx(anchor(f.identifier)),
+      f.attributes.number, jsx(table.concat(images, ' ')), jsx(pandoc.utils.stringify(caption)),
+      #images == 1 and svg(images[1] .. '-phone') and ' phone' or '', inline(caption))
   end
 
-  -- Tables: caption first, then the table as JSX (cells as inline Markdown, so math and links render), then the notes.
-  local function rows(list, tag, aligns)
-    local out, rule = {}, false
-    for _, row in ipairs(list) do
-      if pandoc.utils.stringify(row.cells[1].contents) == 'RULE' then rule = true
-      else
-        local cells, col = {}, 1
-        for _, c in ipairs(row.cells) do
-          local attrs = (c.col_span > 1 and (' colSpan="%d"'):format(c.col_span) or '')
-            .. (c.row_span > 1 and (' rowSpan="%d"'):format(c.row_span) or '')
-            .. (c.col_span == 1 and aligns[col] == 'AlignRight' and ' className="right"' or '')
-          cells[#cells + 1] = ('<%s%s>%s</%s>'):format(tag, attrs, inline(c.contents), tag)
-          col = col + c.col_span
+  -- Tables: a Markdown table like the docs', wrapped with its caption and notes. A two-row header (a label spanning
+  -- several columns over theirs) becomes one row: "Bucket share Median".
+  local function tablemd(t, notes)
+    local rows, body = t.head.rows, t.bodies[1].body
+    if #rows == 0 then -- pandoc leaves a two-row header in the body: the spanning row and the one under it
+      while body[1].cells:find_if(function(c) return c.col_span > 1 end) do rows:insert(body:remove(1)) end
+      rows:insert(body:remove(1))
+    end
+    local labels = {}
+    for _, row in ipairs(rows) do
+      local col = 1
+      for _, c in ipairs(row.cells) do
+        local text = pandoc.utils.blocks_to_inlines(c.contents)
+        for k = col, col + c.col_span - 1 do
+          labels[k] = (#text == 0 or not labels[k] or #labels[k] == 0) and (labels[k] or pandoc.Inlines({})) .. text or labels[k] .. { pandoc.Space() } .. text
         end
-        out[#out + 1] = (rule and '<tr className="rule">' or '<tr>') .. table.concat(cells) .. '</tr>'
-        rule = false
+        col = col + c.col_span
       end
     end
-    return table.concat(out, '\n')
-  end
-  local function tablejsx(t, notes)
-    local aligns = t.colspecs:map(function(c) return c[1] end)
-    local body = pandoc.List()
-    for _, b in ipairs(t.bodies) do body:extend(b.head); body:extend(b.body) end
-    local out = { ('<Table id=%s number="%s">'):format(jsx(anchor(t.identifier)), t.attributes.number), '', md(t.caption.long), '',
-      '<table>', '<thead>', rows(t.head.rows, 'th', aligns), '</thead>', '<tbody>', rows(body, 'td', aligns), '</tbody>', '</table>' }
-    if notes then
-      out[#out + 1] = '\n<ol className="notes" type="a">'
-      for _, item in ipairs(notes.content[1].content) do out[#out + 1] = '<li>' .. inline(item) .. '</li>' end
-      out[#out + 1] = '</ol>'
-    end
-    out[#out + 1] = '\n</Table>'
-    return table.concat(out, '\n')
+    local head = pandoc.Row(pandoc.List(labels):map(function(l) return pandoc.Cell({ pandoc.Plain(l) }) end))
+    local plain = pandoc.Table(pandoc.Caption(), t.colspecs, pandoc.TableHead({ head }), t.bodies, t.foot)
+    return ('<Table id=%s number="%s">\n\n%s\n\n%s\n\n%s</Table>'):format(jsx(anchor(t.identifier)), t.attributes.number,
+      md(t.caption.long), md({ plain }), notes and md(notes.content:walk({ Para = function(p) return pandoc.Plain(p.content) end })) .. '\n\n' or '')
   end
 
   -- Write each page with its sidebar position; the appendices get their own collapsed category.
@@ -241,7 +240,7 @@ function Pandoc(doc)
       if b.t == 'Figure' then out:insert(pandoc.RawBlock('commonmark_x', figure(b)))
       elseif b.t == 'Table' and b.identifier ~= '' then
         local notes = nextb and nextb.t == 'Div' and nextb or nil
-        out:insert(pandoc.RawBlock('commonmark_x', tablejsx(b, notes)))
+        out:insert(pandoc.RawBlock('commonmark_x', tablemd(b, notes)))
         if notes then i = i + 1 end
       else out:insert(b) end
       i = i + 1
@@ -250,9 +249,14 @@ function Pandoc(doc)
     if page.number == 'A' then
       write('appendices/_category_.json', jsx({ label = 'Appendices', position = position, collapsed = true }))
     end
+    -- Footnotes sit under a rule and an unnumbered heading, so they show in the TOC (src/css/research.css
+    -- hides the list's own label).
+    local notes = false
+    page.blocks:walk({ Note = function() notes = true end })
+    local body = page.mdx or md(out) .. (notes and '\n\n---\n\n## Footnotes {#footnotes}' or '')
     local title = page.number and page.number .. ' ' .. page.title or page.title
     write((page.appendix and 'appendices/' or '') .. page.slug .. '.mdx', ('---\ntitle: %s\nslug: %s\nsidebar_position: %d\n---\n\n%s\n')
-      :format(jsx(title), jsx('/thesis/' .. page.slug), page.appendix and page.number:byte() - 64 or position, page.mdx or md(out)))
+      :format(jsx(title), jsx('/thesis/' .. page.slug), page.appendix and page.number:byte() - 64 or position, body))
   end
   return pandoc.Pandoc({})
 end

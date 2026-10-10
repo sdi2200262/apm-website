@@ -11,6 +11,7 @@ on:
       - 'scripts/**'
       - 'docusaurus.config.js'
       - 'sidebars.js'
+      - 'sidebarsResearch.js'
       - 'package.json'
       - 'package-lock.json'
   pull_request:

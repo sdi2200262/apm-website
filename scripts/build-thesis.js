@@ -60,13 +60,20 @@ async function main() {
     .replace(/\\endfirsthead[\s\S]*?\\endhead/, '') // the abbreviations' repeated page header
     .replace(/\\begin\{appendix\}|\\appendixstartedtrue|\\phantomsection|\\addcontentsline\{[^}]*\}\{[^}]*\}\{[^}]*\}|\\end\{appendix\}/g,
       (m) => (m === '\\begin{appendix}' ? '\\appendix' : ''))
-    .replace(/\\printbibliography(\[[^\]]*\])?/, '\\chapter*{Bibliography}');
-  fs.rmSync(out, { recursive: true, force: true });
+    .replace(/\\printbibliography(\[[^\]]*\])?/, '\\chapter*{Bibliography}')
+    .replace(/\\cmidrule[^{]*\{[^}]*\}/g, ''); // pandoc keeps a partial rule's columns as cell text
+  // Pages are overwritten in place, then any page this run did not write is removed: a running dev server
+  // never sees the folder disappear.
+  const started = Date.now();
   fs.mkdirSync(path.join(out, 'appendices'), { recursive: true });
   execFileSync('pandoc', ['-f', 'latex+raw_tex', '-t', 'commonmark_x', '--lua-filter', path.join(__dirname, 'thesis.lua'), '-o', '/dev/null'], {
     cwd: root, input: body, stdio: ['pipe', 'inherit', 'inherit'],
     env: { ...process.env, THESIS_SRC: src, THESIS_OUT: out, THESIS_CSL: path.join(src, 'ieee.csl') },
   });
+
+  for (const f of fs.readdirSync(out, { recursive: true }).map((f) => path.join(out, f))) {
+    if (fs.statSync(f).isFile() && fs.statSync(f).mtimeMs < started) fs.rmSync(f);
+  }
 
   const title = arg(master, 'titleEn');
   const [first, last, initial] = ['authorFirstEn', 'authorLastEn', 'authorFirstAbrEn'].map((m) => arg(master, m));
@@ -87,8 +94,8 @@ async function main() {
   const pages = fs.readdirSync(out, { recursive: true }).filter((f) => f.endsWith('.mdx'));
   const all = pages.map((f) => fs.readFileSync(path.join(out, f), 'utf8')).join('');
   const count = (re) => (all.match(re) || []).length;
-  console.log(`thesis ${commit.slice(0, 7)}: ${pages.length} pages, ${count(/<Table /g)} tables (${count(/<ol className="notes"/g)} with notes), `
-    + `${count(/<Figure /g)} figures, ${count(/^\[\^/gm)} footnotes, ${count(/<Reference /g)} references`);
+  console.log(`thesis ${commit.slice(0, 7)}: ${pages.length} pages, ${count(/<Table /g)} tables (${all.split('</Table>').filter((t) => /\n1\. .*(\n\d+\. .*)*\n*$/.test(t)).length} with notes), `
+    + `${count(/<Diagram /g)} figures, ${count(/^\[\^/gm)} footnotes, ${count(/<Reference /g)} references`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useBaseUrlUtils } from '@docusaurus/useBaseUrl';
+import useBrokenLinks from '@docusaurus/useBrokenLinks';
 import { CAPTIONS } from '../captions';
 
 // A diagram from scripts/build-diagrams.py: static/img/diagrams/<name>[-phone][-<variant>]-<theme>.svg,
@@ -9,6 +10,9 @@ import { CAPTIONS } from '../captions';
 // they keep the desktop layout at a readable minimum width and scroll it sideways. The caption defaults to
 // the shared one in src/captions.js, so a diagram also on the landing page reads the same in both places.
 // A corner button shrinks every diagram on the site (and grows them back); the choice is kept per viewer.
+// The thesis reader (scripts/thesis.lua) passes `images` instead of `name`: space-separated paths under static/img/
+// (diagrams/<name> or figures/<name>), shown side by side; `number` and `id` for "Figure 3.1." and its links; and
+// the caption as children.
 
 // Shared size: one setting for all diagrams, remembered in localStorage (read after mount, so SSR stays full size).
 const KEY = 'apm-diagrams-compact';
@@ -48,26 +52,29 @@ const ICONS = {
   grow: 'M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7',
 };
 
-export default function Diagram({ name, variant, alt, phone = false, caption = CAPTIONS[variant ? `${name}-${variant}` : name] }) {
+export default function Diagram({ name, variant, alt, phone = false, images = `diagrams/${name}`, id, number, children,
+  caption = children || CAPTIONS[variant ? `${name}-${variant}` : name] }) {
   const { withBaseUrl } = useBaseUrlUtils();
+  const links = useBrokenLinks();
+  if (id) links.collectAnchor(id);
   const v = variant ? `-${variant}` : '';
-  const src = (theme, layout = '') => withBaseUrl(`/img/diagrams/${name}${layout}${v}-${theme}.svg`);
+  const src = (path, theme, layout = '') => withBaseUrl(`/img/${path}${layout}${v}-${theme}.svg`);
   const [small, toggle] = useCompact();
   const label = small ? 'Enlarge diagrams' : 'Shrink diagrams';
   return (
-    <figure className={`diagram${phone ? '' : ' diagram--wide'}${small ? ' diagram--compact' : ''}`}>
+    <figure id={id} className={`diagram${phone ? '' : ' diagram--wide'}${small ? ' diagram--compact' : ''}`}>
       <div className="diagram-images">
         <button type="button" className="diagram-size" onClick={toggle} aria-label={label} title={label}>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={ICONS[small ? 'grow' : 'shrink']} /></svg>
         </button>
-        {['light', 'dark'].map((theme) => (
-          <picture key={theme} className={`diagram-${theme}`}>
-            {phone && <source media="(max-width: 600px)" srcSet={src(theme, '-phone')} />}
-            <img src={src(theme)} alt={alt} />
+        {images.split(' ').flatMap((path) => ['light', 'dark'].map((theme) => (
+          <picture key={path + theme} className={`diagram-${theme}`}>
+            {phone && <source media="(max-width: 600px)" srcSet={src(path, theme, '-phone')} />}
+            <img src={src(path, theme)} alt={alt} />
           </picture>
-        ))}
+        )))}
       </div>
-      {caption && <figcaption>{caption}</figcaption>}
+      {caption && <figcaption data-number={number}>{caption}</figcaption>}
     </figure>
   );
 }

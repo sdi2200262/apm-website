@@ -10,6 +10,12 @@
   font-size: 14px;
 }
 
+.toolbar:first-child { /* no headings above it: no hairline */
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
 .btn {
   all: unset;
   cursor: pointer;
