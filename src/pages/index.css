@@ -38,10 +38,11 @@
 .cover-body { display: grid; grid-template-columns: minmax(0, 640px); justify-content: center; align-content: center; gap: 56px; min-height: max(640px, calc(100svh - 57px)); padding: 72px 0; text-align: center; }
 .cover h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 400; line-height: 1.04; text-wrap: balance; }
 .subtitle { margin: 20px auto 0 !important; max-width: 520px; font-size: 20px; font-style: italic; line-height: 1.4; text-wrap: balance; }
-/* Cover definitions (Cover in index.js): a quiet line under the paragraph, its height kept when empty so nothing shifts. */
-.landing-page .cover-note { min-height: calc(6em + 20px); margin-top: 24px; font-size: 15px; line-height: 1.5; transition: opacity .25s ease; }
+/* Cover definitions (Cover in index.js): a quiet line under the paragraph. Its box keeps a fixed height, so nothing shifts;
+   the longest note runs two lines past it into the cover's bottom padding, so the cover centres on what is always shown. */
+.landing-page .cover-note { height: calc(3em + 20px); margin-top: 24px; font-size: 15px; line-height: 1.5; transition: opacity .25s ease; }
 .note-wave { display: block; margin: 0 auto 8px; color: var(--apm-ink); opacity: .6; } /* small calm wave as the note's rule */
-@media (max-width: 600px) { .landing-page .cover-note { min-height: calc(10.5em + 20px); } } /* longest note: four lines wide, seven on phones */
+@media (max-width: 600px) { .landing-page .cover-note { height: calc(7.5em + 20px); } } /* longest note: four lines wide, seven on phones */
 .cover-mark { display: flex; justify-content: center; min-height: 144px; color: var(--apm-ink); }
 .wave { display: flex; justify-content: center; min-height: 20px; padding-bottom: 48px; color: var(--apm-ink); }
 
