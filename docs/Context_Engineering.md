@@ -19,7 +19,7 @@ Each role sees a deliberately limited view of the project, shaped by what it nee
 
 The Planner gives its whole context window to planning and takes no part in implementation. Separating the two phases is meant to keep execution history from competing with the project's intent while that intent is still being settled.
 
-The Planner's conversation does not carry into implementation. It holds exploration, discarded options, and corrections, and only the end results, approved by you, moves on in the Spec, the Plan, and the Rules. The Manager and Workers start from those documents with focused context, and the Planner's conversation can simply end.
+The Planner's conversation does not carry into implementation. It holds exploration, discarded options, and corrections, and only the end results, approved by you, move on in the Spec, the Plan, and the Rules. The Manager starts from these documents. Workers receive the Rules and the context each Task needs through its Task Prompt. The Planner's conversation can simply end.
 
 ### Manager
 
