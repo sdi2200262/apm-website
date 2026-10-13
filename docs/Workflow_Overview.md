@@ -57,7 +57,7 @@ The first Manager instance reads the planning documents, then:
 
 Each Task progresses through four procedures: Task Assignment, Task Execution, Task Logging, and Task Review.
 
-<Diagram name="task-cycle" alt="For each Task, the Manager prepares a Task Prompt and writes it to the Task Bus; the Worker reads it, executes and validates, writes a Task Log to Memory and a Task Report to the Report Bus; the Manager reads the report, reviews the log, and updates project state." />
+<Diagram name="task-cycle" alt="For each Task, the Manager prepares a Task Prompt and writes it to the Task Bus; the Worker reads it, executes and validates, writes a Task Log to Memory and a Task Report to the Report Bus; the Manager reads the report, reviews the log, and updates the session state." />
 
 #### Task Assignment
 

@@ -194,7 +194,7 @@ project/
 ├── .apm/
 │   ├── spec.md                # Design decisions and constraints
 │   ├── plan.md                # Stages, Tasks, dependencies
-│   ├── tracker.md             # Live project state
+│   ├── tracker.md             # Live session state
 │   ├── memory/
 │   │   └── index.md           # Durable project memory
 │   ├── bus/                   # Message Bus (created by Planner)

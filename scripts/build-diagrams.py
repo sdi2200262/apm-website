@@ -281,16 +281,16 @@ def state_compression_phone(t):
 
 def handoff(t):
     # Four channels from the outgoing agent to the incoming one: the Handoff Log above, the User in the
-    # middle (dashed, straight), the Handoff Bus below carrying the Handoff Prompt, and other project state
+    # middle (dashed, straight), the Handoff Bus below carrying the Handoff Prompt, and other session state
     # the incoming agent reads. The Handoff Log and Handoff Bus are dashed to the User.
     d, LB = D(620, 310, t, 9), 34
     L, M, R = 40, 300, 560  # columns: outgoing agent, channel nodes, incoming agent
     E1, E2 = (L + M) / 2, (M + R) / 2  # elbow columns
-    T, A, B, P = 30, 110, 190, 260  # rows: Handoff Log, agents and User, Handoff Bus, project state
+    T, A, B, P = 30, 110, 190, 260  # rows: Handoff Log, agents and User, Handoff Bus, session state
     og = d.icon('bot', L, A, 'Outgoing agent with\naccumulated context')
     inc = d.icon('bot', R, A, 'Incoming agent with\nfresh context')
     hl, us = d.icon('file-box', M, T, 'Handoff Log'), d.icon('user', M, A, 'User')
-    hb, ps = d.icon('file-input', M, B, 'Handoff Bus'), d.icon('boxes', M, P, 'Other relevant\nproject state')
+    hb, ps = d.icon('file-input', M, B, 'Handoff Bus'), d.icon('boxes', M, P, 'Other relevant\nsession state')
     d.edge(og, hl, (1, .2), (0, .5), wp=[(E1, A - 9), (E1, T)])
     d.edge(hl, inc, (1, .5), (0, .2), wp=[(E2, T), (E2, A - 9)])
     d.edge(og, us, (1, .5), (0, .5), line=True, dashed=True)
@@ -310,15 +310,15 @@ def handoff(t):
 
 def handoff_phone(t):
     # The landscape figure turned a quarter: outgoing agent on top, incoming at the bottom, the channels
-    # left to right: Handoff Log, User (dashed, straight down the middle), Handoff Bus, project state.
+    # left to right: Handoff Log, User (dashed, straight down the middle), Handoff Bus, session state.
     d, LB, LB2 = D(342, 540, t, 13, 34), 40, 56  # LB2: below a two-line label
-    L, M, BX, SX = 45, 135, 225, 300  # columns: Handoff Log, agents and User, Handoff Bus, project state
-    OG, F, S, IN = 30, 200, 320, 480  # rows: outgoing, Log/User/Bus, project state, incoming
+    L, M, BX, SX = 45, 135, 225, 300  # columns: Handoff Log, agents and User, Handoff Bus, session state
+    OG, F, S, IN = 30, 200, 320, 480  # rows: outgoing, Log/User/Bus, session state, incoming
     og = d.icon('bot', M, OG, 'Outgoing agent with\naccumulated context')
     inc = d.icon('bot', M, IN, 'Incoming agent with\nfresh context')
     hl, us = d.icon('file-box', L, F, 'Handoff Log'), d.icon('user', M, F, 'User')
     hb = d.icon('file-input', BX, F, 'Handoff Bus')
-    d.icon('boxes', SX, S, 'Other relevant\nproject state')
+    d.icon('boxes', SX, S, 'Other relevant\nsession state')
     d.edge(og, hl, (0, .5), (.5, 0), wp=[(L, OG)])
     d.edge(og, hb, (1, .5), (.5, 0), wp=[(BX, OG)])
     d.edge(d.point(M, OG + LB2), us, en=(.5, 0), line=True, dashed=True)

@@ -35,7 +35,7 @@ A Worker develops working knowledge in its conversation across the Tasks of its 
 
 The Manager and Workers each have their own context, and only what the Message Bus carries passes between them. This matters because Workers share a codebase and can read each other's output, but not the reasoning behind it: why it was built that way and how it connects to other work. The Manager holds that reasoning, since it assigned and reviewed the earlier work, so it supplies whatever the next Worker lacks.
 
-This depends on where the project's state lives. All project state sits in files outside any agent's context window, so a conversation can end, fill, or be compacted without losing the project's state or history.
+This depends on where the session's state lives. All of it sits in files outside any agent's context window, so a conversation can end, fill, or be compacted without losing the session's state or history.
 
 The Manager coordinates every Task and reviews every outcome; its context grows with them. A compression pipeline is meant to prevent that, with each layer compressing the one below it. A Worker's Task Log reduces its reading, debugging, and iteration to the outcome and what the Manager needs to know. Additionally, at each Stage boundary, the Manager condenses the Stage's Task Logs into a summary in the Index and distils its working notes into Memory notes. Each layer is progressively smaller than the one before. For example, a future Manager uses the compressed Index to understand the big picture of the project and can operate from it, instead of reconstructing the project's entire coordination history from all the older Task Logs.
 

@@ -50,7 +50,7 @@ This is what `.apm/` looks like during a session:
 .apm/
 ├── spec.md              # What to build (design decisions, constraints, workspace)
 ├── plan.md              # How work is organised (Stages, Tasks, dependencies)
-├── tracker.md           # Live project state (the Manager's dashboard)
+├── tracker.md           # Live session state (the Manager's dashboard)
 ├── metadata.json        # Installation metadata (source, version, assistants)
 ├── session-summary.md   # Optional, from /apm-8-summarize-session
 ├── memory/

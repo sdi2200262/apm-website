@@ -170,7 +170,7 @@ function Overview() {
       <p className="lead" ref={lead}>
         The {term('planning', 'Planner')} writes three planning documents with you: the Spec, the Plan, and the Rules.
         The {term('manager', 'Manager')} hands out assignments and {term('workers', 'Workers')} carry them out. Their messages pass
-        through {term('user', 'you')}, and the {term('state', 'project state')} lives in shared files outside any conversation. Any agent
+        through {term('user', 'you')}, and the {term('state', 'session\'s state')} lives in shared files outside any conversation. Any agent
         can still offload work to its own subagents for efficiency.
       </p>
       <figure className="plate">

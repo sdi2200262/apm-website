@@ -71,9 +71,9 @@ With version control, each dispatch unit works on its own branch, and parallel u
 
 Task size and dispatch mode set how often exchanges pass through you. Ask the Planner for smaller or larger Tasks, and the Manager for the dispatch mode you want.
 
-## Memory and Project State
+## Memory and Session State
 
-Project state lives in structured files outside any agent's context. The Manager is the primary consumer and maintainer of this state.
+Session state lives in structured files outside any agent's context. The Manager is the primary consumer and maintainer of this state.
 
 <Diagram name="overview" variant="state" alt="The overview diagram with the planning documents, the Tracker, and Memory highlighted." phone />
 
@@ -119,7 +119,7 @@ When an agent's context window fills up, a Handoff transfers working knowledge t
 
 Compaction keeps the noise of a long conversation: debugging attempts, trial and error, abandoned approaches. A Handoff filters it into two artifacts. The **Handoff Log** records what was done, decided, and observed beyond the Task Logs, and stays in Memory. The **Handoff Prompt** describes the current state, the outstanding work, and how the incoming agent should continue; it goes to the Handoff Bus and is cleared once read.
 
-<Diagram name="handoff" alt="The outgoing agent writes a Handoff Log to Memory and a Handoff Prompt to the Handoff Bus; you open a new conversation, where the incoming agent reads both with other relevant project state." phone />
+<Diagram name="handoff" alt="The outgoing agent writes a Handoff Log to Memory and a Handoff Prompt to the Handoff Bus; you open a new conversation, where the incoming agent reads both with other relevant session state." phone />
 
 ### Manager vs Worker Handoff
 
