@@ -245,7 +245,9 @@ html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light {
 .table-of-contents__link { color: var(--ifm-font-color-secondary); }
 .table-of-contents__link:hover, .table-of-contents__link--active { color: var(--apm-ink); }
 .table-of-contents__link--active { font-weight: 600; }
-.breadcrumbs__link { background: none !important; }
+.breadcrumbs__link, .breadcrumbs__link:any-link:hover { background: none !important; color: var(--apm-ink); }
+.breadcrumbs__link:any-link:is(:hover, :focus-visible) { text-decoration: underline; text-underline-offset: 3px; }
+.breadcrumbs__home { display: inline-flex; vertical-align: middle; }
 .breadcrumbs__item--active .breadcrumbs__link { text-decoration: underline; text-underline-offset: 3px; }
 .pagination-nav__link { border-color: var(--apm-soft); }
 .pagination-nav__link:hover { border-color: var(--apm-ink); }
