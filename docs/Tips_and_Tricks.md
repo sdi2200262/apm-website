@@ -7,105 +7,76 @@ sidebar_position: 12
 
 # Tips and Tricks
 
-Practical guidance for getting the most out of APM sessions, covering model selection, cost optimization, workflow efficiency, and patterns that work well in practice.
+Practical guidance for APM sessions: choosing models, keeping costs down, and steering the work.
 
 ## Model Selection
 
-APM Agents perform best with capable reasoning models. For the best overall performance, use **Claude Opus 4.6** throughout all Agent roles. For a budget-friendlier alternative that still delivers strong results, use **Claude Sonnet 4.6** throughout.
+APM works best with capable reasoning models, such as the top models from Claude, GPT, or Gemini.
 
-Beyond these defaults, the table below provides a broader selection. The Planner and Manager handle architectural and coordination decisions where deeper reasoning produces better outcomes. Workers handle execution where code generation and tool use matter most.
+- **Planner and Manager:** use the strongest model you can. Their planning and coordination decisions shape every Task.
+- **Workers:** a smaller model is often enough, since Workers mostly write code and run tools. Give harder Tasks to a stronger one.
 
-### Recommended Models
+If your model lets you set its reasoning effort, set it higher for the Planner and the Manager.
 
-| Agent | Recommended | Cost-effective alternative |
-| :--- | :--- | :--- |
-| **Planner** | Claude Opus 4.6, GPT-5.2+ | Claude Sonnet 4.6, GPT-5.1, GPT-5.2 |
-| **Manager** | Claude Opus 4.6, GPT-5.2+, Gemini 3.1 Pro | Claude Sonnet 4.6, GPT-5.1, GPT-5.2, Gemini 3 Pro |
-| **Workers** | Claude Opus 4.6, GPT-5.4, GPT-5.3-Codex, Gemini 3.1 Pro | Claude Sonnet 4.6, Claude Haiku 4.5, GPT-5.4 mini, GPT-5.3-Codex-Spark, Gemini 3 Flash, Grok Code Fast 1, DeepSeek V4, Qwen 3.5 |
+### Switching Models
 
-**Codex models** (GPT-5.3-Codex, GPT-5.3-Codex-Spark and similar) are tuned for code generation and work well for Workers, but should not be used for Planners or Managers. These models lack the general reasoning and coordination abilities that planning and orchestration require.
+Switching models mid-conversation is generally safe for Workers, whose context is scoped to the current Task. Avoid it for the Planner, which relies on everything gathered during Context Gathering. The Manager can switch between Task cycles, but one model throughout coordinates more consistently.
 
-**Budget models** (Claude Haiku 4.5, GPT-5.4 mini, Gemini 3 Flash, Grok Code Fast 1, DeepSeek V4, Qwen 3.5) work for Workers on straightforward Tasks. For complex Tasks involving architecture, multi-file coordination, or design decisions, use a more capable model.
+## Cost Efficiency
 
-### Model Switching
+Thorough planning is the best saving. Time spent reviewing the planning documents before you approve them spares follow-ups and rework during implementation.
 
-Switching models mid-conversation is generally safe for Workers because their context is tightly scoped to the current Task. For the Planner, avoid switching models during a session since the entire Planning Phase relies on accumulated context from Context Gathering. For the Manager, switching is possible between Task cycles but consistency produces better coordination.
+### Context Up Front
 
-### Reasoning Effort
-
-For models with adjustable reasoning effort, use medium or higher throughout. The Planner and Manager benefit most from higher reasoning settings since they make architectural and coordination decisions.
-
-## Cost Optimization
-
-### Front-Loading Context
-
-The Planner's optional argument accepts project context upfront, reducing the number of question rounds needed:
+The Planner's initiation command accepts project context, which makes its questions more targeted and spares follow-up rounds:
 
 ```
 /apm-1-initiate-planner We're building a REST API for a task management app. Here's the PRD: @docs/prd.md and the existing codebase is in src/
 ```
 
-Sharing existing documentation, PRDs, and codebase references early in Context Gathering prevents expensive follow-up rounds.
-
 ### Batch-Friendly Planning
 
-On platforms that bill per request rather than per token, structuring work to favor batch dispatch reduces the number of exchanges.
-
-The User can mention during Context Gathering that batch-friendly Task structure is preferred. The Planner considers this when organizing Tasks in the Plan, favoring sequential chains assigned to the same Worker or groups of independent same-Worker Tasks that can be dispatched together.
-
-Alternatively, without modifying the planning procedures, the User can encourage the Manager to prefer batch dispatch when multiple same-Worker Tasks are ready simultaneously.
+On platforms that bill per request, batch dispatch saves exchanges. Mention during Context Gathering that you prefer batch-friendly Tasks, and the Planner favours sequential chains for the same Worker. You can also ask the Manager to prefer batch dispatch when several Tasks for one Worker are ready. Batches also mean fewer exchanges pass through you, each covering more work.
 
 ### Handoff Timing
 
-Proactive Handoff before context window limits approach is cheaper than recovery after compaction. An Agent with clean context produces better Handoff artifacts than one already experiencing degradation. The User should trigger Handoffs based on the context usage they can see, instead of relying on platform auto-compaction or summarization mechanisms for continuity.
+A [Handoff](Agent_Orchestration.md#handoff-and-continuity) before the context limit costs less than recovery after compaction, and an agent with clean context writes better Handoff artifacts. Trigger Handoffs from the context usage your platform shows. When a Worker is one or two Tasks from finishing, it can be simpler to let the platform compact, recover, and finish.
 
-That said, if a Worker has only one or two Tasks left or is near completing its current Task, it can be more practical to let the platform auto-compact, use Recovery to finish the remaining work, and Handoff afterward if needed.
+Knowing when to hand off is the hard part, since decay is often visible only after quality drops. Some platforms support hooks that fire at context thresholds. For Claude Code, [`cc-context-awareness`](https://github.com/sdi2200262/cc-context-awareness) sets such thresholds and can prompt the agent to start a Handoff.
 
-The hardest part of Handoff is knowing when to trigger it. Context degradation is not always obvious until quality has already dropped. If your platform supports hooks or triggers that fire at context thresholds, you can use them to detect when Handoff is needed and prompt the Agent to initiate it. For Claude Code, [`cc-context-awareness`](https://github.com/giannisp01/cc-context-awareness) provides configurable context threshold hooks, and ships with a ready-made `apm-handoff` template that handles Manager, Worker, and Planner agents out of the box.
+### Subagents
 
-### Subagent Usage
-
-Workers should use subagents for substantial debugging or research rather than consuming their own context window. A debug subagent runs in its own context, resolves the issue (or reports findings), and returns results. The Worker's context is preserved for actual execution. The Planner similarly benefits during Context Gathering, where substantial codebase exploration is better delegated to a subagent so the Planner's context remains available for Work Breakdown.
-
-Agents are designed to use subagents on their own, but they do not always take the initiative. If the User notices an Agent spending significant context on debugging, research, or exploration that could run in isolation, prompting it to spawn a subagent can save considerable context for the work that follows.
+If an agent spends its context on debugging, research, or exploration that could run in isolation, ask it to launch a subagent.
 
 ## Workflow Efficiency
 
-### Planning Quality
-
-The most effective cost optimization is thorough planning. A well-structured Plan with clear Task boundaries, accurate dependencies, and specific validation criteria reduces follow-ups, rework, and debugging during implementation. Time spent reviewing planning documents before approving them pays for itself in fewer Task iterations.
-
 ### Validation Criteria
 
-During the Planning Phase, the validation criteria you describe to the Planner end up in every Task Prompt the Manager builds. When those criteria are specific and testable, Workers can execute, validate, and iterate on their own - potentially completing complex work in a single uninterrupted run without needing your input.
+The validation criteria you give the Planner reach every Task Prompt. When they are specific and testable, Workers can execute, validate, and iterate on their own, sometimes completing complex work without your input. Workers validate with whatever tools the platform offers: a test suite, a linter or type checker, a browser tool for UI work.
 
-Workers use whatever tools are available on the platform to validate. If there's a test suite, they run it. If there's a browser tool (like the Claude web extension or a Playwright MCP server), they can visually verify a UI renders correctly. If there's a linter or type checker, they run those too. The more concrete the criteria, the more the Worker can verify on its own before reporting back.
-
-Be explicit about what "done" looks like. Instead of "make sure it works," describe what that means in testable terms:
+Describe what "done" means in testable terms:
 
 ```
 Each API endpoint should return the correct status codes and response shapes. The Worker should validate by running the existing test suite (npm test) and adding new tests for any endpoints it creates.
 ```
 
-```
-The dashboard should render all charts with sample data and be responsive down to 768px. The Worker should validate visually using the browser tool and fix any layout issues before reporting back.
-```
+If you want a milestone verified before the next Stage, tell the Manager. It can run checks, examine edge cases, or send a verification subagent.
 
-The Planner encodes these into the Plan's Task definitions, and the Manager embeds them in each Task Prompt. Workers then validate autonomously against them.
+### Steering
 
-The Manager can also perform holistic verification at Stage boundaries when the complexity warrants it. If you want specific milestones verified before proceeding, tell the Manager during the Implementation Phase. It can run checks, examine edge cases, or dispatch a verification subagent before moving to the next Stage.
+You can steer the workflow at any point during implementation.
 
-### Steering the Workflow
+#### Directing Workers
 
-You can influence the APM workflow at any point during the Implementation Phase. Here are some examples.
-
-**Directing Workers** - You can steer a Worker mid-Task with corrections, scope adjustments, or additional work. Workers note your directives in the Task Log by default so the Manager sees them during review, but explicitly asking the Worker to log it ensures it gets flagged:
+Correct or extend a Worker's Task mid-execution. Workers record your corrections in the Task Log for the Manager, and offer to add them to the Rules:
 
 ```
-The API response format changed since the Plan was written - use the v2 format from docs/api-v2.md instead. Flag this in your Task Log as an important finding so the Manager updates the Spec and future Tasks use the right format.
+The API response format changed since the Plan was written - use the v2 format from docs/api-v2.md instead.
 ```
 
-**Adding context to reports** - When you run `/apm-5-check-reports`, you can include additional context or requirements alongside the delivery. The Manager factors these into its next decisions:
+#### Adding Context to Reports
+
+Add your own notes when you deliver a report:
 
 ```
 /apm-5-check-reports python-agent
@@ -113,49 +84,43 @@ The API response format changed since the Plan was written - use the v2 format f
 The task was executed but I noticed the error handling doesn't cover timeout scenarios. I want the next Task for this Worker to address that before moving on.
 ```
 
-**Requesting new Tasks** - You can ask the Manager to create Tasks that aren't in the Plan, adjust dependencies, or modify the Plan on the fly:
+#### Working Notes and Rules
 
-```
-I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it before Stage 2.
-```
-
-**Working notes** - Working notes are ephemeral coordination context in the Tracker. They capture preferences, environment details, and observations that should inform upcoming Tasks. You can add them through a Worker (noted in the Task Log, picked up by the Manager during review) or through the Manager directly:
+Preferences or observations for the coming Tasks of a Stage go into the Tracker as working notes:
 
 ```
 Add a working note: I prefer verbose logging during this Stage so I can monitor execution progress across Workers.
 ```
 
-**Rules updates** - If you identify a pattern that every Worker should follow permanently, it belongs in Rules rather than working notes. Workers can also propose Rules updates when they discover patterns during execution:
+A pattern every Worker should follow for the rest of the project belongs in the Rules:
 
 ```
 I want all new API endpoints to follow the error response format defined in docs/api-errors.md. Add this to Rules so all Workers follow it.
 ```
 
-**Dispatch preferences** - The Manager decides how to dispatch Tasks, but you can suggest groupings based on what you know about the work:
+#### Tasks and Dispatch
+
+Ask the Manager for Tasks the Plan lacks, or suggest groupings from what you know about the work:
 
 ```
-Hold off on dispatching until both the frontend and backend Workers report back - then batch the integration Tasks together.
+I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it before Stage 2.
 ```
 
-or:
-
 ```
-The database schema and the API routes don't depend on each other - dispatch them in parallel to separate Workers so we can move faster.
+The database schema and the API routes don't depend on each other - dispatch them in parallel to separate Workers.
 ```
 
-### Session Management
+### Splitting Sessions
 
-For large projects, splitting work across multiple APM sessions and archiving between them keeps each session focused. The new Planner examines archived sessions during Context Gathering, so context carries forward without a single session trying to hold everything.
+For large projects, several APM sessions with an archive between each keep every session focused. Each new Planner examines the archives, and context carries forward. Common splits:
 
-**Per-feature sessions** - Run one session per feature or deliverable. Archive after each feature completes and start fresh for the next. Each Planner picks up where the previous left off.
-
-**Direction changes** - If a session hits a blocker or execution reveals something that requires a change of direction, pause the Manager, ask it to wrap up its working notes, summarize the session, and archive. A new Planner can assess the situation with the full archive context and plan the revised approach from scratch.
-
-**Sequential layer builds** - For projects with clear layers (e.g. database first, then backend, then frontend), each layer can be its own APM session. Each session's archive informs the next Planner about what was built and how it works.
+- **Per feature:** one session per feature or deliverable.
+- **Per layer:** one session per layer, such as the database, then the backend, then the frontend.
+- **After a change of direction:** when execution hits a blocker that changes the plan, run `/apm-8-summarize-session` in a new conversation, then archive the session. A new Planner plans the revised approach with the archive in view.
 
 ## Related Docs
 
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
 - [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories

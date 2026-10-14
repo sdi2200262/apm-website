@@ -8,7 +8,7 @@ const sidebars = {
     {
       type: 'category',
       label: 'Core Concepts',
-      items: ['agent-types', 'agent-orchestration', 'workflow-overview'],
+      items: ['agent-roles', 'agent-orchestration', 'workflow-overview'],
     },
     {
       type: 'category',
@@ -20,7 +20,7 @@ const sidebars = {
       type: 'category',
       label: 'Reference & Guides',
       collapsed: true,
-      items: ['cli-guide', 'troubleshooting-guide', 'customization-guide', 'security-guide', 'tips-and-tricks'],
+      items: ['cli-guide', 'troubleshooting-guide', 'customisation-guide', 'security-guide', 'tips-and-tricks'],
     },
   ],
 };

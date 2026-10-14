@@ -19,21 +19,22 @@ Requires Node.js 20+.
 
 ```
 src/
-├── components/    # Mark (logo), Brand, GitHub, ThemeSwitch, DocToolbar
+├── components/    # Mark (logo), Brand, GitHub, ThemeSwitch, DocToolbar, Diagram
 ├── constants/     # GitHub URL, copy feedback timing
 ├── css/           # custom.css: palette, fonts, docs styling, shared header/footer/switch
 ├── pages/         # landing page (index.js + index.css)
 └── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, Icon/Arrow
 docs/              # documentation pages (Markdown/MDX)
-diagrams/          # build.py + Lucide icons -> static/img/diagrams/book-*-overview*.svg
-static/img/        # assistant logos, diagrams, favicon, social card
+diagrams/          # diagram sources: icons/ (Lucide), d2/
+scripts/           # build-diagrams.py (diagrams), build-llms.js (llms.txt)
+static/img/        # assistants/ (logos), diagrams/ (generated), favicon, social card
 ```
 
-Overview diagrams: edit `diagrams/build.py`, then run `python3 diagrams/build.py` (needs the `drawio` CLI on PATH).
+Diagrams: edit `scripts/build-diagrams.py` or the sources in `diagrams/`, then run `python3 scripts/build-diagrams.py` (needs the `drawio` and `d2` CLIs on PATH). Output goes to `static/img/diagrams/<name>[-<variant>]-<light|dark>.svg`; don't edit it by hand.
 
 ## LLM Access
 
-The site serves `/llms.txt` and `/llms-full.txt` for AI agent consumption. Both are generated at build time from the docs by `scripts/build-all-docs.js` (runs as `prebuild` and `prestart`).
+The site serves `/llms.txt` and `/llms-full.txt` for AI agent consumption. Both are generated at build time from the docs by `scripts/build-llms.js` (runs as `prebuild` and `prestart`).
 
 ## Contributing
 

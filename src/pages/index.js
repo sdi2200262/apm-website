@@ -7,6 +7,8 @@ import { useColorMode } from '@docusaurus/theme-common';
 import Footer from '@theme/Footer';
 import Mark, { rng } from '../components/Mark';
 import Brand from '../components/Brand';
+import { CAPTIONS } from '../captions';
+import { drawnSeed, pageSeed } from '../components/seed';
 import GitHub from '../components/GitHub';
 import ThemeSwitch from '../components/ThemeSwitch';
 import './index.css';
@@ -16,43 +18,49 @@ import './index.css';
 // shared header/footer/switch parts in src/css/custom.css and src/components. Everything random
 // (mark, waves) is drawn after mount from one seed, so SSR output stays deterministic.
 
-const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. Instead of working in a single, increasingly chaotic chat, APM structures your work into a coordinated system where different AI agents handle planning, coordination and execution as a team.';
-const CAPTION = 'An APM session. The Planning Phase, on the left, produces the planning documents; the Implementation Phase, on the right, carries them out.';
-// Overview parts: key = diagram suffix (book-<theme>-overview-<key>.svg), value = caption. Order = Figure 2..5.
-const PARTS = {
-  planning: 'The Planner conducts structured project discovery while reading your codebase, then decomposes requirements into three planning documents: a Spec (what to build), a Plan (how work is organised) and Rules (how work is performed).',
-  implementation: 'The Manager coordinates execution by assigning Tasks to Workers and reviewing completed work. Each Worker receives a self-contained Task Prompt, executes, validates, logs to Memory and reports back.',
-  user: 'You mediate every exchange between agents by running commands in the right conversation. One command delivers a Task to a Worker; another brings the Worker\'s report back to the Manager.',
-  state: 'Project state lives in structured files outside any agent\'s context. When an agent reaches its limits, a Handoff passes its working knowledge to a fresh instance of the same agent.',
+// The cover text and the overview's captions are mirrored word for word in the APM repo's README; change both together.
+// Meta description; the cover renders the same text with definitions on its two terms (see Cover).
+const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM behind your agent suffers from context decay and context pressure as its conversation grows. APM counters the first by recording the project\'s intent in planning documents, and the second by splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each exchange a chance to review the work and intervene before issues propagate. We call this productive friction.';
+// Definitions for the cover's terms: key -> definition (the note shows it without repeating the term).
+const DEFS = {
+  decay: 'The longer the conversation and the more context accumulates, the less reliably the LLM recalls earlier decisions and instructions, and the less consistently it reasons about them.',
+  pressure: 'Every call to the LLM resends the whole conversation; each step costs more than the last and nears the context window\'s limit, where the conversation must be cut or summarised.',
+  friction: 'Influential human–computer interaction research places friction carefully at chosen points in an interface, as pauses that invite reflection. APM\'s user-mediated coordination aims to create such pauses, allowing you to keep authority over, and understanding of, the software you build.',
 };
-// [init flag, name, logo in static/img]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
+const CAPTION = CAPTIONS.overview; // shared with the docs (src/captions.js)
+// Overview parts, in figure order (Figure 2..6): key = diagram variant (overview-<key>-<theme>.svg). Captions: src/captions.js.
+// A no-break space ties each caption's last two words, so no line ends on a lone word (Safari before 26 ignores text-wrap: pretty).
+const PARTS = Object.fromEntries(['planning', 'manager', 'workers', 'user', 'state'].map((k) => [k, CAPTIONS[`overview-${k}`].replace(/ (\S+)$/, '\u00a0$1')]));
+// [init flag, name, logo in static/img/assistants]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
 const ASSISTANTS = [
-  ['claude', 'Claude Code', 'claude-logo.svg'],
-  ['codex', 'Codex CLI', ['codex-logo-light.svg', 'codex-logo-dark.svg']],
-  ['cursor', 'Cursor', 'cursor-logo.svg'],
-  ['copilot', 'GitHub Copilot', 'github-copilot-logo.svg', 'mask'],
-  ['antigravity', 'Antigravity', 'antigravity-logo.png'],
-  ['opencode', 'OpenCode', ['opencode-logo-light.svg', 'opencode-logo-dark.svg']],
+  ['claude', 'Claude Code', 'claude.svg'],
+  ['codex', 'Codex CLI', ['codex-light.svg', 'codex-dark.svg']],
+  ['cursor', 'Cursor', 'cursor.svg'],
+  ['copilot', 'GitHub Copilot', 'github-copilot.svg', 'mask'],
+  ['antigravity', 'Antigravity', 'antigravity.png'],
+  ['opencode', 'OpenCode', ['opencode-light.svg', 'opencode-dark.svg']],
 ];
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // A hand-drawn section break: ~7 uneven peaks through a Catmull-Rom spline, slightly tilted.
-function wave(rnd) {
+// peaks/amp make smaller, calmer ones (the cover note's rule); flip -1 starts with a dip instead of a peak.
+// Amp scales all vertical jitter, so a small wave keeps the break's proportions. x0/x1: line start and end.
+function wave(rnd, peaks = 7, amp = 1, flip = 1) {
   let x = 18 + rnd() * 6;
-  const pts = [[x, 10 + (rnd() - 0.5) * 2]];
-  for (let k = 0; k < 7; k++) {
+  const pts = [[x, 10 + (rnd() - 0.5) * 2 * amp]];
+  for (let k = 0; k < peaks; k++) {
     x += 13 + rnd() * 5;
-    pts.push([x, 10 + (k % 2 ? 1 : -1) * (3 + rnd() * 4.5) + (rnd() - 0.5) * 1.5]);
+    pts.push([x, 10 + (flip * (k % 2 ? 1 : -1) * (3 + rnd() * 4.5) + (rnd() - 0.5) * 1.5) * amp]);
   }
-  pts.push([x + 10 + rnd() * 5, 10 + (rnd() - 0.5) * 3]);
+  pts.push([x + 10 + rnd() * 5, 10 + (rnd() - 0.5) * 3 * amp]);
   const f = (n) => n.toFixed(1);
   let d = `M${f(pts[0][0])} ${f(pts[0][1])}`;
   for (let i = 0; i < pts.length - 1; i++) {
     const [p0, p1, p2, p3] = [pts[Math.max(0, i - 1)], pts[i], pts[i + 1], pts[Math.min(pts.length - 1, i + 2)]];
     d += ` C${f(p1[0] + (p2[0] - p0[0]) / 6)} ${f(p1[1] + (p2[1] - p0[1]) / 6)} ${f(p2[0] - (p3[0] - p1[0]) / 6)} ${f(p2[1] - (p3[1] - p1[1]) / 6)} ${f(p2[0])} ${f(p2[1])}`;
   }
-  return { d, w: 1.1 + rnd() * 0.45, tilt: (rnd() - 0.5) * 3 };
+  return { d, w: 1.1 + rnd() * 0.45, tilt: (rnd() - 0.5) * 3, x0: pts[0][0], x1: pts[pts.length - 1][0] };
 }
 
 function Wave({ w }) {
@@ -67,14 +75,25 @@ function Wave({ w }) {
   );
 }
 
-// One random seed per load, plus everything derived from it. null during SSR and the first render.
+// The small wave above the cover note, cropped to the line itself; thinner than the section breaks.
+function NoteWave({ w }) {
+  const x = w.x0 - 3, width = w.x1 - w.x0 + 6;
+  return (
+    <svg className="note-wave" viewBox={`${x} 4 ${width} 12`} width={width} height="12" fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true">
+      <path d={w.d} strokeWidth={w.w * 0.75} transform={`rotate(${w.tilt} ${(w.x0 + w.x1) / 2} 10)`} />
+    </svg>
+  );
+}
+
+// The page-load seed (kept across client-side navigation, new on refresh), plus everything derived from it.
+// null during SSR and the hydrating first render.
+const drawFrom = (seed) => {
+  const rnd = rng(seed ^ 0x9e3779b9);
+  return { seed, waves: [wave(rnd), wave(rnd)], note: wave(rnd, 5 + Math.floor(rnd() * 2), 0.5, rnd() < 0.5 ? 1 : -1) };
+};
 function useDraw() {
-  const [draw, setDraw] = useState(null);
-  useEffect(() => {
-    const seed = Math.floor(Math.random() * 4294967295) + 1;
-    const rnd = rng(seed ^ 0x9e3779b9);
-    setDraw({ seed, waves: [wave(rnd), wave(rnd)] });
-  }, []);
+  const [draw, setDraw] = useState(() => drawnSeed() && drawFrom(drawnSeed()));
+  useEffect(() => { if (!draw) setDraw(drawFrom(pageSeed())); }, [draw]);
   return draw;
 }
 
@@ -111,42 +130,68 @@ function Header({ seed, scrolled }) {
   );
 }
 
-// Stacked diagram variants that cross-fade; a term pointed at or focused picks its variant and caption.
-// Touch screens (any-hover: none) get the portrait phone diagram instead, and no highlights (CSS).
-// Images render only in the browser: the theme in their URLs is unknown at build time.
-function Overview() {
+// Underlined terms that pick what a nearby caption shows (hero definitions, overview parts). A term is
+// active while a mouse points at it or it has keyboard focus; on touch screens a tap toggles it, and a tap
+// (not a scroll) outside `ref` clears it. Spread props(key) on each term's <button>.
+function useTerms() {
   const [active, setActive] = useState(null);
+  const ref = useRef();
+  useEffect(() => {
+    if (!active) return undefined;
+    // click, not pointerdown: a touch that starts a scroll must not clear the term.
+    const clear = (e) => { if (!ref.current?.contains(e.target)) setActive(null); };
+    document.addEventListener('click', clear);
+    return () => document.removeEventListener('click', clear);
+  }, [active]);
+  const props = (key) => ({
+    'aria-pressed': active === key,
+    onPointerEnter: (e) => e.pointerType === 'mouse' && setActive(key),
+    onPointerLeave: (e) => e.pointerType === 'mouse' && setActive(null),
+    onFocus: (e) => e.target.matches(':focus-visible') && setActive(key),
+    onBlur: (e) => e.target.matches(':focus-visible') && setActive(null),
+    onClick: () => matchMedia('(any-hover: none)').matches && setActive(active === key ? null : key),
+  });
+  return { active, ref, props };
+}
+
+// Stacked diagram variants that cross-fade; the active term (useTerms) picks its variant and caption.
+// Touch screens (any-hover: none) get the portrait phone diagrams. Images render only in the browser: the
+// theme in their URLs is unknown at build time.
+function Overview() {
+  const { active, ref: lead, props } = useTerms();
   const { colorMode } = useColorMode();
-  const dir = useBaseUrl(`/img/diagrams/book-${colorMode}-overview`);
+  const dir = useBaseUrl('/img/diagrams/overview');
+  const svg = (variant = '') => `${dir}${variant}-${colorMode}.svg`; // overview[-<variant>]-<theme>.svg
   const isBrowser = useIsBrowser();
-  const term = (part, text) => (
-    <button type="button" className="term" onMouseEnter={() => setActive(part)} onMouseLeave={() => setActive(null)} onFocus={() => setActive(part)} onBlur={() => setActive(null)}>
-      {text}
-    </button>
-  );
+  const term = (part, text) => <button type="button" className="term" {...props(part)}>{text}</button>;
   const keys = Object.keys(PARTS);
   return (
     <div>
-      <p className="lead">
-        APM splits the work between three kinds of agent, each in its own conversation with only the context it needs.
-        The {term('planning', 'Planner')} turns your goals into a plan, the {term('implementation', 'Manager')} assigns its Tasks,
-        and {term('implementation', 'Workers')} carry them out. {term('user', 'You')} mediate every exchange between them,
-        and the {term('state', 'project state')} lives in files that outlast any one conversation.
+      <p className="lead" ref={lead}>
+        An APM session runs in two phases. The {term('planning', 'Planner')} writes three planning documents with you: the Spec, the
+        Plan, and the Rules. The {term('manager', 'Manager')} then hands out assignments and {term('workers', 'Workers')} carry them out. Their messages pass
+        through {term('user', 'you')}, and the {term('state', 'session\'s state')} lives in shared files outside any conversation. Any agent
+        can still offload work to its own subagents for efficiency.
       </p>
       <figure className="plate">
         <div className="plate-images">
           {isBrowser && <picture style={{ opacity: active ? 0 : 1 }}>
-            <source media="(any-hover: none)" srcSet={`${dir}-phone.svg`} />
-            <img src={`${dir}.svg`} alt="APM overview: the Planner, the Manager and Workers, coordinated through the user, with shared files" />
+            <source media="(any-hover: none)" srcSet={svg('-phone')} />
+            <img src={svg()} alt="APM overview: the Planner, the Manager, and Workers, coordinated through the user, with shared files" />
           </picture>}
-          {isBrowser && keys.map((k) => <img key={k} className="hl" src={`${dir}-${k}.svg`} alt="" aria-hidden="true" style={{ opacity: active === k ? 1 : 0 }} />)}
+          {isBrowser && keys.map((k) => (
+            <picture key={k} style={{ opacity: active === k ? 1 : 0 }}>
+              <source media="(any-hover: none)" srcSet={svg(`-phone-${k}`)} />
+              <img src={svg(`-${k}`)} alt="" aria-hidden="true" />
+            </picture>
+          ))}
         </div>
         <figcaption aria-live="polite">
           <em>Figure {active ? keys.indexOf(active) + 2 : 1}.</em> {active ? PARTS[active] : CAPTION}
-          {!active && <span className="hover-only"> Point at an underlined term to see its part.</span>}
+          {!active && <><span className="hover-only"> Point at an underlined term to see its part.</span><span className="touch-only-inline"> Tap an underlined term to see its part.</span></>}
         </figcaption>
       </figure>
-      <p className="small">The <Link to="/docs/introduction">docs</Link> cover the agents, the workflow and the CLI in full.</p>
+      <p className="small">The <Link to="/docs/introduction">documentation</Link> covers the workflow and the framework's design in full.</p>
     </div>
   );
 }
@@ -183,10 +228,36 @@ function Code({ children }) {
 }
 
 function Logo({ file, mask }) {
-  const src = useBaseUrl('/img/');
+  const src = useBaseUrl('/img/assistants/');
   if (mask) return <span className="logo mask" style={{ maskImage: `url(${src}${file})`, WebkitMaskImage: `url(${src}${file})` }} />;
   if (Array.isArray(file)) return <><img className="logo only-light" src={src + file[0]} alt="" /><img className="logo only-dark" src={src + file[1]} alt="" /></>;
   return <img className="logo" src={src + file} alt="" />;
+}
+
+// Cover text: DESCRIPTION with its two problems and its closing term as italic terms (useTerms). Their
+// definitions show in a note line below, which keeps its height when empty (nothing shifts) and keeps
+// the last definition while fading out.
+function Cover({ draw }) {
+  const { active, ref, props } = useTerms();
+  const last = useRef('decay');
+  if (active) last.current = active;
+  const term = (key, text) => <button type="button" className="term" aria-controls="cover-note" {...props(key)}>{text}</button>;
+  return (
+    <div ref={ref}>
+      <p>
+        APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM
+        behind your agent suffers from {term('decay', <em>context decay</em>)} and {term('pressure', <em>context pressure</em>)} as
+        its conversation grows. APM counters the first by recording the project&apos;s intent in planning documents, and the second by
+        splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each
+        exchange a chance to review the work and intervene before issues propagate.
+        We call this {term('friction', <em>productive friction</em>)}.
+      </p>
+      <p id="cover-note" className="cover-note" aria-live="polite" aria-hidden={!active} style={{ opacity: active ? 1 : 0 }}>
+        {draw && <NoteWave w={draw.note} />}
+        {DEFS[last.current]}
+      </p>
+    </div>
+  );
 }
 
 function GettingStarted() {
@@ -198,7 +269,7 @@ function GettingStarted() {
         <p>APM installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later.</p>
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
-        <p>In your project directory, run the command below. Pick your assistant here, or when APM asks.</p>
+        <p>In your project directory, run the command below to install APM's commands, guides, skills, and document templates. Pick your assistant's flag here, or run interactively and select when the CLI prompts you.</p>
         <div className="pick" role="group" aria-label="AI assistant">
           {ASSISTANTS.map(([id, name, file, mask]) => (
             <button key={id} type="button" aria-pressed={pick === id} onClick={() => setPick(pick === id ? null : id)}>
@@ -209,12 +280,12 @@ function GettingStarted() {
         </div>
         <Code>{pick ? `apm init -a ${pick}` : 'apm init'}</Code>
         <h3>3. Start the Planner</h3>
-        <p>Open your AI assistant and run:</p>
+        <p>Open your assistant in the project and run:</p>
         <Code>/apm-1-initiate-planner</Code>
-        <p>From there, each agent directs you through the workflow step by step. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
+        <p>Describe what you want to build or change. The Planner works with you on the planning documents, then directs you to start the Manager in a new conversation. From there, each agent tells you what to run next and where. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
-        <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project from a terminal.</p>
+        <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project directory from your terminal.</p>
         <p><Link to="/docs/getting-started">Installation and first steps are in the docs.</Link></p>
       </div>
     </>
@@ -236,7 +307,7 @@ export default function Home() {
               <p className="subtitle">A Spec-Driven Multi-Agent Framework for AI-Assisted Software Engineering</p>
             </div>
             <div className="cover-mark">{draw && <Mark seed={draw.seed} size={144} intro />}</div>
-            <p>{DESCRIPTION}</p>
+            <Cover draw={draw} />
           </div>
           <Wave w={draw?.waves[0]} />
         </section>

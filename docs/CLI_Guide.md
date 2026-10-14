@@ -7,7 +7,7 @@ sidebar_position: 8
 
 # CLI Guide
 
-The `agentic-pm` CLI manages APM installations, assistant configuration, template updates, and session archival. This doc covers every command, its options, and the directory structure the CLI creates.
+The `agentic-pm` CLI manages APM installations, assistant configuration, template updates, and session archival. This doc covers every command, its options, and the files the CLI creates.
 
 ## Installation
 
@@ -25,13 +25,13 @@ npm install -g agentic-pm
 npm install agentic-pm
 ```
 
-After installing, navigate to the project directory and run `apm init` to initialize APM.
+Then run `apm init` in your project directory (with a local install, `npx apm init`).
 
 ## Commands
 
 ### apm init
 
-Initializes APM with official releases. Fresh installs only. If APM is already initialized, shows the current state and suggests `apm add`, `apm update`, or `apm archive`.
+Installs APM from the official releases, in a project without APM. If APM is already installed, it shows the current state and suggests `apm add`, `apm update`, or `apm archive`.
 
 ```bash
 apm init
@@ -44,14 +44,14 @@ apm init -a claude copilot -t v1.0.0
 | `-t, --tag <tag>` | Install a specific release version |
 | `-a, --assistant <id...>` | Pre-select assistant(s) to install |
 
-The command fetches the latest compatible release from GitHub, prompts for assistant selection (unless `--assistant` is provided), downloads the assistant bundle, and installs:
+It fetches the latest compatible release from GitHub, asks which assistant to install (pass several with `--assistant`, or add more later with `apm add`), and installs:
 
-- `.apm/` directory with project artifact templates (Spec, Plan, Tracker, Memory Index, metadata)
-- Commands, guides, skills, and Agent files into the platform-specific directory (e.g. `.claude/`, `.cursor/`, `.github/`)
+- The `.apm/` directory, with templates for the Spec, the Plan, the Tracker, and the Index, and the installation metadata.
+- Commands, guides, skills, and agent files, in each assistant's directory (such as `.claude/`, `.cursor/`, or `.github/`).
 
 ### apm custom
 
-Installs APM from a custom or third-party repository instead of the official releases. Also manages saved custom repositories.
+Installs APM from a custom repository, and manages saved custom repositories.
 
 ```bash
 apm custom
@@ -64,15 +64,15 @@ apm custom -r owner/repo -t v1.0.0 -a claude
 | `-r, --repo <repo>` | Repository in `owner/repo` format |
 | `-t, --tag <tag>` | Install specific release version (requires `--repo`) |
 | `-a, --assistant <id...>` | Pre-select assistant(s) to install |
-| `--add-repo <repos...>` | Save custom repository(ies) for future use |
-| `--remove-repo <repos...>` | Remove saved repository(ies) |
+| `--add-repo <repos...>` | Save custom repositories for later use |
+| `--remove-repo <repos...>` | Remove saved repositories |
 | `--list` | List saved custom repositories |
 | `--clear` | Clear all saved custom repositories |
-| `-f, --force` | Skip confirmation prompts |
+| `-f, --force` | Skip confirmation when removing or clearing repositories |
 
-Without `--repo`, the CLI offers selection from saved repositories (managed via `--add-repo` and `--remove-repo`). Custom repositories show a security disclaimer on first use, which can be skipped for saved repositories.
+Without `--repo`, the CLI offers your saved repositories. A custom repository shows a security disclaimer on every install, unless you saved it and chose to skip the disclaimer. `--force` applies only to `--remove-repo` and `--clear`.
 
-> **Note:** When a saved repository has the disclaimer skip enabled, no security warning is shown during `apm custom`, `apm add`, or `apm update` for that repository. If the repository is later compromised, the user receives no warning. Use `apm custom --list` to review which repositories have the disclaimer skipped. See the [Security Guide](Security_Guide.md) for details.
+> **Note:** A saved repository that skips the disclaimer gives no warning even if it is later compromised. See the [Security Guide](Security_Guide.md#the-security-disclaimer).
 
 **Repository management:**
 
@@ -85,7 +85,7 @@ apm custom --clear
 
 ### apm update
 
-Updates installed assistant templates to the latest compatible version. Archives the current session before updating.
+Updates the installed templates from the same source repository. Run it between sessions: the current session moves to the archive, and `.apm/` returns to blank templates.
 
 ```bash
 apm update
@@ -98,16 +98,16 @@ apm update -n pre-update-backup
 | `-f, --force` | Skip confirmation prompt |
 | `-n, --name <name>` | Custom archive name for the pre-update snapshot |
 
-The update process:
+It:
 
-1. Archives the current `.apm/` artifacts to `.apm/archives/`
-2. Removes all tracked assistant files
-3. Downloads and installs the latest compatible release
-4. Writes fresh metadata
+1. Snapshots all current `.apm/` contents except `archives/` into `.apm/archives/`, then removes the active session files.
+2. Removes the installed assistant files.
+3. Installs the new release, dropping any assistant it no longer offers.
+4. Writes fresh metadata.
 
-For official installations, the CLI prefers stable releases. If currently on a pre-release, it offers both the latest stable and the latest pre-release as options. For custom installations, the User selects from available releases newer than the current version.
+For official installations, the CLI prefers stable releases; on a pre-release, it offers both the latest stable and the latest pre-release. For custom installations, you choose from the releases newer than yours.
 
-| Component | Behavior on update |
+| Component | On update |
 | :--- | :--- |
 | Commands, guides, skills, agents | Replaced with latest version |
 | `.apm/` project artifacts | Archived before replacement |
@@ -135,16 +135,16 @@ apm archive --clear
 
 When creating an archive, the CLI:
 
-1. Snapshots `.apm/` artifacts (Spec, Plan, Tracker, Memory, session summary if present) to `.apm/archives/session-YYYY-MM-DD-NNN/`
-2. Writes `metadata.json` to the archive with the archival timestamp
-3. Removes all tracked assistant files
-4. Deletes installation metadata
+1. Snapshots all `.apm/` contents except `archives/` into `.apm/archives/session-YYYY-MM-DD-NNN/`, including planning documents, the Tracker, Memory, the Message Bus, metadata, and any session summary.
+2. Writes the archive's `metadata.json`, with the archival time.
+3. Removes the installed assistant files.
+4. Removes the active session files and installation metadata, keeping existing archives.
 
-After archival, the project is uninitialized. The User runs `apm init` to begin a new APM session with fresh templates. Archives remain accessible in `.apm/archives/` and are detected by the Planner during Context Gathering in subsequent sessions.
+APM is then uninstalled. Run `apm init` to begin a new session with fresh templates. The Rules stay in your rules file. The archives stay in `.apm/archives/`, and the next Planner asks which are relevant during Context Gathering.
 
 ### apm add
 
-Adds assistant(s) to an existing installation without affecting the current APM session.
+Adds assistants to an existing installation without affecting the current session.
 
 ```bash
 apm add
@@ -154,13 +154,13 @@ apm add -a copilot opencode cursor
 
 | Flag | Description |
 | :--- | :--- |
-| `-a, --assistant <id...>` | Assistant(s) to add |
+| `-a, --assistant <id...>` | Assistants to add |
 
-Fetches the same release version currently installed and shows only uninstalled assistants. Without `--assistant`, prompts for selection. For custom installations, the security disclaimer is shown unless the repository has it skipped - matching the behavior of `apm custom` and `apm update`.
+It fetches the installed release and offers only the assistants not yet installed. For custom installations, it shows the security disclaimer unless the repository skips it.
 
 ### apm remove
 
-Removes assistant(s) from the installation.
+Removes assistants from the installation.
 
 ```bash
 apm remove
@@ -170,10 +170,10 @@ apm remove -a copilot opencode -f
 
 | Flag | Description |
 | :--- | :--- |
-| `-a, --assistant <id...>` | Assistant(s) to remove |
+| `-a, --assistant <id...>` | Assistants to remove |
 | `-f, --force` | Skip confirmation prompt |
 
-Removes tracked files for the specified assistant(s) and updates metadata. Warns when removing all assistants. The `.apm/` project artifacts are preserved.
+It removes those assistants' files and updates the metadata, warning you before removing the last one. Files also used by assistants that remain installed are kept. The `.apm/` artifacts stay. See [Troubleshooting](Troubleshooting_Guide.md#codex-and-antigravity-shared-skills) for the known shared-skill overwrite issue.
 
 ### apm status
 
@@ -183,18 +183,18 @@ Shows the current installation state.
 apm status
 ```
 
-Displays: source (official or custom), repository, release version, CLI version, install date, installed assistants with file counts, and archive count. If APM is not initialized, shows archive count if any exist or suggests `apm init`.
+It shows the source (official or custom), the repository, the release and CLI versions, the install date, the installed assistants with their file counts, and the number of archives. It also checks whether the tracked files exist and flags missing files, with commands to restore them. It does not check their contents. Without an installation, it shows any archives or suggests `apm init`.
 
 ## Directory Structure
 
-After initialization, APM creates the following structure (paths shown for Cursor, other platforms use their own directories):
+After `apm init`, a project looks like this (shown for Cursor):
 
 ```text
 project/
 ├── .apm/
 │   ├── spec.md                # Design decisions and constraints
 │   ├── plan.md                # Stages, Tasks, dependencies
-│   ├── tracker.md             # Live project state
+│   ├── tracker.md             # Live session state
 │   ├── memory/
 │   │   └── index.md           # Durable project memory
 │   ├── bus/                   # Message Bus (created by Planner)
@@ -208,26 +208,28 @@ project/
 └── ...
 ```
 
-Platform-specific directories: `.claude/` for Claude Code, `.github/` for GitHub Copilot, `.agents/` for Antigravity, `.opencode/` for OpenCode, `.codex/` and `.agents/` for Codex (guides and agents go to `.codex/`; commands and skills go to `.agents/skills/`).
+Other assistants use `.claude/` (Claude Code), `.github/` (GitHub Copilot), `.agents/` (Antigravity), and `.opencode/` (OpenCode). Copilot commands and skills go to `.github/skills/`, and Antigravity commands and skills to `.agents/skills/`. Codex splits its files: guides and agents go to `.codex/`, and commands and skills to `.agents/skills/`.
 
 ## Versioning
 
-The CLI and template releases version independently but share major version for compatibility.
+The CLI and the template releases are versioned separately but share a major version.
 
 | Track | Distribution | Update method |
 | :--- | :--- | :--- |
 | **CLI** (`agentic-pm`) | npm, follows semver | `npm update -g agentic-pm` |
 | **Template releases** | GitHub Releases, auto-incrementing patches | `apm update` |
 
-CLI v1.x fetches only v1.x.x template releases from the official repository. Custom repositories have no version filtering, allowing access to any available release.
+CLI v1.x fetches only v1.x.x releases from the official repository. Custom repositories have no version filter. A release's optional `minCliVersion` applies to both sources: from CLI v1.0.2 onward, the CLI refuses installation if it is older than that minimum and asks you to update. Earlier CLIs ignore the field.
+
+Both tracks follow Semantic Versioning. Template patches normally auto-increment; minor and major versions are set when releasing. The [changelog](https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md) labels each entry by track, such as `CLI v1.0.2` or `Templates v1.0.3`.
 
 ## Global Configuration
 
-The CLI stores global settings in `~/.apm/config.json`, including saved custom repositories with per-repository settings (such as whether to skip the security disclaimer). This file is managed automatically by `apm custom --add-repo` and related flags.
+The CLI keeps global settings in `~/.apm/config.json`: your saved custom repositories and their settings, such as whether to skip the disclaimer. `apm custom` and its flags manage the file.
 
 ## Workspace Metadata
 
-Each initialized project has `.apm/metadata.json` tracking the current installation. This file is used by `apm update`, `apm add`, `apm remove`, and `apm archive` to know the current state.
+Each installation has `.apm/metadata.json`, which `apm update`, `apm add`, `apm remove`, and `apm archive` read to know the current state.
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -248,11 +250,11 @@ Each archive in `.apm/archives/` contains its own `metadata.json` with the same 
 | `archivedAt` | string | ISO 8601 timestamp of archival |
 | `reason` | string | Why the archive was created (e.g. `"archive"`, `"update"`, `"migration"`) |
 
-The `apm archive --list` command reads these fields to display archive information.
+`apm archive --list` reads these fields.
 
 ## Related Docs
 
 - [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
 - [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimization, and workflow efficiency
+- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency

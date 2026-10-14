@@ -135,6 +135,15 @@ html[data-theme] {
 .navbar__link, .navbar__link--active { font-size: 14px; color: var(--apm-ink); }
 .navbar__link:hover { color: var(--apm-ink); text-decoration: underline; text-underline-offset: 3px; }
 
+/* Docs type scale: 16px body (the landing page keeps 18px), with the sidebar, TOC and breadcrumbs a step
+   smaller, so the article reads at 100% zoom beside the 14px header and footer. */
+html.docs-wrapper { --ifm-font-size-base: 100%; }
+html.docs-wrapper .menu { font-size: 15px; }
+html.docs-wrapper :is(.table-of-contents, .breadcrumbs) { font-size: 14px; }
+html.docs-wrapper .markdown h1 { font-size: 2.25rem; }
+html.docs-wrapper .markdown h2 { font-size: 1.5rem; }
+html.docs-wrapper .markdown h3 { font-size: 1.25rem; }
+
 /* Docs article: links underlined like the landing page; headings regular h1, 600 below. */
 .markdown a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .markdown h1 { font-weight: 400; }
@@ -188,7 +197,7 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
   .theme-doc-sidebar-container { transition: width .35s cubic-bezier(.65, 0, .35, 1) !important; }
   main[class*='docMainContainer'] { max-width: none !important; min-width: 0; }
   main[class*='docMainContainer'] > .container { transition: max-width .35s cubic-bezier(.65, 0, .35, 1); }
-  [role='button'][class*='expandButton'] { animation: apm-load .25s ease; }
+  [role='button'][class*='expandButton'] svg { animation: apm-load .25s ease; } /* fade the chevron only: the bottom rule stays put */
 }
 :is([class*='collapseSidebarButtonIcon'], [class*='expandButtonIcon']) { margin: 0 !important; opacity: .45; transition: opacity .2s; }
 :is(button[class*='collapseSidebarButton'], [role='button'][class*='expandButton']):is(:hover, :focus-visible) svg { opacity: 1; }
@@ -199,12 +208,30 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 .menu__link--active:not(.menu__link--sublist) { background: none; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .menu__link:hover, .menu__caret:hover, .menu__list-item-collapsible:hover { background: none; }
 .menu__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.menu__link [class*='linkLabel'] { overflow: visible; } /* Docusaurus clips labels to two lines, which also clipped the underline below them */
 .menu__caret:before, .menu__link--sublist-caret:after {
   background: var(--apm-ink);
   filter: none;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
 }
+
+/* Diagrams (src/components/Diagram.js): full column width (or compact, via the corner button), only the current theme's copy shown. */
+.diagram { margin: 32px 0; }
+.diagram img { display: block; width: 100%; height: auto; }
+.diagram-images { position: relative; margin: 0 auto; transition: max-width .25s ease; max-width: 100%; } /* centred, so compact shrinks towards the middle */
+.diagram--compact .diagram-images { max-width: max(60%, 300px); }
+.diagram--compact img { min-width: 0 !important; }
+.diagram-size { position: absolute; top: 0; right: 0; z-index: 1; display: flex; padding: 4px; border: 0; background: var(--apm-paper); color: var(--apm-ink); opacity: .45; cursor: pointer; transition: opacity .2s; }
+.diagram-size:is(:hover, :focus-visible) { opacity: 1; }
+.diagram-size:focus-visible { outline: 2px solid var(--apm-link); outline-offset: 2px; }
+.diagram figcaption { margin-top: 12px; font-size: .9em; line-height: 1.55; } /* shared captions: src/captions.js */
+/* Figures are numbered per page, as on the landing page ("Figure 1."): the counter restarts in each doc. */
+.markdown { counter-reset: figure; }
+.diagram:has(figcaption) { counter-increment: figure; }
+.diagram figcaption::before { content: 'Figure ' counter(figure) '. '; font-style: italic; }
+html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light { display: none; }
+@media (max-width: 600px) { .diagram--wide .diagram-images { overflow-x: auto; } .diagram--wide img { min-width: 560px; } } /* no phone layout: scroll, don't shrink */
 
 /* Table of contents, breadcrumbs, prev/next. */
 .table-of-contents__link { color: var(--ifm-font-color-secondary); }

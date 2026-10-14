@@ -38,18 +38,23 @@
 .cover-body { display: grid; grid-template-columns: minmax(0, 640px); justify-content: center; align-content: center; gap: 56px; min-height: max(640px, calc(100svh - 57px)); padding: 72px 0; text-align: center; }
 .cover h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 400; line-height: 1.04; text-wrap: balance; }
 .subtitle { margin: 20px auto 0 !important; max-width: 520px; font-size: 20px; font-style: italic; line-height: 1.4; text-wrap: balance; }
+/* Cover definitions (Cover in index.js): a quiet line under the paragraph, its height kept when empty so nothing shifts. */
+.landing-page .cover-note { min-height: calc(6em + 20px); margin-top: 24px; font-size: 15px; line-height: 1.5; transition: opacity .25s ease; }
+.note-wave { display: block; margin: 0 auto 8px; color: var(--apm-ink); opacity: .6; } /* small calm wave as the note's rule */
+@media (max-width: 600px) { .landing-page .cover-note { min-height: calc(10.5em + 20px); } } /* longest note: four lines wide, seven on phones */
 .cover-mark { display: flex; justify-content: center; min-height: 144px; color: var(--apm-ink); }
 .wave { display: flex; justify-content: center; min-height: 20px; padding-bottom: 48px; color: var(--apm-ink); }
 
 /* Overview: terms are dotted-underlined buttons; diagram variants stack in one grid cell and cross-fade. */
 .lead { max-width: 640px; text-wrap: pretty; }
 .term { cursor: help !important; text-decoration: underline dotted 1px; text-underline-offset: 4px; }
-.term:is(:hover, :focus-visible) { text-decoration-style: solid; }
+.term:is(:focus-visible, [aria-pressed='true']) { text-decoration-style: solid; }
+@media (any-hover: hover) { .term:hover { text-decoration-style: solid; } } /* touch :hover sticks after a tap */
 .plate { margin-top: 56px !important; }
 .plate-images { display: grid; overflow-x: auto; }
 .plate-images > * { grid-area: 1 / 1; transition: opacity .2s ease; }
 .plate-images img { display: block; width: 100%; min-width: 560px; height: auto; }
-.plate figcaption { max-width: 640px; min-height: 6.6em; margin-top: 24px; font-size: 17px; line-height: 1.55; }
+.plate figcaption { max-width: 640px; min-height: 7.8em; margin-top: 24px; font-size: 17px; line-height: 1.55; text-wrap: pretty; }
 .small { max-width: 640px; margin-top: 32px !important; font-size: 17px; line-height: 1.55; }
 
 /* Getting started: steps, code blocks with Copy, assistant picker (3 x 2). */
@@ -70,12 +75,12 @@
 .logo.mask { background: var(--apm-ink); mask: center / contain no-repeat; -webkit-mask: center / contain no-repeat; }
 html[data-theme='dark'] .only-light, html[data-theme='light'] .only-dark { display: none; }
 
-/* Touch screens get a shorter page: phone diagram, plain terms, two-line Getting started. */
-.touch-only { display: none; }
+/* Touch screens get a shorter page: phone diagrams, tap-to-toggle terms, two-line Getting started. */
+.touch-only, .touch-only-inline { display: none; }
 @media (any-hover: none) {
-  .hover-only, .plate-images .hl { display: none; }
+  .hover-only { display: none; }
   .touch-only { display: block; }
-  .term { pointer-events: none; text-decoration: none; }
+  .touch-only-inline { display: inline; }
   .plate-images img { min-width: 0; max-width: 420px; margin: 0 auto; }
 }
 

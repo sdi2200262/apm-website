@@ -7,92 +7,47 @@ sidebar_position: 6
 
 # Prompt Engineering
 
-APM's workflow is driven by structured files that Agents read and follow. This doc explains how those files are designed, why they are structured the way they are, and how Agents themselves generate structured content for other Agents during the workflow.
+APM's workflow runs on structured files that agents read and follow. This doc explains how those files are organised and why, which matters most when you read or [customise](Customisation_Guide.md) them.
 
 ## File Types
 
-APM installs four types of files into the project workspace:
+APM installs four types of files into your project:
 
 | Type | What it is | How it enters context |
 | :--- | :--- | :--- |
-| **Commands** | Prompts the User sends to the model via slash commands | Delivered directly as a prompt |
-| **Guides** | Procedural files containing a single procedure each | Read autonomously by Agents via file tools, on demand |
-| **Skills** | Shared procedural files used by multiple roles | Read autonomously at initialization |
-| **Agent files** | Subagent configurations | Read when spawning a subagent |
+| **Commands** | Prompts you invoke by name (`/`, or `$` in Codex) | Delivered directly as a prompt |
+| **Guides** | One procedure each, for one role | Read by the role that performs it |
+| **Skills** | Protocols shared by several roles | Read at initialisation |
+| **Agent files** | Subagent configurations | Read when a subagent is launched |
 
-**Commands** are the only files the User sends directly to the model. Everything else is read autonomously by Agents through their file tools. Commands fall into four categories:
+Commands are the only files you send to the model. They set the agent's role and point it to the guides and skills it needs; the agent reads everything else itself.
 
-- **Initiation** (Planner, Manager, Worker) - Declare the Agent's role, list the documents it should read, and define its procedural flow
-- **Handoff** (Manager, Worker) - Guide an outgoing Agent through context transfer
-- **Utility** (check-tasks, check-reports, summarize-session) - Trigger specific workflow actions
-- **Troubleshooting** (recover) - Reconstruct working context after disruptions
+Guides keep each procedure apart from the command, scoped to the one role that performs it, and each agent loads only its own. The Manager reads Task Assignment and Task Review at initialisation, and Workers read Task Execution and Task Logging. The Planner reads Context Gathering first and Work Breakdown only once you approve its understanding.
 
-**Guides** are separated from commands for a specific reason: loading all procedural content at initialization would consume context space before the Agent needs it. Instead, each command tells the Agent which guides to read and when. The Manager reads Task Assignment and Task Review. Workers read Task Execution and Task Logging. The Planner reads Context Gathering and Work Breakdown. Each guide is scoped to one role and one procedure.
+Skills hold what several roles share. The communication skill defines the Message Bus protocol and how agents address you, and every role loads it at initialisation. A skill can also carry supporting files, such as the integration guide that lets agents outside APM join the Message Bus. Agent files configure APM's own subagents: currently the `apm-archive-explorer`, which the Planner uses to research archived sessions.
 
-**Skills** are the exception to on-demand loading. The Communication Skill defines the Message Bus protocol, Agent-to-User communication standards, and terminology boundaries. This knowledge applies throughout the entire workflow, so it is loaded at initialization alongside the command.
-
-**Agent files** configure custom subagents. The `apm-archive-explorer` is an example, a subagent the Planner spawns during Context Gathering to examine archived sessions.
+Commands, skills, and agent files each carry a name and a one-line description in YAML frontmatter, which the build and your assistant use to identify them. Guides carry none.
 
 ## Writing Patterns
 
-APM's files are written for two audiences: the AI Agent parsing instructions, and the human reading or modifying them. The patterns below serve both:
-
-- **Imperative mood** - "Perform the following actions", "Read the Task Log", "Assess whether the status is consistent." Direct instructions produce more reliable Agent behavior than suggestions or descriptions.
-- **Directly actionable** - Each instruction includes specific file paths, field names, and conditions. Vague instructions ("implement properly") lead to inconsistent execution.
-- **Structured hierarchy** - H2 for major sections, H3 for subsections, bold for sub-topics, italic for list items. Consistent structure helps Agents locate specific instructions during execution and helps humans scan documents quickly.
-- **De-duplication** - Each concept has one primary explanation in one location. Other files reference it rather than repeating it. Duplication wastes tokens and risks divergence between copies.
-- **Token efficiency** - Prose over tables when equally clear. No redundant phrasing. Files aim to stay under ~500 lines, because every token an Agent spends reading procedural files is a token unavailable for execution.
-
-Guides follow a consistent section pattern that Agents can rely on:
-
-1. **Overview** - Who reads this, what it does
-2. **Operational Standards** - Decision rules and reasoning approaches
-3. **Procedure** - Step-by-step actions
-4. **Structural Specifications** - Output formats and schemas
-5. **Content Guidelines** - Common mistakes and quality standards
+APM's files are written for two readers: the agent following them and the person reading or changing them. Instructions are imperative and concrete, naming files, fields, and conditions, in order less open to interpretation. Each concept is explained once, in one file, and referenced elsewhere. Duplication costs tokens and lets copies drift apart. Files stay short for the same reason: every token an agent spends reading procedure is a token unavailable for the work.
 
 ## Structured Formats
 
-Many of APM's artifacts - Task Prompts, Task Logs, Handoff Logs, planning documents - pair YAML frontmatter with a Markdown body. Each artifact defines its own schema and body structure, but the split between YAML and Markdown reflects the same distinction in how Agents use information.
+APM's artifacts, such as Task Prompts, Task Logs, Handoff Logs, and the planning documents, pair YAML frontmatter with a Markdown body. The split follows how agents use the information.
 
-YAML carries facts the Agent should not have to infer or interpret from the body. If `important_findings: true` is set in a Task Log, the Manager knows its review procedure requires deeper investigation - the Worker raised that flag so the Manager does not have to read the body and assess whether findings exist. The Manager can then validate the flag's consistency against the body and research further if needed. If `status: Failed`, the procedural path is determined by the field, not by the Manager's interpretation of what happened. If `modified:` contains an attribution, any Agent knows who changed the file and when. YAML fields drive procedural decisions directly - they are flags, identifiers, and states that map to specific next actions.
-
-Markdown carries everything that requires reading and reasoning: the actual instructions in a Task Prompt, the execution details in a Task Log, the working context in a Handoff Log. This is where nuance, explanation, and judgment live.
-
-## Agent-Generated Content
-
-During the workflow, Agents generate structured documents for other Agents. Each artifact type has its own schema and structure, but they all follow the same YAML-plus-Markdown approach as the installed files.
-
-| Artifact | Generated by | Consumed by | Purpose |
-| :--- | :--- | :--- | :--- |
-| Task Prompt | Manager | Worker | Complete execution plan with context, objectives, instructions, and validation |
-| Task Report | Worker | Manager | Brief completion summary: status, log path, key findings |
-| Handoff Log | Outgoing Agent | Incoming Agent | Past-tense working knowledge not captured in Task Logs |
-| Handoff Prompt | Outgoing Agent | Incoming Agent | Present-tense state and reconstruction instructions |
-
-Task Prompts are the most design-intensive artifact. Each one is a complete execution plan - dependency context, design decisions from the Spec, instructions, expected outputs, and validation criteria - composed into a single self-contained document. See [How Task Prompts Are Built](Agent_Orchestration.md#how-task-prompts-are-built) for construction details.
+YAML carries facts an agent should not have to infer: flags, identifiers, and states that decide the next step. A Task Log whose `status` is anything but Success, or which sets `important_findings: true`, tells the Manager to investigate before accepting the work. The Manager still checks each flag against the body, and a mismatch is a warning sign. Markdown carries everything that needs reading and judgement.
 
 ## Platform-Agnostic Design
 
-APM's files are authored once and adapted per platform at build time. The source files use placeholders that resolve to platform-specific values:
-
-| Placeholder | Resolves to |
-| :--- | :--- |
-| `{RULES_FILE}` | `CLAUDE.md`, `AGENTS.md`, or `AGENTS.md` depending on platform |
-| `{SKILL_PATH:name}` | Platform-specific path where skills are installed |
-| `{ARGS}` | Platform's argument syntax (`$ARGUMENTS`, `{{args}}`, or descriptive text for platforms without argument variables) |
-| `{SUBAGENT_GUIDANCE}` | Platform-native subagent invocation |
-
-The core workflow is identical across all platforms. A Planner on Claude Code and a Planner on Cursor follow the same procedures, read the same guides, and produce the same planning documents. The differences are limited to file paths, argument syntax, subagent invocation, and format (Markdown for Antigravity, Markdown for everything else).
+APM's files are written once and adapted to each assistant at build time. Placeholders in the source resolve to the platform's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others), its install paths, its argument syntax, and its way of launching subagents. Each assistant installs the files in its own place and format. Codex, Copilot, and Antigravity receive APM's commands as skills. Codex invokes them with `$`; Copilot and Antigravity use the `/` menu. These remain user-triggered commands, separate from the procedural skills agents read. The workflow itself is identical everywhere: a Planner in Claude Code and a Planner in Cursor follow the same procedures and produce the same planning documents.
 
 ## Terminology
 
-APM defines a formal vocabulary used consistently across all files. Terms like Task, Stage, Worker, Manager, Planner, Handoff, Spec, Plan, and Rules carry specific defined meanings and are always capitalized. All other language is natural English with no formal status.
-
-This matters because consistent terminology produces consistent Agent behavior. When every file uses "Task" to mean a specific work unit with defined lifecycle states, Agents inherit that precision and use it in their own communication. Ambiguity in terminology leads to ambiguity in execution.
+APM's files share a small formal vocabulary, always capitalised: Planner, Manager, Worker, Spec, Plan, Rules, Task, Stage, Handoff, and the rest. Everything else is plain English. Consistent terms help agents behave consistently. For example, when every file uses "Task" for one defined unit of work, agents carry that precision into their own messages.
 
 ## Related Docs
 
-- [Context Engineering](Context_Engineering.md) - How APM manages what each Agent sees and why
+- [Context Engineering](Context_Engineering.md) - How APM manages what each agent sees and why
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation

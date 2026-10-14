@@ -7,67 +7,44 @@ sidebar_position: 7
 
 # Context Engineering
 
-APM's multi-agent design is built around a specific constraint: AI context windows are finite, and they degrade as they fill. This doc explains how APM engineers each Agent's context - how scoping is designed per role, how context flows between Agents during implementation, and how project state persists as a layered compression archive.
+APM's design starts from the two problems with long LLM conversations, described in the [Introduction](Introduction.md#the-problem): *context decay*, where the LLM recalls earlier decisions less reliably as context accumulates, and *context pressure*, where each call costs more and the conversation nears the context window's limit. Context engineering is the practice of managing everything a model's context holds, keeping its limited attention and tokens on relevant material. This doc explains the choices APM makes and the intent behind them.
 
-For the coordination mechanisms themselves, see [Agent Orchestration](Agent_Orchestration.md). For Agent roles and responsibilities, see [Agent Types](Agent_Types.md). This doc explains the reasoning underneath.
+[Agent Orchestration](Agent_Orchestration.md) describes the mechanisms themselves. This doc covers the reasoning underneath them.
 
 ## Context Scoping
 
-Each Agent role operates with a deliberately limited view of the project. The scoping is intentional: each role's context budget is shaped by what it needs to do well.
+Each role sees a deliberately limited view of the project, shaped by what it needs to do its job.
 
 ### Planner
 
-The Planner dedicates its entire context window to planning. No execution history competes for space because the Planner does not participate in implementation. This is why APM separates planning from execution into distinct phases rather than having one Agent do both.
+The Planner gives its whole context window to planning and takes no part in implementation. Separating the two phases is meant to keep execution history from competing with the project's intent while that intent is still being settled.
 
-Having an entire conversation's context budget available allows the Planner to explore the codebase for deep understanding, conduct thorough discovery across multiple question rounds, cross-check findings against what actually exists, and decompose gathered context into planning documents through structured procedures. The quality of these documents determines the quality of everything that follows in the Implementation Phase.
+The Planner's conversation does not carry into implementation. It holds exploration, discarded options, and corrections, and only the end results, approved by you, move on in the Spec, the Plan, and the Rules. The Manager starts from these documents. Workers receive the Rules and the context each Task needs through its Task Prompt. The Planner's conversation can simply end.
 
 ### Manager
 
-The Manager operates one layer above implementation detail. Its default context is coordination-level: planning documents, the Tracker, the Index, and Task Logs. It goes deeper when needed - reading source files for Task Prompt construction, investigating implementation detail during review, or operating at any level when the User requests it, but returns to the coordination layer after each pass. This is what allows a single Manager to coordinate many Tasks across multiple Workers without its context becoming unmanageable.
+The Manager works one layer above implementation. Its default context is coordination-level: the planning documents, the Tracker, the Index, and Task Logs. It goes deeper when it needs to, reading source files to write a Task Prompt or to investigate a doubtful result, then returns to coordination. Staying at that level is intended to let one Manager coordinate many Tasks across several Workers without its context growing in proportion.
 
 ### Workers
 
-Workers receive [Task Prompts](Agent_Orchestration.md#how-task-prompts-are-built) from the Manager and accumulate working context as they execute. A Worker assigned multiple Tasks across a project receives each when the Manager determines the Task is ready, building familiarity with the domain as it progresses. If the Worker's context fills up mid-project, it Hands off to a fresh instance that continues from where the previous left off.
+Each Worker sees its Task Prompt, the Rules, and the working context it builds over its Tasks. It generally never reads the Spec, the Plan, or the Tracker: the Manager writes what the Task needs from them into the prompt. The less coordination context a Worker carries, the more of its window remains for reading code, implementing, debugging, and validating.
 
-A Worker never references the Spec, the Plan, or the Tracker. Each Task Prompt functions as a complete execution plan - dependency context, Spec content, and Plan Task fields synthesized into a single self-contained document. Every piece of coordination-level context the Worker does not carry is space available for the actual work: reading code, writing implementations, debugging, running validation.
+A Worker develops working knowledge in its conversation across the Tasks of its domain. Familiarity is the gain: the Manager can send a brief reminder about the Worker's own earlier work instead of full context. Decay is the cost, as the conversation grows, but can be countered using Handoffs. Workers still launch subagents for investigation or debugging, which keeps that load out of their own context.
 
-## Context During Implementation
+## Context Across Conversations
 
-During the Implementation Phase, the Manager and Workers exchange context through the [Message Bus](Agent_Orchestration.md#the-message-bus) without ever sharing a context window. This isolation is what keeps each Agent's context focused.
+The Manager and Workers each have their own context, and only what the Message Bus carries passes between them. This matters because Workers share a codebase and can read each other's output, but not the reasoning behind it: why it was built that way and how it connects to other work. The Manager holds that reasoning, since it assigned and reviewed the earlier work, so it supplies whatever the next Worker lacks.
 
-### How the Manager Stays Lean
+This depends on where the session's state lives. All of it sits in files outside any agent's context window, so a conversation can end, fill, or be compacted without losing the session's state or history.
 
-The Manager's context could easily bloat since it coordinates every Task, reviews every outcome, and maintains all project state. Two mechanisms keep it manageable:
+The Manager coordinates every Task and reviews every outcome; its context grows with them. A compression pipeline is meant to prevent that, with each layer compressing the one below it. A Worker's Task Log reduces its reading, debugging, and iteration to the outcome and what the Manager needs to know. Additionally, at each Stage boundary, the Manager condenses the Stage's Task Logs into a summary in the Index and distils its working notes into Memory notes. Each layer is progressively smaller than the one before. For example, a future Manager uses the compressed Index to understand the big picture of the project and can operate from it, instead of reconstructing the project's entire coordination history from all the older Task Logs.
 
-- **Task Logs as abstraction** - The Manager reviews Task Logs rather than source code. A Worker might consume thousands of tokens reading files, debugging, and iterating. The Task Log compresses all of that into a structured summary, giving the Manager the outcome without the execution noise.
-- **Stage summaries as compression** - At Stage boundaries, the Manager distills Task Logs and working notes into a Stage summary in the [Index](Agent_Orchestration.md#the-index). Detail from individual Tasks compresses into Stage-level observations. An incoming Manager after Handoff reads these summaries first, encountering the most compressed form of the project's history before loading recent detail.
+The same reasoning explains why a Handoff is preferred to compaction. Compaction replaces the conversation's history with a summary, trading detail for space. Each later compaction condenses the summary further. A Handoff instead writes its record to files that persist. Successive Handoffs leave a durable history of the role's work, and you can invoke one early, before decay sets in.
 
-### Cross-Agent Dependencies
-
-Workers share a codebase, so they can see each other's outputs: the files, the code, the artifacts. What they lack is the context behind that work: why it was built that way, what architectural decisions shaped it, where to look for integration points, what constraints apply.
-
-The Manager bridges this gap. It oversaw both sides of the dependency, assigned the producer Task, reviewed the outcome, and understands the design intent from the Spec. When constructing the consumer's Task Prompt, the Manager reads the producer's Task Log, extracts the key outputs and integration details, and provides the consuming Worker with the context it cannot get from the code alone.
-
-When a Task depends on work done by the same Worker, the context is lighter. The Worker already has working familiarity from executing the producer Task, so the Manager provides recall anchors and file paths rather than full explanations.
-
-### Cross-Instance Dependencies
-
-When a Worker [Handoff](Agent_Orchestration.md#handoff-and-continuity) occurs, the incoming instance loads only current-Stage Task Logs to keep its context lean for execution. This means it lacks the previous instance's working familiarity with earlier Tasks, since previous-Stage work is outside its context.
-
-The Manager accounts for this by treating those dependencies as if a different Worker had done the work, providing more comprehensive context in future Task Prompts. The incoming Worker can execute reliably without context gaps, while the lean log loading maintains efficiency.
-
-## Project State Persistence
-
-Every piece of project state in APM exists as a file outside any Agent's context window. When a conversation ends or an Agent's context fills up, the project state survives in the file system.
-
-The [Tracker](Agent_Orchestration.md#the-tracker) holds live project state, reflecting the current moment. [Memory](Agent_Orchestration.md#file-based-memory) is a separate hierarchy that captures project history through Task Logs, Handoff Logs, and the Index. Together they form a compression pipeline: execution detail flows into Task Logs; Task Logs compress into Stage summaries; working notes distill into Memory notes in the Index. Each layer reduces volume while preserving what matters for coordination.
-
-An incoming Manager after Handoff reads the Index first - the most compressed and durable layer, then the Tracker for current state, then relevant Task Logs for recent detail. Each layer adds specificity, but the compressed layers load first so the Agent has the big picture before the details.
-
-[Session archives](Workflow_Overview.md#session-continuation) extend this principle across APM sessions. The archive is a contextual snapshot. A new Planner examines relevant archives during Context Gathering and validates findings against the current codebase, enabling iterative development without starting from zero.
+[Session archives](Workflow_Overview.md#session-continuation) carry the same principle across sessions. A new Planner examines relevant archives during Context Gathering and checks them against the current codebase, so each session can build on the last.
 
 ## Related Docs
 
 - [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
 - [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Customization Guide](Customization_Guide.md) - Custom repositories and template customization
+- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation

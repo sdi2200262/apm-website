@@ -7,11 +7,11 @@ sidebar_position: 3
 
 # Quick Reference
 
-A handy cheat sheet for APM sessions. All the commands, file paths, and workflows in one place.
+A reference for APM sessions: the commands, file paths, and workflows in one place.
 
-## APM Commands
+## Commands
 
-You run these as slash commands in your Agent conversations:
+Invoke these in your agent conversations with `/` (including command skills in Copilot and Antigravity). In Codex, use `$` instead:
 
 | Command | What it does |
 | :--- | :--- |
@@ -19,92 +19,96 @@ You run these as slash commands in your Agent conversations:
 | `/apm-2-initiate-manager` | Start the Manager |
 | `/apm-3-initiate-worker <id>` | Start a Worker with the given identifier (e.g. `frontend-agent`) |
 | `/apm-4-check-tasks` | Deliver a Task Prompt to the current Worker |
-| `/apm-5-check-reports` | Deliver a Task Report to the Manager (add a Worker id to target a specific one) |
+| `/apm-5-check-reports` | Deliver a Task Report to the Manager (add one or more Worker ids to target specific Workers) |
 | `/apm-6-handoff-manager` | Initiate Manager Handoff before context fills |
 | `/apm-7-handoff-worker` | Initiate Worker Handoff before context fills |
-| `/apm-8-summarize-session` | Generate a structured session summary (new conversation, or current Manager chat if context allows) |
-| `/apm-9-recover <role>` | Reconstruct context after compaction (e.g. `manager` or `frontend-agent`) |
+| `/apm-8-summarize-session` | Write a structured session summary and offer to archive (run in a new conversation) |
+| `/apm-9-recover [role]` | Reconstruct context after compaction or a lost conversation (e.g. `manager` or `frontend-agent`) |
 
-## CLI Commands
+## CLI
 
 You run these in your terminal from the project workspace:
 
 | Command | What it does |
 | :--- | :--- |
-| `apm init` | Initialize APM with official templates |
-| `apm custom -r owner/repo` | Initialize from a custom repository |
-| `apm update` | Update templates to the latest compatible version |
-| `apm archive` | Archive current session to `.apm/archives/` |
+| `apm init` | Initialise APM with official templates |
+| `apm custom -r owner/repo` | Initialise from a custom repository |
+| `apm update` | Archive the current session, then update templates to the latest compatible version |
+| `apm archive` | Archive the current session to `.apm/archives/` and remove installed assistant files |
 | `apm archive --name my-feature` | Archive with a custom name |
 | `apm add -a copilot` | Add an assistant to an existing installation |
 | `apm remove -a copilot` | Remove an assistant |
 | `apm status` | Show current installation state |
 
-## APM Project Structure
+For every option, see the [CLI Guide](CLI_Guide.md).
+
+## Project Structure
 
 This is what `.apm/` looks like during a session:
 
 ```text
 .apm/
 ├── spec.md              # What to build (design decisions, constraints, workspace)
-├── plan.md              # How work is organized (Stages, Tasks, dependencies)
-├── tracker.md           # Live project state (the Manager's dashboard)
+├── plan.md              # How work is organised (Stages, Tasks, dependencies)
+├── tracker.md           # Live session state (the Manager's dashboard)
 ├── metadata.json        # Installation metadata (source, version, assistants)
+├── session-summary.md   # Optional, from /apm-8-summarize-session
 ├── memory/
 │   ├── index.md         # Durable observations and Stage summaries
 │   ├── stage-01/        # Task Logs for Stage 1
 │   │   ├── task-01-01.log.md
 │   │   └── task-01-02.log.md
-│   └── handoffs/        # Handoff Logs per Agent
+│   └── handoffs/        # Handoff Logs per agent
 │       ├── manager/
 │       └── frontend-agent/
-├── bus/                  # Message Bus (file-based Agent communication)
+├── bus/                  # Message Bus (file-based agent communication)
 │   ├── manager/
 │   │   └── handoff.md
 │   └── frontend-agent/
 │       ├── task.md       # Task Prompt (Manager to Worker)
 │       ├── report.md     # Task Report (Worker to Manager)
 │       └── handoff.md    # Handoff Prompt
+├── worktrees/            # Git worktrees for parallel dispatch
 └── archives/             # Archived sessions from previous runs
+    └── index.md          # One row per archived session
 ```
 
-The Rules file lives outside `.apm/` - it's written to your platform's rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `AGENTS.md`) so your assistant reads it automatically.
+The Rules live outside `.apm/` - they are written to your assistant's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others), where your assistant reads them automatically.
 
 ## Planning Phase
 
-1. **Start the Planner** - Open a new Agent conversation, run `/apm-1-initiate-planner`
-2. **Answer questions** - Three rounds covering vision, requirements, and implementation approach
+1. **Start the Planner** - Open a new agent conversation, run `/apm-1-initiate-planner`
+2. **Answer questions** - Three rounds: existing materials and vision, technical requirements, and implementation approach and quality
 3. **Approve the Understanding Summary** - Verify the Planner understands the project
 4. **Review planning documents** - Approve the Spec, then the Plan, then the Rules
-5. **Done** - The Planner initializes the Message Bus. Open a new conversation for the Manager.
+5. **Done** - The Planner initialises the Message Bus. Open a new conversation for the Manager.
 
 ## Implementation Phase
 
-1. **Start the Manager** - Run `/apm-2-initiate-manager`, review and approve its Understanding Summary
+1. **Start the Manager** - Run `/apm-2-initiate-manager`, review and approve its Understanding Summary and version control conventions
 2. **Manager dispatches** - It writes a Task Prompt and tells you which Worker to go to
 3. **Start or switch to the Worker** - Run `/apm-3-initiate-worker <id>` for new Workers, or `/apm-4-check-tasks` for existing ones
 4. **Worker executes** - It follows the Task Prompt, validates results, and logs the outcome
-5. **Carry the report** - Run `/apm-5-check-reports` in the Manager's conversation
+5. **Deliver the report** - Run `/apm-5-check-reports` in the Manager's conversation
 6. **Manager reviews** - Proceeds, issues a follow-up, or modifies planning documents
 7. **Repeat** - Steps 2-6 cycle until all Stages complete
 
 ## Handoff
 
-When an Agent's context fills or quality degrades:
+When an agent's context fills or quality degrades:
 
 1. Run `/apm-6-handoff-manager` or `/apm-7-handoff-worker` in the outgoing conversation
 2. Open a new conversation for the same role
-3. Run the same initiation command - the incoming Agent auto-detects the Handoff
+3. Run the same initiation command - the incoming agent auto-detects the Handoff
+4. Verify the incoming agent's Understanding Summary before continuing
 
-Handoff produces cleaner context than recovery (`/apm-9-recover`), so prefer it when you can anticipate the limit.
+Handoff produces cleaner context than recovery (`/apm-9-recover`). Prefer it when the context limit is approaching.
 
 ## After Completion
 
-When the Manager finishes all Stages, you can archive the session and start fresh. Archives are preserved so future Planners can build on past work.
+When the Manager finishes all Stages, you can archive the session and begin a new one. To leave future Planners a summary, run `/apm-8-summarize-session` in a new conversation first.
 
 ```bash
-apm archive                        # snapshot .apm/ to archives, clean workspace
-apm init                           # start a new session (the Planner detects past archives)
+apm archive                        # move .apm/ artifacts to archives, clean workspace
+apm init                           # reinstall and start a new session (the Planner detects past archives)
 ```
-
-You can also run `/apm-8-summarize-session` first to generate a summary that future Planners can reference.
