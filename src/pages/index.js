@@ -133,10 +133,10 @@ function GettingStarted() {
     <>
       <div className="steps hover-only">
         <h3>1. Install the CLI</h3>
-        <p>APM installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later.</p>
+        <p>APM supports Claude Code, Codex CLI, Cursor, GitHub Copilot, Antigravity, and OpenCode. It installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later:</p>
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
-        <p>In your project directory, run the command below to install APM's commands, guides, skills, and document templates. Pick your assistant's flag here, or run interactively and select when the CLI prompts you.</p>
+        <p>In your project directory, run the command below to install APM's commands, guides, skills, and document templates. Select your assistant when the CLI prompts you, or pass it with <code>-a</code>:</p>
         <div className="pick" role="group" aria-label="AI assistant">
           {ASSISTANTS.map(([id, name, file, mask]) => (
             <button key={id} type="button" aria-pressed={pick === id} onClick={() => setPick(pick === id ? null : id)}>

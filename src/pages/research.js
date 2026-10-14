@@ -36,27 +36,25 @@ export default function Research() {
                 <dt>Date</dt><dd>{thesis.date}</dd>
               </dl>
               <p>
-                APM v1 has been presented and empirically evaluated as a framework for AI-assisted software engineering. The work
-                describes its design and introduces a reproducible methodology for evaluating frameworks built on top of coding agents
-                and similar human-in-the-loop workflows. To our knowledge, this is among the first methodologies for evaluating these
-                frameworks in use by developers.
+                This thesis presents the design and implementation of APM v1 and a reproducible methodology for comparing
+                frameworks on top of coding agents.
               </p>
               <p>
-                The methodology was applied in a comparative case study with twelve developers. Each attempted the same demanding
-                software task once with APM and once with GitHub&rsquo;s <button type="button" className="term" aria-controls="speckit-note" {...props('speckit')}>Spec-kit</button>.
-                The comparison examines cost, development process, functional outcomes, and developer perception.
+                The methodology is applied in a case study with twelve developers. Each completed the same demanding software task
+                in two sessions, once with APM and once with GitHub&rsquo;s <button type="button" className="term" aria-controls="speckit-note" {...props('speckit')}>Spec-kit</button>.
+                Both frameworks ran on Claude Code with Claude Opus 4.7 or Claude Sonnet 4.6. The comparison covers economic cost,
+                process, functional test scores, and developer perception.
               </p>
               <p>A paper adaptation is in preparation.</p>
               <Note id="speckit-note" active={!!active} wave={draw?.note}>
-                The comparison used the Spec-kit releases available in the study&rsquo;s time window. The findings concern those
-                versions, which predate the current release.
+                The study used the Spec-kit releases available during its sessions. The findings concern those versions.
               </Note>
             </div>
             <div className={styles.rail}>
               <div className={styles.mark}>{draw && <Mark seed={draw.seed} size={144} intro />}</div>
               <nav className={styles.links} aria-label="Publications">
                 <Link to="/research/thesis/introduction">Read thesis</Link>
-                <a href={pdf} download="apm-thesis.pdf">Download PDF</a>
+                <a href={pdf} download="apm-thesis.pdf">Download thesis PDF</a>
                 <Link to="/research/paper">Read paper</Link>
               </nav>
             </div>
