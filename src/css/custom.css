@@ -1,578 +1,297 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Site-wide book style (design: "APM Website Redesign"). Holds the palette for every page, maps
+   Docusaurus/Infima variables onto it for the docs, and styles the shared header parts.
+   Landing page layout lives in src/pages/index.css. Theme = Docusaurus's [data-theme] on <html>. */
 
-/* ============================================
-   APM Design System — CSS Variables
-   ============================================ */
+@import '@fontsource/literata/400.css';
+@import '@fontsource/literata/400-italic.css';
+@import '@fontsource/literata/600.css';
+@import '@fontsource/jetbrains-mono/400.css';
 
-:root {
-  /* Grid row height — single source of truth, referenced by grid + ContentViewer */
-  --apm-row-h: 50px;
+/* Book, light. Gruvbox light, MIT/X11. https://github.com/morhetz/gruvbox/blob/master/colors/gruvbox.vim */
+html[data-theme='light'] {
+  --apm-paper: #FBF1C7;  /* light bg0 */
+  --apm-deep: #EBDBB2;   /* light bg1 */
+  --apm-ink: #3C3836;    /* light fg1 */
+  --apm-soft: #D5C4A1;   /* light bg2 */
+  --apm-link: #1F7A74;   /* own, the logo's teal */
+  --apm-hover: #14524E;  /* own, teal darkened */
+  --apm-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233C3836' stroke-width='1.75' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"); /* Lucide search in ink (phones) */
+}
 
-  /* APM Custom Properties — Dark (default)
-     Neutrals tinted with accent hue (175°) at low saturation for cohesion */
-  --apm-bg: #0e1112;
-  --apm-grid: #1a1f1f;
-  --apm-border: #252c2c;
-  --apm-t1: #e2e7e6;
-  --apm-t2: #8e9a99;
-  --apm-t3: #586060;
-  --apm-accent: #3aada5;
-  --apm-accent2: #2a8d86;
-  --apm-cmd-bg: #121616;
-  --apm-cmd-border: #1e2424;
+/* Book, dark. Gruvbox dark, MIT/X11. Same source. */
+html[data-theme='dark'] {
+  --apm-paper: #282828;  /* dark bg0 */
+  --apm-deep: #3C3836;   /* dark bg1 */
+  --apm-ink: #EBDBB2;    /* dark fg1 */
+  --apm-soft: #504945;   /* dark bg2 */
+  --apm-link: #3AADA5;   /* own, the logo's teal lightened */
+  --apm-hover: #6FCFC8;  /* own, teal lightened more */
+  --apm-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23EBDBB2' stroke-width='1.75' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+}
 
-  /* Map to Docusaurus Infima variables */
-  --ifm-color-primary: #3aada5;
-  --ifm-color-primary-dark: #2a8d86;
-  --ifm-color-primary-darker: #237d77;
-  --ifm-color-primary-darkest: #1a5f5a;
-  --ifm-color-primary-light: #4fbfb7;
-  --ifm-color-primary-lighter: #60cac3;
-  --ifm-color-primary-lightest: #84d9d3;
+/* Infima -> palette. Greys (emphasis-*) become mixes of ink and paper so nothing reads as neutral grey. */
+html[data-theme] {
+  --ifm-color-primary: var(--apm-link);
+  --ifm-color-primary-dark: var(--apm-hover);
+  --ifm-color-primary-darker: var(--apm-hover);
+  --ifm-color-primary-darkest: var(--apm-hover);
+  --ifm-color-primary-light: var(--apm-link);
+  --ifm-color-primary-lighter: var(--apm-link);
+  --ifm-color-primary-lightest: var(--apm-link);
+  --ifm-background-color: var(--apm-paper);
+  --ifm-background-surface-color: var(--apm-paper);
+  --ifm-font-color-base: var(--apm-ink);
+  --ifm-font-color-secondary: color-mix(in srgb, var(--apm-ink) 75%, var(--apm-paper));
+  --ifm-heading-color: var(--apm-ink);
+  --ifm-color-emphasis-100: var(--apm-deep);
+  --ifm-color-emphasis-200: var(--apm-soft);
+  --ifm-color-emphasis-300: var(--apm-soft);
+  --ifm-color-emphasis-600: color-mix(in srgb, var(--apm-ink) 70%, var(--apm-paper));
+  --ifm-color-emphasis-700: color-mix(in srgb, var(--apm-ink) 80%, var(--apm-paper));
+  --ifm-color-emphasis-800: var(--apm-ink);
 
-  --ifm-background-color: #0e1112;
-  --ifm-background-surface-color: #121616;
-  --ifm-font-color-base: #e2e7e6;
-  --ifm-font-color-secondary: #8a9594;
-  --ifm-heading-color: #e2e7e6;
+  --ifm-font-family-base: 'Literata', Georgia, serif;
+  --ifm-heading-font-family: 'Literata', Georgia, serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', ui-monospace, monospace;
+  --ifm-font-size-base: 112.5%; /* 18px */
+  --ifm-line-height-base: 1.6;
+  --ifm-heading-font-weight: 600;
+  --ifm-global-radius: 0;
+  --ifm-global-shadow-lw: none;
+  --ifm-global-shadow-md: none;
+  --ifm-global-shadow-tl: none;
 
-  --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
-  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', monospace;
-  --ifm-heading-font-family: 'Inter', system-ui, -apple-system, sans-serif;
-
-  --ifm-global-radius: 3px;
-  --ifm-code-border-radius: 3px;
-  --ifm-button-border-radius: 3px;
-  --ifm-card-border-radius: 3px;
-
-  --ifm-code-font-size: 85%;
-  --ifm-line-height-base: 1.75;
-
-  --ifm-navbar-background-color: #0e1112;
+  --ifm-link-color: var(--apm-link);
+  --ifm-link-hover-color: var(--apm-hover);
+  --ifm-navbar-height: 56px;
+  --ifm-navbar-background-color: var(--apm-paper);
   --ifm-navbar-shadow: none;
-  --ifm-footer-background-color: #121616;
+  --ifm-navbar-link-color: var(--apm-ink);
+  --ifm-navbar-link-hover-color: var(--apm-ink);
+  --ifm-navbar-search-input-background-color: var(--apm-deep);
+  --ifm-navbar-search-input-color: var(--apm-ink);
+  --ifm-navbar-search-input-placeholder-color: color-mix(in srgb, var(--apm-ink) 60%, var(--apm-deep));
+  --ifm-footer-background-color: var(--apm-paper);
+  --ifm-footer-color: var(--apm-ink);
+  --ifm-footer-link-color: var(--apm-ink);
+  --ifm-footer-link-hover-color: var(--apm-ink);
+  --ifm-menu-color: var(--apm-ink);
+  --ifm-menu-color-active: var(--apm-ink);
+  --ifm-menu-color-background-active: var(--apm-deep);
+  --ifm-menu-color-background-hover: var(--apm-deep);
+  --ifm-toc-border-color: var(--apm-soft);
+  --ifm-hr-border-color: var(--apm-soft);
+  --ifm-table-border-color: var(--apm-soft);
+  --ifm-table-stripe-background: transparent;
+  --ifm-code-background: var(--apm-deep);
+  --ifm-code-font-size: 85%;
+  --ifm-breadcrumb-item-background-active: var(--apm-deep);
+  --ifm-breadcrumb-color-active: var(--apm-ink);
+  --docusaurus-highlighted-code-line-bg: var(--apm-soft);
 
-  --ifm-link-color: #3aada5;
-  --ifm-link-hover-color: #4fbfb7;
+  /* Search plugin (@easyops-cn/docusaurus-search-local): flat results, deep fill on the active hit. */
+  --search-local-modal-background: var(--apm-paper);
+  --search-local-modal-shadow: none;
+  --search-local-hit-background: var(--apm-paper);
+  --search-local-hit-shadow: none;
+  --search-local-hit-color: var(--apm-ink);
+  --search-local-hit-active-color: var(--apm-ink);
+  --search-local-highlight-color: var(--apm-link);
+  --search-local-muted-color: color-mix(in srgb, var(--apm-ink) 60%, var(--apm-paper));
+  --search-local-input-active-border-color: var(--apm-ink);
 
-  --ifm-menu-color: #8a9594;
-  --ifm-menu-color-active: #3aada5;
-  --ifm-menu-color-background-active: rgba(58, 173, 165, 0.08);
+  /* Admonition edges use the mark's paints: note = ink, tip/info = teal, caution = ochre, danger = red. */
+  --ifm-color-secondary-dark: var(--apm-ink);
+  --ifm-color-success-dark: var(--apm-link);
+  --ifm-color-info-dark: var(--apm-link);
+  --ifm-color-warning-dark: #E2A52E;
+  --ifm-color-danger-dark: #B4382A;
 
-  --ifm-toc-link-color: #8a9594;
-  --ifm-toc-border-color: #252c2c;
-
-  --ifm-hr-border-color: #252c2c;
-  --ifm-table-border-color: #252c2c;
-  --ifm-table-stripe-background: rgba(255, 255, 255, 0.02);
-
-  --ifm-breadcrumb-color-active: #3aada5;
-  --ifm-breadcrumb-item-background-active: rgba(58, 173, 165, 0.08);
-
-  --docusaurus-highlighted-code-line-bg: rgba(58, 173, 165, 0.1);
-
-  /* Admonition colors — muted to match dark aesthetic */
-  --ifm-color-info: #5580aa;
-  --ifm-color-info-dark: #4a7099;
-  --ifm-color-info-contrast-foreground: #a0bdd8;
-  --ifm-color-success: #3aada5;
-  --ifm-color-success-dark: #2a8d86;
-  --ifm-color-success-contrast-foreground: #84d9d3;
-  --ifm-color-warning: #c9943e;
-  --ifm-color-warning-dark: #b38435;
-  --ifm-color-warning-contrast-foreground: #e0c088;
-  --ifm-color-danger: #c94a4a;
-  --ifm-color-danger-dark: #b33e3e;
-  --ifm-color-danger-contrast-foreground: #e09a9a;
+  background: var(--apm-paper);
 }
 
-/* Light theme overrides */
-[data-theme='light'] {
-  /* Neutrals tinted with accent hue (175°) for cohesion with dark theme */
-  --apm-bg: #f4f6f6;
-  --apm-grid: #e1e5e4;
-  --apm-border: #cfd4d3;
-  --apm-t1: #1a2121;
-  --apm-t2: #5a6565;
-  --apm-t3: #8e9797;
-  --apm-accent: #2a8d86;
-  --apm-accent2: #237d77;
-  --apm-cmd-bg: #e8ecec;
-  --apm-cmd-border: #cfd4d3;
+::selection { background: var(--apm-ink); color: var(--apm-paper); }
 
-  --ifm-color-primary: #2a8d86;
-  --ifm-color-primary-dark: #237d77;
-  --ifm-color-primary-darker: #1d6d68;
-  --ifm-color-primary-darkest: #155450;
-  --ifm-color-primary-light: #3aada5;
-  --ifm-color-primary-lighter: #4fbfb7;
-  --ifm-color-primary-lightest: #84d9d3;
+/* Shared header parts (landing header and docs navbar): brand, GitHub + stars. */
+.brand { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; color: var(--apm-ink) !important; text-decoration: none !important; } /* a button-like link: never teal */
+.brand:hover .brand-name { text-decoration: underline; text-underline-offset: 3px; }
+.gh { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+.gh a { color: var(--apm-ink); text-decoration: none; }
+.gh a:hover { color: var(--apm-ink); text-decoration: underline; }
+.stars { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; opacity: .75; user-select: none; }
+@media (max-width: 599px), (any-hover: none) { .brand-name { display: none; } }
 
-  --ifm-background-color: #f4f6f6;
-  --ifm-background-surface-color: #e8ecec;
-  --ifm-font-color-base: #1a2121;
-  --ifm-font-color-secondary: #5a6565;
-  --ifm-heading-color: #1a2121;
+/* Docs navbar laid out like the landing header: same 1200px column and gutters, brand left, Docs +
+   GitHub on the right, then search; 14px, thin rule under it. */
+.navbar { padding: 0; border-bottom: 1px solid var(--apm-soft); }
+.navbar__inner { position: relative; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+@media (min-width: 900px) { .navbar__inner { padding: 0 40px; } }
+/* Wide screens: search moves out into the right page margin, 24px after GitHub, so Docs and GitHub
+   sit exactly where they are on the landing page. Narrower: it stays inline as the last item. */
+@media (min-width: 1560px) { .navbar [class*='navbarSearchContainer'] { position: absolute; left: calc(100% - 16px); top: 50%; transform: translateY(-50%); } }
+.navbar__brand { margin-right: 24px; }
+.navbar__items--right { gap: 24px; }
+.navbar__item { padding: 0; }
+.navbar__link, .navbar__link--active { font-size: 14px; color: var(--apm-ink); }
+.navbar__link:hover { color: var(--apm-ink); text-decoration: underline; text-underline-offset: 3px; }
 
-  --ifm-navbar-background-color: #f4f6f6;
-  --ifm-footer-background-color: #e8ecec;
+/* Docs article: links underlined like the landing page; headings regular h1, 600 below. */
+.markdown a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.markdown h1 { font-weight: 400; }
+.markdown table th { background: var(--apm-deep); }
+.markdown blockquote { border-left-color: var(--apm-soft); color: inherit; }
+:not(pre) > code { border: 1px solid var(--apm-soft); padding: 1px 4px; }
+.alert { --ifm-alert-background-color: var(--apm-deep); --ifm-alert-background-color-highlight: var(--apm-soft); --ifm-alert-foreground-color: var(--apm-ink); border: 1px solid var(--apm-soft); border-left-width: 3px; }
+.theme-edit-this-page { font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
 
-  --ifm-link-color: #2a8d86;
-  --ifm-link-hover-color: #237d77;
+/* Code blocks as on the landing page: deep fill, soft outline, a teal "Copy" text link instead of
+   Docusaurus's icon buttons. Its module classes are hashed, so match on the stable prefix. */
+.theme-code-block { border: 1px solid var(--apm-soft); }
+.theme-code-block pre { background-color: var(--apm-deep) !important; } /* the Prism theme sets its own bg inline */
+.theme-code-block pre { padding-right: 80px; } /* room for the Copy link; lines wrap instead of running under it */
+.theme-code-block pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
+.theme-code-block [class*='buttonGroup'] { top: var(--ifm-pre-padding); }
+.theme-code-block [class*='buttonGroup'] button { opacity: 1; background: none; border: 0; padding: 0; line-height: 1.6; color: var(--apm-link); font: 14px 'Literata', Georgia, serif; text-decoration: underline; text-underline-offset: 3px; }
+.theme-code-block [class*='buttonGroup'] button:hover { color: var(--apm-hover); }
+.theme-code-block [class*='buttonGroup'] button > span { display: none; } /* the icons */
+.theme-code-block [class*='buttonGroup'] button:has([class*='copyButtonIcons'])::after { content: 'Copy'; }
+.theme-code-block [class*='buttonGroup'] button[class*='copyButtonCopied']::after { content: 'Copied'; }
+.theme-code-block [class*='buttonGroup'] button:has([class*='wordWrapButtonIcon']) { display: none; } /* lines always wrap */
 
-  --ifm-menu-color: #5a6565;
-  --ifm-menu-color-active: #2a8d86;
-  --ifm-menu-color-background-active: rgba(42, 141, 134, 0.08);
+/* Search box and results: square, hairline borders, no teal fill on the active hit. */
+.navbar__search-input { width: 180px; border: 1px solid var(--apm-soft); border-radius: 0; background: none; font: 14px 'Literata', Georgia, serif; }
+.navbar__search-input:focus { outline: 0; border-color: var(--apm-ink); }
+[class*='dropdownMenu'] { border: 1px solid var(--apm-soft); border-radius: 0 !important; }
+[class*='dropdownMenu'] [class*='suggestion'] { border-radius: 0; }
+[class*='suggestion'][class*='cursor'] { background: var(--apm-deep) !important; }
+.navbar [class*='searchHintContainer'] { gap: 0; }
+/* The plugin's ⌘/ctrl + K key chips become plain text after the placeholder: "Search (⌘ + K)". */
+.navbar kbd[class*='searchHint'] { border: 0 !important; background: none !important; box-shadow: none !important; padding: 0; margin: 0; font: 14px 'Literata', Georgia, serif; color: var(--ifm-navbar-search-input-placeholder-color); }
+.navbar kbd[class*='searchHint']:first-child::before { content: '('; }
+.navbar kbd[class*='searchHint']:first-child::after { content: '\00a0+\00a0'; }
+.navbar kbd[class*='searchHint']:last-child::after { content: ')'; }
 
-  --ifm-toc-link-color: #5a6565;
-  --ifm-toc-border-color: #cfd4d3;
+/* Sidebar: one hairline between it and the doc; hideable (config) via a quiet button at its bottom,
+   which leaves a thin full-height strip to bring it back. TOC: no outline. Current page: bold +
+   underlined (hover underlines too); no fills.
+   Category carets: thin Lucide chevron painted in ink via a mask (Infima's is a thick filled arrow). */
+.theme-doc-sidebar-container { border-right: 1px solid var(--apm-soft) !important; }
+/* Collapse bar / expand strip: part of the sidebar (its hairlines continue), no fills; only the thin
+   chevron (src/theme/Icon/Arrow) brightens on hover/focus. button[...] so the *Icon classes don't match. */
+button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !important; border-left: 0 !important; background: var(--apm-paper) !important; color: var(--apm-ink); }
+[role='button'][class*='expandButton'] { background: none !important; color: var(--apm-ink); border-bottom: 1px solid var(--apm-soft); }
+:is(button[class*='collapseSidebarButton'], [role='button'][class*='expandButton']):focus-visible { outline: 0; }
+/* Collapse/expand motion: Docusaurus animates only the sidebar width (0.2s) and snaps the main column's
+   max-widths, which jerks the content. Here the main column just fills what the sidebar leaves, and the doc
+   container's max-width eases with the sidebar on one curve, so the page reflows in one smooth slide. */
+@media (min-width: 997px) {
+  .theme-doc-sidebar-container { transition: width .35s cubic-bezier(.65, 0, .35, 1) !important; }
+  main[class*='docMainContainer'] { max-width: none !important; min-width: 0; }
+  main[class*='docMainContainer'] > .container { transition: max-width .35s cubic-bezier(.65, 0, .35, 1); }
+  [role='button'][class*='expandButton'] { animation: apm-load .25s ease; }
+}
+:is([class*='collapseSidebarButtonIcon'], [class*='expandButtonIcon']) { margin: 0 !important; opacity: .45; transition: opacity .2s; }
+:is(button[class*='collapseSidebarButton'], [role='button'][class*='expandButton']):is(:hover, :focus-visible) svg { opacity: 1; }
 
-  --ifm-hr-border-color: #cfd4d3;
-  --ifm-table-border-color: #cfd4d3;
-
-  --docusaurus-highlighted-code-line-bg: rgba(42, 141, 134, 0.1);
+/* Docusaurus's back-to-top is replaced by the up button in the theme switch dock (.totop). */
+.theme-back-to-top-button { display: none !important; }
+.table-of-contents__left-border { border-left: 0; }
+.menu__link--active:not(.menu__link--sublist) { background: none; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.menu__link:hover, .menu__caret:hover, .menu__list-item-collapsible:hover { background: none; }
+.menu__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.menu__caret:before, .menu__link--sublist-caret:after {
+  background: var(--apm-ink);
+  filter: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
 }
 
-/* ============================================
-   Global Styles
-   ============================================ */
+/* Table of contents, breadcrumbs, prev/next. */
+.table-of-contents__link { color: var(--ifm-font-color-secondary); }
+.table-of-contents__link:hover, .table-of-contents__link--active { color: var(--apm-ink); }
+.table-of-contents__link--active { font-weight: 600; }
+.breadcrumbs__link { background: none !important; }
+.breadcrumbs__item--active .breadcrumbs__link { text-decoration: underline; text-underline-offset: 3px; }
+.pagination-nav__link { border-color: var(--apm-soft); }
+.pagination-nav__link:hover { border-color: var(--apm-ink); }
+.pagination-nav__sublabel { color: var(--ifm-font-color-secondary); }
 
-html {
-  scroll-behavior: smooth;
+/* Phones/tablets (<997px): keep Docs + GitHub in the bar, as on the landing page (Infima hides them),
+   so the drawer only holds the docs navigation and its "Back to main menu" panel is dropped. */
+@media (max-width: 996px) {
+  .navbar__items--right > .navbar__item { display: inline-flex; }
+  .navbar__items--right { gap: 16px; }
+  .navbar-sidebar__back { display: none; }
+  /* Search: an icon square in the row (Docusaurus pins it absolutely over the links); focused, it widens over them. */
+  .navbar [class*='navbarSearchContainer'] { position: static !important; }
+  .navbar [class*='navbarSearchContainer']:focus-within { position: absolute !important; right: 24px; }
+  .navbar__search-input { width: 32px; padding: 0; color: transparent; background: var(--apm-search-icon) center / 16px no-repeat; }
+  .navbar__search-input::placeholder { color: transparent; }
+  .navbar [class*='searchHintContainer'] { display: none; } /* no (⌘ + K) next to the icon */
+  .navbar__search-input:focus { width: 220px; padding: 0 12px; color: var(--apm-ink); background: var(--apm-paper); }
+}
+.navbar-sidebar { background: var(--apm-paper); }
+.navbar-sidebar__brand { border-bottom: 1px solid var(--apm-soft); }
+
+/* Site footer (src/theme/Footer): the landing page footer strip — links left, licence right, same
+   1200px column; stacked and centred on phones. */
+.site-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 24px; width: 100%; max-width: 1200px; min-height: 56px; margin: 0 auto; padding: 0 24px 24px; font-size: 14px; }
+.site-footer nav { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+html.docs-wrapper .site-footer { margin-top: 88px; } /* same gap above the footer as the landing page's section padding */
+.site-footer nav a { color: var(--apm-ink); text-decoration: none; }
+.site-footer nav a:hover { color: var(--apm-ink); text-decoration: underline; }
+.site-footer span a { text-decoration: underline; text-underline-offset: 3px; }
+@media (min-width: 900px) { .site-footer { padding: 0 40px 24px; } }
+@media (max-width: 599px), (any-hover: none) {
+  .site-footer { flex-direction: column; justify-content: center; text-align: center; padding: 16px 24px; }
+  .site-footer nav { justify-content: center; }
 }
 
-body {
-  font-family: var(--ifm-font-family-base);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* Page fade, shared with the landing page (.landing-page in index.css): the docs fade in when you
+   arrive (load, or from the landing page). Docs keep one Layout across doc pages, so moving between
+   docs does not re-fade. No fill-mode: the animation is dropped once done. */
+@keyframes apm-load { from { opacity: 0; } }
+html.docs-wrapper :is(.navbar, .main-wrapper) { animation: apm-load .8s cubic-bezier(.4, 0, .2, 1); }
+
+/* Theme switch dock (src/components/ThemeSwitch.js): bottom-right pill, 38px closed (selected icon only), 76px
+   open on hover/focus, with an up button above it. .away (set in JS: scrolled down, and the mouse is not in the
+   160x180 bottom-right corner) slides the dock off; keyboard focus also keeps it. Touch screens always keep it. */
+.dock { position: fixed; z-index: 30; right: 12px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: flex-end; gap: 8px; transition: transform .45s cubic-bezier(.65, 0, .35, 1); view-transition-name: apm-dock; }
+.dock.away:not(:has(:focus-visible)) { transform: translateX(64px); }
+@media (any-hover: none) { .dock.away:not(:has(:focus-visible)) { transform: none; } } /* touch: no hover to bring it back, so it stays */
+/* Up button: same marker + thin icon as the switch; only there once the page is scrolled past 400px (.on). */
+.totop { position: relative; width: 38px; height: 38px; display: grid; place-items: center; appearance: none; margin: 0; padding: 0; border: 0; background: none; color: var(--apm-ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+.totop.on { opacity: 1; pointer-events: auto; }
+.totop svg { position: relative; width: 20px; height: 20px; }
+.totop:focus-visible { outline: 2px solid var(--apm-link); outline-offset: 3px; }
+.pill { position: relative; width: 38px; height: 38px; overflow: hidden; transition: width .14s cubic-bezier(.4, 0, 1, 1); }
+/* Open on hover (pointer devices), keyboard focus, or .open (touch: toggled by tapping the selected icon). */
+.pill:has(:focus-visible), .pill.open { width: 76px; transition: width .3s cubic-bezier(.22, 1, .36, 1); }
+@media (any-hover: hover) { .pill:hover { width: 76px; transition: width .3s cubic-bezier(.22, 1, .36, 1); } }
+.track { position: absolute; top: 0; right: 0; width: 76px; height: 38px; } /* right-anchored: the closed pill shows the right (selected) slot */
+.ind { position: absolute; background: var(--apm-paper); border: 1px solid var(--apm-ink); transition: all .5s cubic-bezier(.34, 1.45, .55, 1), background-color .45s ease-in-out .35s, border-color .45s ease-in-out .35s; }
+.pill button { appearance: none; margin: 0; padding: 0; border: 0; background: none; cursor: pointer; position: absolute; top: 0; width: 38px; height: 38px; display: grid; place-items: center; color: var(--apm-ink); opacity: .45; transition: opacity .35s ease .08s, color .45s ease-in-out .35s; }
+.pill button:is([aria-pressed='true'], :hover) { opacity: 1; }
+.pill button:focus-visible { outline: none; }
+.pill svg { width: 20px; height: 20px; transform: scale(.88); transition: transform .45s cubic-bezier(.34, 1.45, .55, 1) .05s; }
+.pill button[aria-pressed='true'] svg { transform: scale(1); }
+
+/* Theme change: slow cross-fade of the whole page; the fade runs from 32% to 82% of 0.9s. The switch is excluded. */
+@keyframes apm-out { 0%, 32% { opacity: 1; } 82%, 100% { opacity: 0; } }
+@keyframes apm-in { 0%, 32% { opacity: 0; } 82%, 100% { opacity: 1; } }
+::view-transition-old(root) { animation: apm-out .9s ease-in-out both; mix-blend-mode: plus-lighter; }
+::view-transition-new(root) { animation: apm-in .9s ease-in-out both; mix-blend-mode: plus-lighter; }
+::view-transition-group(apm-dock), ::view-transition-new(apm-dock) { animation: none; mix-blend-mode: normal; }
+::view-transition-old(apm-dock) { display: none; }
+::view-transition { pointer-events: none; } /* let hover reach the page during the fade, so the open switch stays open */
 
-
-/* ============================================
-   Navbar — Docs pages only
-   ============================================ */
-
-.navbar {
-  border-bottom: 1px solid var(--apm-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: var(--apm-bg) !important;
-}
-
-/* backdrop-filter creates a containing block for position:fixed children,
-   trapping the mobile sidebar inside the 60px navbar. Disable it when open. */
-.navbar.navbar-sidebar--show {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.navbar__title {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: -0.3px;
-}
-
-.navbar__link {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* ============================================
-   Sidebar
-   ============================================ */
-
-.menu__link {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  border-radius: 3px;
-}
-
-.menu__link--active {
-  color: var(--apm-accent) !important;
-}
-
-.menu__list-item-collapsible:hover {
-  background: rgba(58, 173, 165, 0.06);
-}
-
-.theme-doc-sidebar-container {
-  border-right: 1px solid var(--apm-border) !important;
-}
-
-.theme-doc-sidebar-menu {
-  padding: 8px 0;
-}
-
-.menu__list .menu__list {
-  border-left: 1px solid var(--apm-border);
-  margin-left: 12px;
-  padding-left: 0;
-}
-
-/* ============================================
-   Doc Article
-   ============================================ */
-
-.theme-doc-markdown {
-  padding: 0 8px;
-}
-
-.markdown h1:first-child {
-  border-bottom: 1px solid var(--apm-border);
-  padding-bottom: 16px;
-  margin-bottom: 24px;
-  font-size: 1.8rem;
-  letter-spacing: -0.5px;
-}
-
-.markdown h2 {
-  border-bottom: 1px solid var(--apm-border);
-  padding-bottom: 8px;
-  margin-top: 40px;
-  font-size: 1.2rem;
-  letter-spacing: -0.3px;
-}
-
-.markdown h3 {
-  font-size: 1.05rem;
-  letter-spacing: -0.2px;
-  font-weight: 600;
-  margin-top: 32px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid var(--apm-border);
-}
-
-.markdown h1,
-.markdown h2 {
-  font-family: 'Inter', system-ui, sans-serif;
-  letter-spacing: -0.3px;
-}
-
-.markdown h4 {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 1.02rem;
-  font-weight: 500;
-  letter-spacing: -0.2px;
-  margin-top: 20px;
-  margin-bottom: 16px;
-  color: var(--ifm-heading-color);
-  text-decoration: underline;
-  text-decoration-color: var(--apm-border);
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
-  display: inline-block;
-}
-
-.markdown p {
-  line-height: 1.8;
-  color: var(--apm-t2);
-  margin-bottom: 1rem;
-}
-
-/* Lists */
-.markdown ul,
-.markdown ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
-  color: var(--apm-t2);
-  line-height: 1.8;
-}
-
-.markdown li {
-  margin-bottom: 0.3rem;
-  font-size: 0.95rem;
-}
-
-.markdown li::marker {
-  color: var(--apm-accent);
-}
-
-.markdown li > p {
-  margin-bottom: 0.3rem;
-}
-
-/* Nested lists */
-.markdown ul ul,
-.markdown ol ol,
-.markdown ul ol,
-.markdown ol ul {
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
-}
-
-.markdown strong {
-  color: var(--apm-t1);
-  font-weight: 500;
-}
-
-.markdown blockquote {
-  border-left: 3px solid var(--apm-accent2);
-  background: var(--apm-cmd-bg);
-  padding: 12px 16px;
-  margin: 16px 0;
-  border-radius: 0 3px 3px 0;
-}
-
-.markdown blockquote p {
-  margin: 0;
-  font-size: 13px;
-}
-
-/* Tables */
-.markdown table {
-  font-size: 13px;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.markdown table th {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--apm-t3);
-  background: var(--apm-cmd-bg);
-  padding: 8px 12px;
-  border: 1px solid var(--apm-border);
-}
-
-.markdown table td {
-  padding: 8px 12px;
-  border: 1px solid var(--apm-border);
-  color: var(--apm-t2);
-}
-
-.markdown table tr:hover td {
-  background: rgba(58, 173, 165, 0.04);
-}
-
-/* ============================================
-   Admonitions — Dark theme only
-   Unify surface fill and border with code blocks
-   ============================================ */
-
-[data-theme='dark'] .alert {
-  background: var(--apm-cmd-bg) !important;
-  border: 1px solid var(--apm-border);
-  border-radius: 3px;
-}
-
-[data-theme='dark'] .alert--info    { border-left: 3px solid var(--ifm-color-info-dark); }
-[data-theme='dark'] .alert--success { border-left: 3px solid var(--ifm-color-success-dark); }
-[data-theme='dark'] .alert--warning { border-left: 3px solid var(--ifm-color-warning-dark); }
-[data-theme='dark'] .alert--danger  { border-left: 3px solid var(--ifm-color-danger-dark); }
-
-/* ============================================
-   Code Blocks
-   ============================================ */
-
-.prism-code {
-  border: 1px solid var(--apm-border);
-  border-radius: 3px !important;
-  font-size: 13px;
-  background: var(--apm-cmd-bg) !important;
-}
-
-/* Inline code only — block code is handled by .prism-code / pre */
-:not(pre) > code {
-  border-radius: 3px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 85%;
-  background: var(--apm-cmd-bg);
-  border: 1px solid var(--apm-border);
-  padding: 2px 5px;
-}
-
-.theme-code-block {
-  --prism-background-color: var(--apm-cmd-bg) !important;
-}
-
-/* Code block title — uses attribute selector to survive class name changes across Docusaurus versions */
-div[class*='codeBlockTitle'] {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: var(--apm-cmd-bg);
-  border-bottom: 1px solid var(--apm-cmd-border);
-  color: var(--apm-t3);
-}
-
-/* ============================================
-   Footer — Docs pages
-   ============================================ */
-
-.footer__links {
-  justify-content: center !important;
-}
-
-.footer__col {
-  flex: none !important;
-  width: auto !important;
-  min-width: 160px;
-  padding: 0 24px;
-}
-
-.footer {
-  border-top: 1px solid var(--apm-border);
-  background: var(--apm-cmd-bg);
-}
-
-.footer__title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--apm-t3);
-  margin-bottom: 12px;
-}
-
-.footer__link-item {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  color: var(--apm-t2);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 2;
-}
-
-.footer__link-item:hover {
-  color: var(--apm-accent);
-}
-
-/* ============================================
-   Table of Contents
-   ============================================ */
-
-.table-of-contents {
-  padding-left: 12px;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-/* Remove default left border — container-level border handles the TOC edge */
-.table-of-contents__left-border {
-  border-left: none;
-}
-
-.table-of-contents__link {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--apm-t3);
-}
-
-.table-of-contents__link:hover,
-.table-of-contents__link--active {
-  color: var(--apm-accent);
-}
-
-/* ============================================
-   Breadcrumbs
-   ============================================ */
-
-.breadcrumbs__link {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--apm-t3);
-}
-
-.breadcrumbs__item--active .breadcrumbs__link {
-  color: var(--apm-accent);
-}
-
-.breadcrumbs__item:not(:last-child):after {
-  color: var(--apm-t3);
-}
-
-/* ============================================
-   Pagination (prev/next)
-   ============================================ */
-
-.pagination-nav__link {
-  border: 1px solid var(--apm-border);
-  border-radius: 3px;
-  transition: border-color 0.15s ease;
-}
-
-.pagination-nav__link:hover {
-  border-color: var(--apm-accent2);
-}
-
-.pagination-nav__sublabel {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--apm-t3);
-}
-
-.pagination-nav__label {
-  font-size: 14px;
-  color: var(--apm-t1);
-}
-
-/* ============================================
-   Landing Page — Hide default Docusaurus navbar
-   (landing page has its own header bar)
-   ============================================ */
-
-html:has(.landing-page) .navbar {
-  display: none !important;
-}
-
-/* ============================================
-   Scrollbar (landing page)
-   ============================================ */
-
-.landing-page ::-webkit-scrollbar,
-html:has(.landing-page) ::-webkit-scrollbar {
-  display: none;
-}
-
-.landing-page,
-html:has(.landing-page) {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* ============================================
-   Selection
-   ============================================ */
-
-::selection {
-  background: rgba(58, 173, 165, 0.25);
-  color: inherit;
-}
-
-/* ============================================
-   Landing Page — Mobile Performance
-   ============================================ */
-@media (max-width: 768px) {
-  :root {
-    --apm-row-h: 36px;
-  }
-
-  /* Disable backdrop-filter on mobile — expensive on low-end GPUs */
-  .landing-page [data-region="hdr"],
-  .landing-page [data-region="ftr"] {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: var(--apm-bg) !important;
-  }
-}
-
-/* ============================================
-   Reduced Motion — Global
-   ============================================ */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  .dock, .dock *, html.docs-wrapper :is(.navbar, .main-wrapper), ::view-transition-old(root), ::view-transition-new(root) { transition: none !important; animation: none !important; }
 }
+
+/* No page scrollbar anywhere (as in the design), so landing and docs line up exactly. */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+
+/* Landing page draws its own header; hide the Docusaurus navbar there. */
+html:has(.landing-page) .navbar { display: none !important; }

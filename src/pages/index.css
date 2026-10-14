@@ -1,0 +1,84 @@
+/* Landing page, book style. Page-wide rules are scoped through html:has(.landing-page) or .landing-page;
+   component classes (.wrap, .code, ...) are bare but only rendered here. Theme = Docusaurus's [data-theme] on <html>. */
+
+/* Palette (--apm-*), fonts and the shared header parts (.brand, .gh) are site-wide in src/css/custom.css. */
+
+.landing-page {
+  background: var(--apm-paper);
+  color: var(--apm-ink);
+  font: 20px/1.6 'Literata', Georgia, serif;
+  /* Fade in on load. No fill-mode: once done the animation is dropped, so the page is not kept as one big composited layer while scrolling. */
+  animation: apm-load .8s cubic-bezier(.4, 0, .2, 1); /* keyframes in custom.css */
+}
+.landing-page :is(h1, h2, h3, p, figure) { margin: 0; color: inherit; font-family: inherit; }
+.landing-page a { color: var(--apm-link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.landing-page a:hover { color: var(--apm-hover); }
+.landing-page :is(a, button):focus-visible { outline: 2px solid var(--apm-link); outline-offset: 3px; }
+.landing-page code { font: 85% 'JetBrains Mono', ui-monospace, monospace; background: none; border: 0; padding: 0; color: inherit; }
+.landing-page button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+/* Layout: 1200px content, 24px gutters (40px from 900px), 200px label column + content from 900px. */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 32px; padding: 88px 0; }
+.label { font-size: 1rem; font-weight: 600; }
+@media (min-width: 900px) {
+  .wrap { padding: 0 40px; }
+  .grid2 { grid-template-columns: 200px minmax(0, 840px); }
+}
+
+/* Header strip: plain ink links, underline on hover. (Footer: .site-footer in custom.css.) */
+.strip { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 24px; min-height: 56px; font-size: 14px; }
+.strip nav { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 24px; }
+.landing-page .strip a { color: var(--apm-ink); text-decoration: none; }
+.landing-page .strip a:hover { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: var(--apm-paper); border-bottom: 1px solid transparent; transition: border-color .3s ease; }
+.topbar.scrolled { border-color: var(--apm-soft); }
+
+/* Cover: title, mark and description in one centred 640px column, about a screen tall. */
+.cover-body { display: grid; grid-template-columns: minmax(0, 640px); justify-content: center; align-content: center; gap: 56px; min-height: max(640px, calc(100svh - 57px)); padding: 72px 0; text-align: center; }
+.cover h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 400; line-height: 1.04; text-wrap: balance; }
+.subtitle { margin: 20px auto 0 !important; max-width: 520px; font-size: 20px; font-style: italic; line-height: 1.4; text-wrap: balance; }
+.cover-mark { display: flex; justify-content: center; min-height: 144px; color: var(--apm-ink); }
+.wave { display: flex; justify-content: center; min-height: 20px; padding-bottom: 48px; color: var(--apm-ink); }
+
+/* Overview: terms are dotted-underlined buttons; diagram variants stack in one grid cell and cross-fade. */
+.lead { max-width: 640px; text-wrap: pretty; }
+.term { cursor: help !important; text-decoration: underline dotted 1px; text-underline-offset: 4px; }
+.term:is(:hover, :focus-visible) { text-decoration-style: solid; }
+.plate { margin-top: 56px !important; }
+.plate-images { display: grid; overflow-x: auto; }
+.plate-images > * { grid-area: 1 / 1; transition: opacity .2s ease; }
+.plate-images img { display: block; width: 100%; min-width: 560px; height: auto; }
+.plate figcaption { max-width: 640px; min-height: 6.6em; margin-top: 24px; font-size: 17px; line-height: 1.55; }
+.small { max-width: 640px; margin-top: 32px !important; font-size: 17px; line-height: 1.55; }
+
+/* Getting started: steps, code blocks with Copy, assistant picker (3 x 2). */
+.steps { max-width: 640px; }
+.steps h3 { margin-top: 40px; font-size: 1rem; font-weight: 600; }
+.steps h3:first-child { margin-top: 0; }
+.steps h3 + p { margin-top: 8px; }
+.steps p + p { margin-top: 16px; }
+.code { display: flex; align-items: center; gap: 16px; margin: 12px 0 24px; padding: 10px 16px; background: var(--apm-deep); border: 1px solid var(--apm-soft); font: 15px 'JetBrains Mono', ui-monospace, monospace; }
+.landing-page .code pre { flex: 1; min-width: 0; margin: 0; padding: 0; overflow-x: auto; background: none; color: inherit; font: inherit; }
+.landing-page .copy { flex: none; font: 14px 'Literata', Georgia, serif; color: var(--apm-link); text-decoration: underline; text-underline-offset: 3px; }
+.landing-page .copy:hover { color: var(--apm-hover); }
+.pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.landing-page .pick button { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 6px; border: 1px solid var(--apm-soft); font-size: 14px; line-height: 1.25; }
+.landing-page .pick button:is(:hover, :focus-visible) { border-color: var(--apm-ink); }
+.landing-page .pick button[aria-pressed='true'] { background: var(--apm-deep); border-color: var(--apm-ink); box-shadow: inset 0 0 0 1px var(--apm-ink); }
+.logo { width: 22px; height: 22px; object-fit: contain; }
+.logo.mask { background: var(--apm-ink); mask: center / contain no-repeat; -webkit-mask: center / contain no-repeat; }
+html[data-theme='dark'] .only-light, html[data-theme='light'] .only-dark { display: none; }
+
+/* Touch screens get a shorter page: phone diagram, plain terms, two-line Getting started. */
+.touch-only { display: none; }
+@media (any-hover: none) {
+  .hover-only, .plate-images .hl { display: none; }
+  .touch-only { display: block; }
+  .term { pointer-events: none; text-decoration: none; }
+  .plate-images img { min-width: 0; max-width: 420px; margin: 0 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-page, .landing-page * { transition: none !important; animation: none !important; }
+}

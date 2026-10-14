@@ -10,7 +10,6 @@
   overflow-y: auto;
   position: sticky;
   top: calc(var(--ifm-navbar-height) + 1rem);
-  border-left: 1px solid var(--apm-border);
 }
 
 @media (max-width: 996px) {

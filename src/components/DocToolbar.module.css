@@ -1,43 +1,28 @@
+/* Teal text links (landing "Copy" style), one per line, separated from the TOC by a hairline. */
 .toolbar {
-  margin-top: 16px;
-  padding: 12px 12px 8px 12px;
-  border-top: 1px solid var(--apm-border);
-  border-bottom: 1px solid var(--apm-border);
-  border-right: 1px solid var(--apm-border);
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 6px;
-  position: sticky;
-  bottom: 0;
-  background: var(--ifm-background-color);
-}
-
-.row {
-  display: flex;
-  gap: 6px;
+  margin: 16px 0 0 var(--ifm-toc-padding-horizontal);
+  padding-top: 16px;
+  border-top: 1px solid var(--apm-soft);
+  font-size: 14px;
 }
 
 .btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--apm-t3);
-  background: transparent;
-  border: 1px solid var(--apm-cmd-border);
-  border-radius: 3px;
-  padding: 5px 8px;
+  all: unset;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  white-space: nowrap;
+  color: var(--apm-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .btn:hover {
-  color: var(--apm-accent);
-  border-color: var(--apm-accent2);
+  color: var(--apm-hover);
 }
 
-.btn.active {
-  color: var(--apm-accent);
+.btn:focus-visible {
+  outline: 2px solid var(--apm-link);
+  outline-offset: 3px;
 }
