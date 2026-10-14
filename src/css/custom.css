@@ -262,6 +262,8 @@ html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light {
   .navbar [class*='navbarSearchContainer']:focus-within { position: absolute !important; right: 24px; }
   .navbar__search-input { width: 32px; padding: 0; color: transparent; background: var(--apm-search-icon) center / 16px no-repeat; }
   .navbar__search-input::placeholder { color: transparent; }
+  /* The search plugin measures text in a hidden pre; keep it inside the collapsed input's right edge. */
+  .navbar__search pre[aria-hidden='true'] { right: 0; }
   .navbar [class*='searchHintContainer'] { display: none; } /* no (⌘ + K) next to the icon */
   .navbar__search-input:focus { width: 220px; padding: 0 12px; color: var(--apm-ink); background: var(--apm-paper); }
 }
