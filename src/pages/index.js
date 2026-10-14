@@ -20,8 +20,8 @@ import './index.css';
 // Everything random (mark, waves) is drawn after mount from one seed, so SSR output stays deterministic.
 
 // The cover text and the overview's captions are mirrored word for word in the APM repo's README; change both together.
-// Meta description; the cover renders the same text with definitions on its two terms (see Cover).
-const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM behind your agent suffers from context decay and context pressure as its conversation grows. APM counters the first by recording the project\'s intent in planning documents, and the second by splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each exchange a chance to review the work and intervene before issues propagate. We call this productive friction.';
+// Short description for search engines and link previews.
+const DESCRIPTION = 'APM is a spec-driven multi-agent framework for AI-assisted software engineering, with planning documents, separate agent conversations, and coordination through you.';
 // Definitions for the cover's terms: key -> definition (the note shows it without repeating the term).
 const DEFS = {
   decay: 'The longer the conversation and the more context accumulates, the less reliably the LLM recalls earlier decisions and instructions, and the less consistently it reasons about them.',
@@ -46,7 +46,8 @@ const ASSISTANTS = [
 function useAway() {
   const [away, setAway] = useState(false);
   useEffect(() => {
-    const on = () => setAway(document.querySelector('.cover').getBoundingClientRect().bottom < window.innerHeight * 0.4);
+    const cover = document.querySelector('.cover');
+    const on = () => setAway(cover.getBoundingClientRect().bottom < window.innerHeight * 0.4);
     on();
     window.addEventListener('scroll', on, { passive: true });
     window.addEventListener('resize', on);
@@ -104,7 +105,7 @@ function Logo({ file, mask }) {
   return <img className="logo" src={src + file} alt="" />;
 }
 
-// Cover text: DESCRIPTION with its two problems and its closing term as italic terms (useTerms). Their
+// Cover text with its two problems and its closing term as italic terms (useTerms). Their
 // definitions show in a note line below, which keeps its height when empty (nothing shifts) and keeps
 // the last definition while fading out.
 function Cover({ draw }) {

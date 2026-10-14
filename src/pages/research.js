@@ -19,7 +19,7 @@ export default function Research() {
   const pdf = useBaseUrl('/research/thesis.pdf');
   const [name, subtitle] = thesis.title.split(': ');
   return (
-    <Layout title="Research" description={thesis.abstract[0]}>
+    <Layout title="Research" description="The design and evaluation of APM v1, presented in a BSc thesis with a comparative case study.">
       <main className="book">
         <Header seed={draw?.seed} />
         <section className="wrap">
