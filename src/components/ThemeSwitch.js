@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import { rng } from './Mark';
 import { pageSeed } from './seed';
-import { reduced } from '../browser';
+import { reduced, supportsThemeChange } from '../browser';
 
 
 // Bottom-right light/dark switch (styles: "Theme switch" in src/css/custom.css). The selected option
@@ -42,6 +42,7 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
   }, [toTop]);
   const away = (awayProp || (toTop && scrolled)) && !inCorner;
   if (!jit) return null;
+  const supported = supportsThemeChange();
 
   const choose = (mode) => {
     if (mode === sel) {
@@ -62,7 +63,7 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
   };
   const box = (j, left = 0) => ({ left: left + j.l, top: j.t, width: 38 - j.l - j.r, height: 38 - j.t - j.b, transform: `rotate(${j.a}deg)` });
   const btn = (mode, label, icon) => (
-    <button ref={(el) => { icons.current[mode] = el; }} type="button" style={{ left: sel === mode ? 38 : 0 }} onClick={() => choose(mode)} aria-pressed={sel === mode} aria-label={label} title={label}>
+    <button ref={(el) => { icons.current[mode] = el; }} type="button" disabled={!supported} style={{ left: sel === mode ? 38 : 0 }} onClick={() => choose(mode)} aria-pressed={sel === mode} aria-label={label} title={supported ? label : 'Theme switching is unavailable in this browser'}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icon}</svg>
     </button>
   );

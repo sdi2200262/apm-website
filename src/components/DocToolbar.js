@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useActivePlugin } from '@docusaurus/plugin-content-docs/client';
 import thesis from '@site/research/thesis.json';
@@ -11,16 +11,19 @@ import { copyText } from '../browser';
 // (the research docs instance) the actions are the thesis PDF and its citation, from scripts/build-thesis.js.
 export default function DocToolbar() {
   const [copied, setCopied] = useState(null);
+  const timer = useRef();
+  useEffect(() => () => clearTimeout(timer.current), []);
   const all = useBaseUrl('/llms-full.txt');
   const pdf = useBaseUrl('/research/thesis.pdf');
   const research = useActivePlugin()?.pluginId === 'research';
   const pageText = () => document.querySelector('.theme-doc-markdown')?.innerText ?? '';
-  // Label: Copied / Copy failed. All docs can still be fetching when the write starts (copyText in src/browser.js).
+  // Only successful writes change the label. All docs may still be fetching when the write starts.
   const copy = (key, text) => {
-    copyText(text()).then(() => key, () => `${key}-failed`).then((state) => {
-      setCopied(state);
-      setTimeout(() => setCopied(null), COPY_FEEDBACK_DURATION);
-    });
+    copyText(text()).then(() => {
+      setCopied(key);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(null), COPY_FEEDBACK_DURATION);
+    }, () => {});
   };
   const download = (href, name) => Object.assign(document.createElement('a'), { href, download: name }).click();
   const downloadPage = () => {
@@ -29,7 +32,7 @@ export default function DocToolbar() {
     URL.revokeObjectURL(url);
   };
   const actions = research ? [
-    ['dl-pdf', 'Download PDF', () => download(pdf, 'apm-thesis.pdf')],
+    ['dl-pdf', 'Download thesis PDF', () => download(pdf, 'apm-thesis.pdf')],
     ['cite', 'Copy citation', () => copy('cite', () => thesis.citation)],
   ] : [
     ['page', 'Copy page', () => copy('page', pageText)],
@@ -40,7 +43,7 @@ export default function DocToolbar() {
   return (
     <div className={styles.toolbar}>
       {actions.map(([key, label, run]) => (
-        <button key={key} type="button" className={styles.btn} onClick={run}>{copied === key ? 'Copied' : copied === `${key}-failed` ? 'Copy failed' : label}</button>
+        <button key={key} type="button" className={styles.btn} onClick={run}>{copied === key ? 'Copied' : label}</button>
       ))}
     </div>
   );

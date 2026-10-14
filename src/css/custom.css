@@ -378,6 +378,7 @@ html:has(.book) .navbar { display: none !important; }
 .code--block { flex-direction: column; align-items: stretch; gap: 4px; } /* the Copy link on its own row, so its label changes never reflow the text */
 .book .code--block pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .book .code--block .copy { align-self: flex-end; order: -1; }
+.pill button:disabled { opacity: .45; cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
   .book, .book * { transition: none !important; animation: none !important; }
 }
