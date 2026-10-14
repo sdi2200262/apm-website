@@ -49,7 +49,7 @@ The Manager coordinates execution using the three planning documents and the [Tr
 
 - **Planning Document Maintenance** - Updates the Spec, Plan, or Rules when execution shows the original design needs to change.
 
-- **Memory Maintenance** - Updates the [Tracker and Index](Agent_Orchestration.md#memory-and-project-state) after each Task Review and at Stage boundaries.
+- **Memory Maintenance** - Updates the [Tracker and Index](Agent_Orchestration.md#memory-and-session-state) after each Task Review and at Stage boundaries.
 
 - **Version Control Coordination** - Owns the version control lifecycle: sets conventions with your approval, manages branches and worktrees, and merges every accepted branch before a Stage closes.
 

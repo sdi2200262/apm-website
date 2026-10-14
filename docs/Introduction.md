@@ -30,9 +30,9 @@ APM counters each problem, and keeps you in charge throughout.
 
 What distinguishes this from subagent-based approaches: the agents doing implementation work are not restarted fresh on each task. They accumulate working context across assignments, building familiarity with their domain as the project progresses. When context fills, a Handoff transfers that working knowledge to a fresh instance rather than discarding it. Any APM agent may delegate heavy work to its own subagents.
 
-<Diagram name="overview" alt="The APM workflow: in the Planning Phase you and the Planner write the Spec, the Plan, and the Rules; in the Implementation Phase the Manager hands out assignments and Workers report back through you, with project state in shared files." phone />
+<Diagram name="overview" alt="The APM workflow: in the Planning Phase you and the Planner write the Spec, the Plan, and the Rules; in the Implementation Phase the Manager hands out assignments and Workers report back through you, with the session's state in shared files." phone />
 
-Throughout implementation, the Manager checks the work against the planning documents and Workers follow the Rules, under your supervision. Shared files outside any conversation hold the project's state and history. When a session ends, you can archive it, and later Planners can build on the archive.
+Throughout implementation, the Manager checks the work against the planning documents and Workers follow the Rules, under your supervision. Shared files outside any conversation hold the session's state and history. When a session ends, you can archive it, and later Planners can build on the archive.
 
 ## Installation
 

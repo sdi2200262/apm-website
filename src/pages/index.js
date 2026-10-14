@@ -21,7 +21,7 @@ import './index.css';
 
 // The cover text and the overview's captions are mirrored word for word in the APM repo's README; change both together.
 // Meta description; the cover renders the same text with definitions on its two terms (see Cover).
-const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM behind your agent suffers from context decay and context pressure as its conversation grows. APM counters the first by recording the project\'s intent in planning documents, and the second by splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each exchange a chance to review and intervene. We call this productive friction.';
+const DESCRIPTION = 'APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM behind your agent suffers from context decay and context pressure as its conversation grows. APM counters the first by recording the project\'s intent in planning documents, and the second by splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each exchange a chance to review the work and intervene before issues propagate. We call this productive friction.';
 // Definitions for the cover's terms: key -> definition (the note shows it without repeating the term).
 const DEFS = {
   decay: 'The longer the conversation and the more context accumulates, the less reliably the LLM recalls earlier decisions and instructions, and the less consistently it reasons about them.',
@@ -69,9 +69,9 @@ function Overview() {
   return (
     <div>
       <p className="lead" ref={lead}>
-        The {term('planning', 'Planner')} writes three planning documents with you: the Spec, the Plan, and the Rules.
-        The {term('manager', 'Manager')} hands out assignments and {term('workers', 'Workers')} carry them out. Their messages pass
-        through {term('user', 'you')}, and the {term('state', 'project state')} lives in shared files outside any conversation. Any agent
+        An APM session runs in two phases. The {term('planning', 'Planner')} writes three planning documents with you: the Spec, the
+        Plan, and the Rules. The {term('manager', 'Manager')} then hands out assignments and {term('workers', 'Workers')} carry them out. Their messages pass
+        through {term('user', 'you')}, and the {term('state', 'session\'s state')} lives in shared files outside any conversation. Any agent
         can still offload work to its own subagents for efficiency.
       </p>
       <figure className="plate">
@@ -119,7 +119,7 @@ function Cover({ draw }) {
         behind your agent suffers from {term('decay', <em>context decay</em>)} and {term('pressure', <em>context pressure</em>)} as
         its conversation grows. APM counters the first by recording the project&apos;s intent in planning documents, and the second by
         splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each
-        exchange a chance to review and intervene.
+        exchange a chance to review the work and intervene before issues propagate.
         We call this {term('friction', <em>productive friction</em>)}.
       </p>
       <Note id="cover-note" active={!!active} wave={draw?.note}>{DEFS[last.current]}</Note>
@@ -136,7 +136,7 @@ function GettingStarted() {
         <p>APM installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later.</p>
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
-        <p>In your project directory, run the command below. Pick your assistant's flag here, or run interactively and select when the CLI prompts you.</p>
+        <p>In your project directory, run the command below to install APM's commands, guides, skills, and document templates. Pick your assistant's flag here, or run interactively and select when the CLI prompts you.</p>
         <div className="pick" role="group" aria-label="AI assistant">
           {ASSISTANTS.map(([id, name, file, mask]) => (
             <button key={id} type="button" aria-pressed={pick === id} onClick={() => setPick(pick === id ? null : id)}>
@@ -149,7 +149,7 @@ function GettingStarted() {
         <h3>3. Start the Planner</h3>
         <p>Open your assistant in the project and run:</p>
         <Code>/apm-1-initiate-planner</Code>
-        <p>From there, each agent tells you what to run next and where. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
+        <p>Describe what you want to build or change. The Planner works with you on the planning documents, then directs you to start the Manager in a new conversation. From there, each agent tells you what to run next and where. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
         <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project directory from your terminal.</p>

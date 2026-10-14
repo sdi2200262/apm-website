@@ -56,7 +56,7 @@ let llmsTxt = `# Agentic Project Management (APM)
 
 > A spec-driven multi-agent framework for AI-assisted software engineering. Open source and platform-agnostic: Claude Code, Cursor, GitHub Copilot, Antigravity, OpenCode, and Codex.
 
-APM addresses two problems of long LLM conversations: context decay (recall and reasoning weaken as context grows) and context pressure (each call costs more and nears the context window's limit). In the Planning Phase, a Planner works with the user to write three planning documents: the Spec, the Plan, and the Rules. In the Implementation Phase, a Manager assigns Tasks and Workers carry them out, each in its own conversation. Agents communicate only through the user, who delivers each message with a command and can review the work first; APM calls this productive friction. Project state lives in files under .apm/, outside any agent's context window.
+APM addresses two problems of long LLM conversations: context decay (recall and reasoning weaken as context grows) and context pressure (each call costs more and nears the context window's limit). In the Planning Phase, a Planner works with the user to write three planning documents: the Spec, the Plan, and the Rules. In the Implementation Phase, a Manager assigns Tasks and Workers carry them out, each in its own conversation. Agents communicate only through the user, who delivers each message with a command and can review the work first; APM calls this productive friction. Session state lives in files under .apm/, outside any agent's context window.
 
 There is also an installable apm-assist skill that AI assistants can use to answer questions about APM by reading these docs: ${siteUrl}/docs/introduction#installation
 
