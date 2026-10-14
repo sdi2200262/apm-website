@@ -148,7 +148,7 @@ function GettingStarted() {
         <Code>{pick ? `apm init -a ${pick}` : 'apm init'}</Code>
         <h3>3. Start the Planner</h3>
         <p>Open your assistant in the project and run:</p>
-        <Code>/apm-1-initiate-planner</Code>
+        <Code>{pick === 'codex' ? '$apm-1-initiate-planner' : '/apm-1-initiate-planner'}</Code>
         <p>Describe what you want to build or change. The Planner works with you on the planning documents, then directs you to start the Manager in a new conversation. From there, each agent tells you what to run next and where. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
