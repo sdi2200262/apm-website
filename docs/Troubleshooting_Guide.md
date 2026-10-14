@@ -114,6 +114,20 @@ If the incoming agent's Understanding Summary shows errors anyway:
 | `apm init` reports that APM is already installed | To start fresh, run `apm archive`, then `apm init`. |
 | `apm update` finds no compatible release | Update the CLI with `npm update -g agentic-pm`, then run `apm update` again. CLI v1.x fetches only v1.x.x releases (see [Versioning](CLI_Guide.md#versioning)). |
 
+### Missing Installed Files
+
+`apm status` checks the files recorded in installation metadata. If files are missing, it names the affected assistants. Run `apm remove -a <id>`, then `apm add -a <id>` to reinstall that assistant's files from the installed release. Session artifacts remain in `.apm/`.
+
+### Codex and Antigravity Shared Skills
+
+Codex and Antigravity install some APM skills to the same paths in `.agents/skills/`, with different command syntax and guide paths. The one installed or updated last overwrites the other's instructions. This is a known issue pending a fix.
+
+To restore one assistant's instructions, run `apm remove -a <id>`, then `apm add -a <id>`. If both remain installed, this overwrites the other's instructions again. CLI v1.0.2 keeps shared files when removing an assistant and warns when they contain that assistant's instructions; older CLIs delete them.
+
+### Minimum CLI Version
+
+If a release requires a newer CLI, run `npm update -g agentic-pm`, then retry the installation or update. This requirement is separate from the major-version filter for official releases.
+
 ## Migrating from v0.5.x
 
 v0.5.x installations differ in file structure, metadata format, and CLI, and the v1 CLI cannot manage them directly. The [CHANGELOG](https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md) lists the changes.
