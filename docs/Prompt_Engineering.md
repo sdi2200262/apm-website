@@ -15,7 +15,7 @@ APM installs four types of files into your project:
 
 | Type | What it is | How it enters context |
 | :--- | :--- | :--- |
-| **Commands** | Prompts you send with a slash command | Delivered directly as a prompt |
+| **Commands** | Prompts you invoke by name (`/`, or `$` in Codex) | Delivered directly as a prompt |
 | **Guides** | One procedure each, for one role | Read by the role that performs it |
 | **Skills** | Protocols shared by several roles | Read at initialisation |
 | **Agent files** | Subagent configurations | Read when a subagent is launched |
@@ -40,7 +40,7 @@ YAML carries facts an agent should not have to infer: flags, identifiers, and st
 
 ## Platform-Agnostic Design
 
-APM's files are written once and adapted to each assistant at build time. Placeholders in the source resolve to the platform's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others), its install paths, its argument syntax, and its way of launching subagents. Each assistant installs the files in its own place and format; Codex, for example, has no custom slash commands: it receives APM's commands as skills, invoked with `$` instead of `/`. The workflow itself is identical everywhere: a Planner in Claude Code and a Planner in Cursor follow the same procedures and produce the same planning documents.
+APM's files are written once and adapted to each assistant at build time. Placeholders in the source resolve to the platform's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others), its install paths, its argument syntax, and its way of launching subagents. Each assistant installs the files in its own place and format. Codex, Copilot, and Antigravity receive APM's commands as skills. Codex invokes them with `$`; Copilot and Antigravity use the `/` menu. These remain user-triggered commands, separate from the procedural skills agents read. The workflow itself is identical everywhere: a Planner in Claude Code and a Planner in Cursor follow the same procedures and produce the same planning documents.
 
 ## Terminology
 

@@ -50,6 +50,12 @@ The initialisation command will:
 
 After initialisation completes, you're ready to begin.
 
+Copilot and Antigravity receive APM commands as skills, invoked from the `/` menu. If you have an older installation using prompt files or workflows, run `apm update` between sessions to switch to the current files.
+
+:::caution Codex and Antigravity
+These assistants currently overwrite each other's APM skills when installed in the same workspace. See [Troubleshooting](Troubleshooting_Guide.md#codex-and-antigravity-shared-skills) for details.
+:::
+
 :::note Codex
 Codex has no custom slash commands. APM installs its commands there as skills, and you invoke them with `$` instead of `/` - for example, `$apm-1-initiate-planner`.
 :::
@@ -57,15 +63,12 @@ Codex has no custom slash commands. APM installs its commands there as skills, a
 :::note "Open a new agent"
 Each APM agent runs in its own isolated conversation. What this looks like varies by platform:
 
-**IDE assistants:**
-- **Cursor** - Start a new Cursor Agent chat
-- **GitHub Copilot** - Start a new Copilot Chat
-
-**CLI assistants:**
-- **Claude Code** - Open a new terminal and start Claude Code
-- **Antigravity** - Open a new terminal and start Antigravity
-- **OpenCode** - Open a new terminal and start OpenCode
-- **Codex** - Open a new terminal and start Codex
+- **Claude Code** - Run `claude` in a new terminal, open a new Claude Code tab in VS Code, or start a new session in the desktop app
+- **Codex** - Run `codex` in a new terminal, or start a new chat in the IDE extension or app
+- **Cursor** - Start a new Agent chat in the editor, or run `agent` in a new terminal
+- **GitHub Copilot** - Start a new chat in VS Code, or run `copilot` in a new terminal
+- **Antigravity** - Start a new conversation in the app or IDE agent panel, or run `agy` in a new terminal
+- **OpenCode** - Run `opencode` in a new terminal, or start a new session in the desktop app
 
 Throughout this guide, **"open a new agent"** means whichever of the above applies to your platform. Keep active agent conversations open during the APM session for easy switching between them. Don't delete conversations until the agent has handed off or the session is complete.
 :::
@@ -207,7 +210,7 @@ apm archive                        # auto-named session-YYYY-MM-DD-NNN
 apm archive --name horse-tinder-v1 # custom archive directory name
 ```
 
-Archival moves the current `.apm/` artifacts into `.apm/archives/`, removes installed assistant files, and deletes installation metadata. Run `apm init` afterward to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance. Each APM session can then build on what came before.
+Archival snapshots all current `.apm/` contents except `archives/` into `.apm/archives/`, then removes the active session files, installed assistant files, and installation metadata. Run `apm init` afterward to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance. Each APM session can then build on what came before.
 
 ## Next Steps
 

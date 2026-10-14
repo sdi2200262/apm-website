@@ -11,7 +11,7 @@ A reference for APM sessions: the commands, file paths, and workflows in one pla
 
 ## Commands
 
-You run these as slash commands in your agent conversations (in Codex, use `$` instead of `/`):
+Invoke these in your agent conversations with `/` (including command skills in Copilot and Antigravity). In Codex, use `$` instead:
 
 | Command | What it does |
 | :--- | :--- |

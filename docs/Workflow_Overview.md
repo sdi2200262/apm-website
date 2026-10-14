@@ -85,7 +85,7 @@ For batch execution, the Worker logs each Task as it completes and writes one co
 
 The Manager receives the report via `/apm-5-check-reports` (add a Worker's identifier when several are active) and reviews it as an outsider to the code. It reads the Task Log, checks that the claimed status matches the log's content, and checks the work against what it assigned and against the planning documents. For anything doubtful, it investigates itself or sends a subagent. There are three outcomes:
 
-- **Proceed** - The Manager updates the [Tracker](Agent_Orchestration.md#the-tracker), merges the Task's branch where needed, and dispatches newly ready Tasks.
+- **Proceed** - The Manager updates the [Tracker](Agent_Orchestration.md#the-tracker), merges the dispatch unit's branch where needed, and dispatches newly ready Tasks.
 - **Follow-up** - The Worker retries from a new Task Prompt with refined instructions, overwriting its previous log.
 - **Document modification** - Execution revealed a problem in the Spec, Plan, or Rules. The Manager works out the knock-on effects and brings you in when the change is beyond its authority. It then proceeds or issues a follow-up.
 
@@ -110,7 +110,7 @@ After all Stages complete, the Manager marks the project as complete in the Trac
 When an APM session ends, whether through project completion, a decision to pause, or a shift in direction, you can archive the session and begin a new one.
 
 1. **Summarise** - Run `/apm-8-summarize-session` in a new conversation. The summarisation agent reads the `.apm/` artifacts, validates them against the current codebase, and produces a session summary of decisions, completed work, and lessons learned. It also offers to archive the session.
-2. **Archive** - Run [`apm archive`](CLI_Guide.md#apm-archive) (or `apm archive --name custom-name`). This moves the `.apm/` artifacts into `.apm/archives/`, removes installed assistant files, and clears installation metadata.
+2. **Archive** - Run [`apm archive`](CLI_Guide.md#apm-archive) (or `apm archive --name custom-name`). This snapshots all `.apm/` contents except `archives/` into `.apm/archives/`, then removes the active session files, installed assistant files, and installation metadata.
 3. **Continue** - Run `apm init` to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance. Each session can then build on earlier ones.
 
 ## Next Steps

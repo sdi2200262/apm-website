@@ -85,7 +85,7 @@ apm custom --clear
 
 ### apm update
 
-Updates the installed templates to the latest compatible release. Run it between sessions: the current session moves to the archive, and `.apm/` returns to blank templates.
+Updates the installed templates from the same source repository. Run it between sessions: the current session moves to the archive, and `.apm/` returns to blank templates.
 
 ```bash
 apm update
@@ -100,7 +100,7 @@ apm update -n pre-update-backup
 
 It:
 
-1. Archives the current `.apm/` artifacts to `.apm/archives/`.
+1. Snapshots all current `.apm/` contents except `archives/` into `.apm/archives/`, then removes the active session files.
 2. Removes the installed assistant files.
 3. Installs the new release, dropping any assistant it no longer offers.
 4. Writes fresh metadata.
@@ -135,10 +135,10 @@ apm archive --clear
 
 When creating an archive, the CLI:
 
-1. Moves the `.apm/` artifacts (the Spec, the Plan, the Tracker, Memory, the Message Bus, and the session summary if present) to `.apm/archives/session-YYYY-MM-DD-NNN/`.
+1. Snapshots all `.apm/` contents except `archives/` into `.apm/archives/session-YYYY-MM-DD-NNN/`, including planning documents, the Tracker, Memory, the Message Bus, metadata, and any session summary.
 2. Writes the archive's `metadata.json`, with the archival time.
 3. Removes the installed assistant files.
-4. Deletes the installation metadata.
+4. Removes the active session files and installation metadata, keeping existing archives.
 
 APM is then uninstalled. Run `apm init` to begin a new session with fresh templates. The Rules stay in your rules file. The archives stay in `.apm/archives/`, and the next Planner asks which are relevant during Context Gathering.
 
@@ -173,7 +173,7 @@ apm remove -a copilot opencode -f
 | `-a, --assistant <id...>` | Assistants to remove |
 | `-f, --force` | Skip confirmation prompt |
 
-It removes those assistants' files and updates the metadata, warning you before removing the last one. The `.apm/` artifacts stay.
+It removes those assistants' files and updates the metadata, warning you before removing the last one. Files also used by assistants that remain installed are kept. The `.apm/` artifacts stay. See [Troubleshooting](Troubleshooting_Guide.md#codex-and-antigravity-shared-skills) for the known shared-skill overwrite issue.
 
 ### apm status
 
@@ -183,7 +183,7 @@ Shows the current installation state.
 apm status
 ```
 
-It shows the source (official or custom), the repository, the release and CLI versions, the install date, the installed assistants with their file counts, and the number of archives. Without an installation, it shows any archives or suggests `apm init`.
+It shows the source (official or custom), the repository, the release and CLI versions, the install date, the installed assistants with their file counts, and the number of archives. It also checks whether the tracked files exist and flags missing files, with commands to restore them. It does not check their contents. Without an installation, it shows any archives or suggests `apm init`.
 
 ## Directory Structure
 
@@ -208,7 +208,7 @@ project/
 └── ...
 ```
 
-Other assistants use `.claude/` (Claude Code), `.github/` (GitHub Copilot), `.agents/` (Antigravity), and `.opencode/` (OpenCode). Codex splits its files: guides and agents go to `.codex/`, and commands and skills to `.agents/skills/`.
+Other assistants use `.claude/` (Claude Code), `.github/` (GitHub Copilot), `.agents/` (Antigravity), and `.opencode/` (OpenCode). Copilot commands and skills go to `.github/skills/`, and Antigravity commands and skills to `.agents/skills/`. Codex splits its files: guides and agents go to `.codex/`, and commands and skills to `.agents/skills/`.
 
 ## Versioning
 
@@ -219,7 +219,9 @@ The CLI and the template releases are versioned separately but share a major ver
 | **CLI** (`agentic-pm`) | npm, follows semver | `npm update -g agentic-pm` |
 | **Template releases** | GitHub Releases, auto-incrementing patches | `apm update` |
 
-CLI v1.x fetches only v1.x.x releases from the official repository. Custom repositories have no version filter.
+CLI v1.x fetches only v1.x.x releases from the official repository. Custom repositories have no version filter. A release's optional `minCliVersion` applies to both sources: from CLI v1.0.2 onward, the CLI refuses installation if it is older than that minimum and asks you to update. Earlier CLIs ignore the field.
+
+Both tracks follow Semantic Versioning. Template patches normally auto-increment; minor and major versions are set when releasing. The [changelog](https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md) labels each entry by track, such as `CLI v1.0.2` or `Templates v1.0.3`.
 
 ## Global Configuration
 

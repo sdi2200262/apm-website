@@ -55,7 +55,7 @@ A Task Prompt is a self-contained document that gives a Worker everything it nee
 
 The Manager scales the dependency context to the Worker's familiarity with the earlier work. For the Worker's own earlier Tasks, a light reminder is enough: key file paths and brief references. For another Worker's output, the Task Prompt carries comprehensive context: which files to read, what was produced, and how to integrate it.
 
-After a Worker Handoff, the incoming Worker lacks familiarity with Tasks from earlier Stages, and the Manager treats those dependencies like another Worker's output. After auto-compaction, it likewise gives a Worker fuller context for its own earlier work.
+After a Worker Handoff, the incoming Worker lacks familiarity with Tasks from earlier Stages, and the Manager treats those dependencies like another Worker's output. After recovery, it likewise gives a Worker fuller context for its own earlier work.
 
 ### Dispatch Modes
 
