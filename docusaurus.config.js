@@ -8,7 +8,7 @@ import rehypeKatex from 'rehype-katex';
 // MDXComponents = full-width tables and thesis reader parts). The thesis reader is a second docs instance over research/ (scripts/build-thesis.js).
 export default {
   title: 'APM - Agentic Project Management',
-  tagline: 'Let AI agents manage your project structure, tasks, and workflow.',
+  tagline: 'A Spec-Driven Multi-Agent Framework for AI-Assisted Software Engineering',
   favicon: 'img/favicon.svg',
   url: 'https://agentic-project-management.dev',
   baseUrl: '/',
@@ -48,7 +48,7 @@ export default {
   ],
 
   themeConfig: {
-    image: 'img/social-card.png',
+    image: 'img/social-card-v1.png',
     colorMode: {
       defaultMode: 'dark',
       respectPrefersColorScheme: true,
