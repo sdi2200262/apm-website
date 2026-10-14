@@ -3,15 +3,19 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths:
+    paths: &paths
       - 'docs/**'
+      - 'research/**'
       - 'src/**'
       - 'static/**'
       - 'scripts/**'
       - 'docusaurus.config.js'
       - 'sidebars.js'
+      - 'sidebarsResearch.js'
       - 'package.json'
       - 'package-lock.json'
+  pull_request:
+    paths: *paths
   workflow_dispatch:
 
 permissions:
@@ -36,6 +40,11 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Install pandoc
+        run: |
+          curl -sLo pandoc.deb https://github.com/jgm/pandoc/releases/download/3.10.1/pandoc-3.10.1-1-amd64.deb
+          sudo dpkg -i pandoc.deb
+
       - run: npm ci
       - run: npm run build
 
@@ -45,6 +54,7 @@ jobs:
           path: build
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:

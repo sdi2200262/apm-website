@@ -5,18 +5,19 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import useIsBrowser from '@docusaurus/useIsBrowser';
 import { useColorMode } from '@docusaurus/theme-common';
 import Footer from '@theme/Footer';
-import Mark, { rng } from '../components/Mark';
-import Brand from '../components/Brand';
+import Mark from '../components/Mark';
+import Header from '../components/Header';
 import { CAPTIONS } from '../captions';
-import { drawnSeed, pageSeed } from '../components/seed';
-import GitHub from '../components/GitHub';
+import { Wave, useDraw } from '../components/Drawn';
+import { Note, useTerms } from '../components/Terms';
+import Code from '../components/Code';
 import ThemeSwitch from '../components/ThemeSwitch';
 import './index.css';
 
 // Landing page, book style (design: "APM Website Redesign", Gruvbox palette + Literata).
-// Three parts: cover, overview, getting started. Layout lives in ./index.css; palette, fonts and the
-// shared header/footer/switch parts in src/css/custom.css and src/components. Everything random
-// (mark, waves) is drawn after mount from one seed, so SSR output stays deterministic.
+// Three parts: cover, overview, getting started. Layout lives in ./index.css; the book style it shares with
+// other book pages, the palette, fonts and the header/footer/switch parts in src/css/custom.css and src/components.
+// Everything random (mark, waves) is drawn after mount from one seed, so SSR output stays deterministic.
 
 // The cover text and the overview's captions are mirrored word for word in the APM repo's README; change both together.
 // Meta description; the cover renders the same text with definitions on its two terms (see Cover).
@@ -41,117 +42,17 @@ const ASSISTANTS = [
   ['opencode', 'OpenCode', ['opencode-light.svg', 'opencode-dark.svg']],
 ];
 
-const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// A hand-drawn section break: ~7 uneven peaks through a Catmull-Rom spline, slightly tilted.
-// peaks/amp make smaller, calmer ones (the cover note's rule); flip -1 starts with a dip instead of a peak.
-// Amp scales all vertical jitter, so a small wave keeps the break's proportions. x0/x1: line start and end.
-function wave(rnd, peaks = 7, amp = 1, flip = 1) {
-  let x = 18 + rnd() * 6;
-  const pts = [[x, 10 + (rnd() - 0.5) * 2 * amp]];
-  for (let k = 0; k < peaks; k++) {
-    x += 13 + rnd() * 5;
-    pts.push([x, 10 + (flip * (k % 2 ? 1 : -1) * (3 + rnd() * 4.5) + (rnd() - 0.5) * 1.5) * amp]);
-  }
-  pts.push([x + 10 + rnd() * 5, 10 + (rnd() - 0.5) * 3 * amp]);
-  const f = (n) => n.toFixed(1);
-  let d = `M${f(pts[0][0])} ${f(pts[0][1])}`;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const [p0, p1, p2, p3] = [pts[Math.max(0, i - 1)], pts[i], pts[i + 1], pts[Math.min(pts.length - 1, i + 2)]];
-    d += ` C${f(p1[0] + (p2[0] - p0[0]) / 6)} ${f(p1[1] + (p2[1] - p0[1]) / 6)} ${f(p2[0] - (p3[0] - p1[0]) / 6)} ${f(p2[1] - (p3[1] - p1[1]) / 6)} ${f(p2[0])} ${f(p2[1])}`;
-  }
-  return { d, w: 1.1 + rnd() * 0.45, tilt: (rnd() - 0.5) * 3, x0: pts[0][0], x1: pts[pts.length - 1][0] };
-}
-
-function Wave({ w }) {
-  return (
-    <div className="wave" aria-hidden="true">
-      {w && (
-        <svg viewBox="0 0 140 20" width="140" height="20" fill="none" stroke="currentColor" strokeLinecap="round">
-          <path d={w.d} strokeWidth={w.w} transform={`rotate(${w.tilt} 70 10)`} />
-        </svg>
-      )}
-    </div>
-  );
-}
-
-// The small wave above the cover note, cropped to the line itself; thinner than the section breaks.
-function NoteWave({ w }) {
-  const x = w.x0 - 3, width = w.x1 - w.x0 + 6;
-  return (
-    <svg className="note-wave" viewBox={`${x} 4 ${width} 12`} width={width} height="12" fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true">
-      <path d={w.d} strokeWidth={w.w * 0.75} transform={`rotate(${w.tilt} ${(w.x0 + w.x1) / 2} 10)`} />
-    </svg>
-  );
-}
-
-// The page-load seed (kept across client-side navigation, new on refresh), plus everything derived from it.
-// null during SSR and the hydrating first render.
-const drawFrom = (seed) => {
-  const rnd = rng(seed ^ 0x9e3779b9);
-  return { seed, waves: [wave(rnd), wave(rnd)], note: wave(rnd, 5 + Math.floor(rnd() * 2), 0.5, rnd() < 0.5 ? 1 : -1) };
-};
-function useDraw() {
-  const [draw, setDraw] = useState(() => drawnSeed() && drawFrom(drawnSeed()));
-  useEffect(() => { if (!draw) setDraw(drawFrom(pageSeed())); }, [draw]);
-  return draw;
-}
-
-// scrolled: header rule shows after 4px. away: the cover's bottom is above 40% of the viewport (hides the switch).
-function useScroll() {
-  const [s, setS] = useState({ scrolled: false, away: false });
+// The cover's bottom is above 40% of the viewport: the theme switch slides away.
+function useAway() {
+  const [away, setAway] = useState(false);
   useEffect(() => {
-    const on = () => {
-      const cover = document.querySelector('.cover');
-      const next = { scrolled: window.scrollY > 4, away: !!cover && cover.getBoundingClientRect().bottom < window.innerHeight * 0.4 };
-      setS((p) => (p.scrolled === next.scrolled && p.away === next.away ? p : next));
-    };
+    const on = () => setAway(document.querySelector('.cover').getBoundingClientRect().bottom < window.innerHeight * 0.4);
     on();
     window.addEventListener('scroll', on, { passive: true });
     window.addEventListener('resize', on);
     return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); };
   }, []);
-  return s;
-}
-
-// Landing header: the shared brand (clicking it scrolls to the top here) + Docs and GitHub.
-function Header({ seed, scrolled }) {
-  const toTop = (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }); };
-  return (
-    <header className={`topbar${scrolled ? ' scrolled' : ''}`}>
-      <div className="wrap strip">
-        <Brand seed={seed} onClick={toTop} />
-        <nav>
-          <Link to="/docs/introduction">Docs</Link>
-          <GitHub />
-        </nav>
-      </div>
-    </header>
-  );
-}
-
-// Underlined terms that pick what a nearby caption shows (hero definitions, overview parts). A term is
-// active while a mouse points at it or it has keyboard focus; on touch screens a tap toggles it, and a tap
-// (not a scroll) outside `ref` clears it. Spread props(key) on each term's <button>.
-function useTerms() {
-  const [active, setActive] = useState(null);
-  const ref = useRef();
-  useEffect(() => {
-    if (!active) return undefined;
-    // click, not pointerdown: a touch that starts a scroll must not clear the term.
-    const clear = (e) => { if (!ref.current?.contains(e.target)) setActive(null); };
-    document.addEventListener('click', clear);
-    return () => document.removeEventListener('click', clear);
-  }, [active]);
-  const props = (key) => ({
-    'aria-pressed': active === key,
-    onPointerEnter: (e) => e.pointerType === 'mouse' && setActive(key),
-    onPointerLeave: (e) => e.pointerType === 'mouse' && setActive(null),
-    onFocus: (e) => e.target.matches(':focus-visible') && setActive(key),
-    onBlur: (e) => e.target.matches(':focus-visible') && setActive(null),
-    onClick: () => matchMedia('(any-hover: none)').matches && setActive(active === key ? null : key),
-  });
-  return { active, ref, props };
+  return away;
 }
 
 // Stacked diagram variants that cross-fade; the active term (useTerms) picks its variant and caption.
@@ -191,45 +92,14 @@ function Overview() {
           {!active && <><span className="hover-only"> Point at an underlined term to see its part.</span><span className="touch-only-inline"> Tap an underlined term to see its part.</span></>}
         </figcaption>
       </figure>
-      <p className="small">The <Link to="/docs/introduction">documentation</Link> covers the workflow and the framework's design in full.</p>
-    </div>
-  );
-}
-
-// A one-line command with a Copy link: clipboard API, then execCommand, else "Select and copy".
-function Code({ children }) {
-  const [label, setLabel] = useState('Copy');
-  const timer = useRef();
-  useEffect(() => () => clearTimeout(timer.current), []);
-  const copy = () => {
-    const done = (ok) => {
-      setLabel(ok ? 'Copied' : 'Select and copy');
-      clearTimeout(timer.current);
-      timer.current = setTimeout(() => setLabel('Copy'), 1600);
-    };
-    const legacy = () => {
-      const ta = Object.assign(document.createElement('textarea'), { value: children });
-      document.body.appendChild(ta);
-      ta.select();
-      let ok = false;
-      try { ok = document.execCommand('copy'); } catch { /* blocked */ }
-      ta.remove();
-      done(ok);
-    };
-    if (navigator.clipboard) navigator.clipboard.writeText(children).then(() => done(true), legacy);
-    else legacy();
-  };
-  return (
-    <div className="code">
-      <pre>{children}</pre>
-      <button type="button" className="copy" onClick={copy}>{label}</button>
+      <p className="more">The <Link to="/docs/introduction">documentation</Link> covers the workflow and the framework's design in full.</p>
     </div>
   );
 }
 
 function Logo({ file, mask }) {
   const src = useBaseUrl('/img/assistants/');
-  if (mask) return <span className="logo mask" style={{ maskImage: `url(${src}${file})`, WebkitMaskImage: `url(${src}${file})` }} />;
+  if (mask) return <span className="logo mask" style={{ maskImage: `url(${src}${file})` }} />;
   if (Array.isArray(file)) return <><img className="logo only-light" src={src + file[0]} alt="" /><img className="logo only-dark" src={src + file[1]} alt="" /></>;
   return <img className="logo" src={src + file} alt="" />;
 }
@@ -252,10 +122,7 @@ function Cover({ draw }) {
         exchange a chance to review the work and intervene before issues propagate.
         We call this {term('friction', <em>productive friction</em>)}.
       </p>
-      <p id="cover-note" className="cover-note" aria-live="polite" aria-hidden={!active} style={{ opacity: active ? 1 : 0 }}>
-        {draw && <NoteWave w={draw.note} />}
-        {DEFS[last.current]}
-      </p>
+      <Note id="cover-note" active={!!active} wave={draw?.note}>{DEFS[last.current]}</Note>
     </div>
   );
 }
@@ -266,10 +133,10 @@ function GettingStarted() {
     <>
       <div className="steps hover-only">
         <h3>1. Install the CLI</h3>
-        <p>APM installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later.</p>
+        <p>APM supports Claude Code, Codex CLI, Cursor, GitHub Copilot, Antigravity, and OpenCode. It installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later:</p>
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
-        <p>In your project directory, run the command below to install APM's commands, guides, skills, and document templates. Pick your assistant's flag here, or run interactively and select when the CLI prompts you.</p>
+        <p>In your project directory, run the command below to install APM's commands, guides, skills, and document templates. Select your assistant when the CLI prompts you, or pass it with <code>-a</code>:</p>
         <div className="pick" role="group" aria-label="AI assistant">
           {ASSISTANTS.map(([id, name, file, mask]) => (
             <button key={id} type="button" aria-pressed={pick === id} onClick={() => setPick(pick === id ? null : id)}>
@@ -286,7 +153,7 @@ function GettingStarted() {
       </div>
       <div className="steps touch-only">
         <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project directory from your terminal.</p>
-        <p><Link to="/docs/getting-started">Installation and first steps are in the docs.</Link></p>
+        <p>For installation and first steps, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
     </>
   );
@@ -294,11 +161,11 @@ function GettingStarted() {
 
 export default function Home() {
   const draw = useDraw();
-  const { scrolled, away } = useScroll();
+  const away = useAway();
   return (
     <Layout description={DESCRIPTION} noFooter>
-      <div className="landing-page">
-        <Header seed={draw?.seed} scrolled={scrolled} />
+      <div className="landing-page book">
+        <Header seed={draw?.seed} home />
 
         <section className="cover wrap">
           <div className="cover-body">

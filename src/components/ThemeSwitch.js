@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import { rng } from './Mark';
 import { pageSeed } from './seed';
+import { reduced, supportsThemeChange } from '../browser';
 
-const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Bottom-right light/dark switch (styles: "Theme switch" in src/css/custom.css). The selected option
 // always sits in the right slot (the one shown when closed) under a hand-drawn marker. On a click the
 // slots swap at once and two WAAPI animations hide the jump: the new choice slides from the left slot
 // into the right one, the old one fades out in place and back in on the left. The page follows 60ms
-// later through a View Transition cross-fade; reduced motion or no API skips the effects.
+// later through a View Transition cross-fade; reduced motion skips the effects.
 // `away` (landing: once the cover scrolls away) slides the dock off the right edge. `toTop` adds an up button
 // with its own random marker; past 400px of scroll it shows and also counts as away. Either way the dock
 // stays while the mouse is in the 160x180 bottom-right corner, tracked from its last position, so scrolling
@@ -42,6 +42,7 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
   }, [toTop]);
   const away = (awayProp || (toTop && scrolled)) && !inCorner;
   if (!jit) return null;
+  const supported = supportsThemeChange();
 
   const choose = (mode) => {
     if (mode === sel) {
@@ -56,13 +57,13 @@ export default function ThemeSwitch({ away: awayProp = false, toTop = false }) {
     setTimeout(() => setOpen(false), 500); // touch: fold the pill once the swap has played
     setTimeout(() => {
       const go = () => setColorMode(mode);
-      if (!document.startViewTransition || reduced()) go();
+      if (reduced()) go();
       else document.startViewTransition(() => { go(); return new Promise((r) => setTimeout(r, 90)); });
     }, 60);
   };
   const box = (j, left = 0) => ({ left: left + j.l, top: j.t, width: 38 - j.l - j.r, height: 38 - j.t - j.b, transform: `rotate(${j.a}deg)` });
   const btn = (mode, label, icon) => (
-    <button ref={(el) => { icons.current[mode] = el; }} type="button" style={{ left: sel === mode ? 38 : 0 }} onClick={() => choose(mode)} aria-pressed={sel === mode} aria-label={label} title={label}>
+    <button ref={(el) => { icons.current[mode] = el; }} type="button" disabled={!supported} style={{ left: sel === mode ? 38 : 0 }} onClick={() => choose(mode)} aria-pressed={sel === mode} aria-label={label} title={supported ? label : 'Theme switching is unavailable in this browser'}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icon}</svg>
     </button>
   );

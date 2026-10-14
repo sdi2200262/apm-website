@@ -83,6 +83,7 @@ html[data-theme] {
   --ifm-hr-border-color: var(--apm-soft);
   --ifm-table-border-color: var(--apm-soft);
   --ifm-table-stripe-background: transparent;
+  --ifm-hr-background-color: var(--apm-soft);
   --ifm-code-background: var(--apm-deep);
   --ifm-code-font-size: 85%;
   --ifm-breadcrumb-item-background-active: var(--apm-deep);
@@ -133,7 +134,7 @@ html[data-theme] {
 .navbar__items--right { gap: 24px; }
 .navbar__item { padding: 0; }
 .navbar__link, .navbar__link--active { font-size: 14px; color: var(--apm-ink); }
-.navbar__link:hover { color: var(--apm-ink); text-decoration: underline; text-underline-offset: 3px; }
+.navbar__link:hover, .navbar__link--active { color: var(--apm-ink); text-decoration: underline; text-underline-offset: 3px; }
 
 /* Docs type scale: 16px body (the landing page keeps 18px), with the sidebar, TOC and breadcrumbs a step
    smaller, so the article reads at 100% zoom beside the 14px header and footer. */
@@ -148,6 +149,10 @@ html.docs-wrapper .markdown h3 { font-size: 1.25rem; }
 .markdown a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .markdown h1 { font-weight: 400; }
 .markdown table th { background: var(--apm-deep); }
+/* Tables (src/theme/MDXComponents.js): full column width; a wider table scrolls inside its box, not the page. */
+.table-scroll { overflow-x: auto; margin-bottom: var(--ifm-leading); }
+.table-scroll table { display: table; width: 100%; margin: 0; }
+.footnotes li { scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem); } /* a footnote link's target clears the header */
 .markdown blockquote { border-left-color: var(--apm-soft); color: inherit; }
 :not(pre) > code { border: 1px solid var(--apm-soft); padding: 1px 4px; }
 .alert { --ifm-alert-background-color: var(--apm-deep); --ifm-alert-background-color-highlight: var(--apm-soft); --ifm-alert-foreground-color: var(--apm-ink); border: 1px solid var(--apm-soft); border-left-width: 3px; }
@@ -198,6 +203,8 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
   main[class*='docMainContainer'] { max-width: none !important; min-width: 0; }
   main[class*='docMainContainer'] > .container { transition: max-width .35s cubic-bezier(.65, 0, .35, 1); }
   [role='button'][class*='expandButton'] svg { animation: apm-load .25s ease; } /* fade the chevron only: the bottom rule stays put */
+  .theme-doc-sidebar-container .menu { transition: opacity .35s cubic-bezier(.65, 0, .35, 1); } /* the menu fades out and in with the slide */
+  [class*='docSidebarContainerHidden'] .menu { opacity: 0; }
 }
 :is([class*='collapseSidebarButtonIcon'], [class*='expandButtonIcon']) { margin: 0 !important; opacity: .45; transition: opacity .2s; }
 :is(button[class*='collapseSidebarButton'], [role='button'][class*='expandButton']):is(:hover, :focus-visible) svg { opacity: 1; }
@@ -212,14 +219,14 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 .menu__caret:before, .menu__link--sublist-caret:after {
   background: var(--apm-ink);
   filter: none;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E") center / 1rem no-repeat;
 }
 
 /* Diagrams (src/components/Diagram.js): full column width (or compact, via the corner button), only the current theme's copy shown. */
 .diagram { margin: 32px 0; }
 .diagram img { display: block; width: 100%; height: auto; }
-.diagram-images { position: relative; margin: 0 auto; transition: max-width .25s ease; max-width: 100%; } /* centred, so compact shrinks towards the middle */
+.diagram-images { position: relative; display: flex; gap: 16px; margin: 0 auto; transition: max-width .25s ease; max-width: 100%; } /* centred, so compact shrinks towards the middle */
+.diagram-images picture { flex: 1; min-width: 0; } /* several images (thesis panels) share the row */
 .diagram--compact .diagram-images { max-width: max(60%, 300px); }
 .diagram--compact img { min-width: 0 !important; }
 .diagram-size { position: absolute; top: 0; right: 0; z-index: 1; display: flex; padding: 4px; border: 0; background: var(--apm-paper); color: var(--apm-ink); opacity: .45; cursor: pointer; transition: opacity .2s; }
@@ -230,20 +237,23 @@ button[class*='collapseSidebarButton'] { border: 1px solid var(--apm-soft) !impo
 .markdown { counter-reset: figure; }
 .diagram:has(figcaption) { counter-increment: figure; }
 .diagram figcaption::before { content: 'Figure ' counter(figure) '. '; font-style: italic; }
+.diagram figcaption[data-number]::before { content: 'Figure ' attr(data-number) '. '; } /* the thesis's own numbers */
 html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light { display: none; }
-@media (max-width: 600px) { .diagram--wide .diagram-images { overflow-x: auto; } .diagram--wide img { min-width: 560px; } } /* no phone layout: scroll, don't shrink */
+@media (max-width: 600px) { .diagram--wide .diagram-images { flex-direction: column; overflow-x: auto; } .diagram--wide img { min-width: 560px; } } /* no phone layout: stack panels, scroll, don't shrink */
 
 /* Table of contents, breadcrumbs, prev/next. */
 .table-of-contents__link { color: var(--ifm-font-color-secondary); }
 .table-of-contents__link:hover, .table-of-contents__link--active { color: var(--apm-ink); }
 .table-of-contents__link--active { font-weight: 600; }
-.breadcrumbs__link { background: none !important; }
+.breadcrumbs__link, .breadcrumbs__link:any-link:hover { background: none !important; color: var(--apm-ink); }
+.breadcrumbs__link:any-link:is(:hover, :focus-visible) { text-decoration: underline; text-underline-offset: 3px; }
+.breadcrumbs__home { display: inline-flex; vertical-align: middle; }
 .breadcrumbs__item--active .breadcrumbs__link { text-decoration: underline; text-underline-offset: 3px; }
 .pagination-nav__link { border-color: var(--apm-soft); }
 .pagination-nav__link:hover { border-color: var(--apm-ink); }
 .pagination-nav__sublabel { color: var(--ifm-font-color-secondary); }
 
-/* Phones/tablets (<997px): keep Docs + GitHub in the bar, as on the landing page (Infima hides them),
+/* Phones/tablets (<997px): keep Docs, Research and GitHub in the bar, as on the landing page (Infima hides them),
    so the drawer only holds the docs navigation and its "Back to main menu" panel is dropped. */
 @media (max-width: 996px) {
   .navbar__items--right > .navbar__item { display: inline-flex; }
@@ -254,8 +264,17 @@ html[data-theme='light'] .diagram-dark, html[data-theme='dark'] .diagram-light {
   .navbar [class*='navbarSearchContainer']:focus-within { position: absolute !important; right: 24px; }
   .navbar__search-input { width: 32px; padding: 0; color: transparent; background: var(--apm-search-icon) center / 16px no-repeat; }
   .navbar__search-input::placeholder { color: transparent; }
+  /* The search plugin measures text in a hidden pre; keep it inside the collapsed input's right edge. */
+  .navbar__search pre[aria-hidden='true'] { right: 0; }
   .navbar [class*='searchHintContainer'] { display: none; } /* no (⌘ + K) next to the icon */
   .navbar__search-input:focus { width: 220px; padding: 0 12px; color: var(--apm-ink); background: var(--apm-paper); }
+}
+/* Narrow phones: the menu button, brand, Docs, Research, GitHub and search share one row, so the star count goes
+   and the gaps narrow; the brand keeps its size (squeezed, its mark overlapped Docs). */
+@media (max-width: 429px) {
+  .navbar .stars { display: none; }
+  .navbar__items--right { gap: 12px; }
+  .navbar__brand { flex-shrink: 0; }
 }
 .navbar-sidebar { background: var(--apm-paper); }
 .navbar-sidebar__brand { border-bottom: 1px solid var(--apm-soft); }
@@ -274,7 +293,7 @@ html.docs-wrapper .site-footer { margin-top: 88px; } /* same gap above the foote
   .site-footer nav { justify-content: center; }
 }
 
-/* Page fade, shared with the landing page (.landing-page in index.css): the docs fade in when you
+/* Page fade, shared with the book pages (.book, below): the docs fade in when you
    arrive (load, or from the landing page). Docs keep one Layout across doc pages, so moving between
    docs does not re-fade. No fill-mode: the animation is dropped once done. */
 @keyframes apm-load { from { opacity: 0; } }
@@ -318,7 +337,50 @@ html.docs-wrapper :is(.navbar, .main-wrapper) { animation: apm-load .8s cubic-be
 
 /* No page scrollbar anywhere (as in the design), so landing and docs line up exactly. */
 html { scrollbar-width: none; }
-html::-webkit-scrollbar { display: none; }
 
-/* Landing page draws its own header; hide the Docusaurus navbar there. */
-html:has(.landing-page) .navbar { display: none !important; }
+/* Book pages (landing, Research; class .book): paper, ink and Literata at 20px, with the column, label grid,
+   hand-drawn rules (src/components/Drawn.js) and term notes (src/components/Terms.js) they share. Global, so a
+   book page opened directly still has them. They fade in on load; no fill-mode, so the animation is dropped once done. */
+.book { background: var(--apm-paper); color: var(--apm-ink); font: 20px/1.6 'Literata', Georgia, serif; animation: apm-load .8s cubic-bezier(.4, 0, .2, 1); }
+.book :is(h1, h2, h3, p, figure) { margin: 0; color: inherit; font-family: inherit; }
+.book a { color: var(--apm-link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.book a:hover { color: var(--apm-hover); }
+.book :is(a, button):focus-visible { outline: 2px solid var(--apm-link); outline-offset: 3px; }
+.book code { font: 85% 'JetBrains Mono', ui-monospace, monospace; background: none; border: 0; padding: 0; color: inherit; }
+.book button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+/* Header (src/components/Header.js) in place of the navbar: plain ink links, underline on hover, a rule once scrolled. */
+html:has(.book) .navbar { display: none !important; }
+.strip { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 24px; min-height: 56px; font-size: 14px; }
+.strip nav { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 24px; }
+.book .strip a { color: var(--apm-ink); text-decoration: none; }
+.book .strip a:is(:hover, [aria-current='page']) { text-decoration: underline; }
+.topbar { position: sticky; top: 0; z-index: 20; background: var(--apm-paper); border-bottom: 1px solid transparent; transition: border-color .3s ease; }
+.topbar.scrolled { border-color: var(--apm-soft); }
+/* Layout: 1200px content, 24px gutters (40px from 900px), 200px label column + content from 900px. */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 32px; padding: 88px 0; }
+.label { font-size: 1rem; font-weight: 600; }
+@media (min-width: 900px) {
+  .wrap { padding: 0 40px; }
+  .grid2 { grid-template-columns: 200px minmax(0, 840px); }
+}
+.book .subtitle { margin-top: 20px; max-width: 520px; font-size: 20px; font-style: italic; line-height: 1.4; text-wrap: balance; }
+.wave { display: flex; justify-content: center; min-height: 20px; padding-bottom: 48px; color: var(--apm-ink); }
+/* Terms: dotted-underlined buttons; their note is a quiet line under the text, ruled by a small calm wave. */
+.term { cursor: help !important; text-decoration: underline dotted 1px; text-underline-offset: 4px; }
+.term:is(:focus-visible, [aria-pressed='true']) { text-decoration-style: solid; }
+@media (any-hover: hover) { .term:hover { text-decoration-style: solid; } } /* touch :hover sticks after a tap */
+.book .note { margin-top: 24px; font-size: 15px; line-height: 1.5; transition: opacity .25s ease; }
+.note-wave { display: block; margin: 0 auto 8px; color: var(--apm-ink); opacity: .6; }
+/* Text with a Copy link (src/components/Code.js): commands on one scrolling line; blocks (citations) wrapped under their link. */
+.code { display: flex; align-items: center; gap: 16px; margin: 12px 0 24px; padding: 10px 16px; background: var(--apm-deep); border: 1px solid var(--apm-soft); font: 15px 'JetBrains Mono', ui-monospace, monospace; }
+.book .code pre { flex: 1; min-width: 0; margin: 0; padding: 0; overflow-x: auto; background: none; color: inherit; font: inherit; }
+.book .copy { flex: none; font: 14px 'Literata', Georgia, serif; color: var(--apm-link); text-decoration: underline; text-underline-offset: 3px; }
+.book .copy:hover { color: var(--apm-hover); }
+.code--block { flex-direction: column; align-items: stretch; gap: 4px; } /* the Copy link on its own row, so its label changes never reflow the text */
+.book .code--block pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.book .code--block .copy { align-self: flex-end; order: -1; }
+.pill button:disabled { opacity: .45; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) {
+  .book, .book * { transition: none !important; animation: none !important; }
+}

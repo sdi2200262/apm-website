@@ -19,18 +19,27 @@ Requires Node.js 20+.
 
 ```
 src/
-├── components/    # Mark (logo), Brand, GitHub, ThemeSwitch, DocToolbar, Diagram
+├── components/    # Mark (logo), Brand, GitHub, ThemeSwitch, DocToolbar, Diagram, Thesis (reader tables, references),
+│                  # Drawn, Terms, Code (book page parts)
 ├── constants/     # GitHub URL, copy feedback timing
-├── css/           # custom.css: palette, fonts, docs styling, shared header/footer/switch
-├── pages/         # landing page (index.js + index.css)
-└── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, Icon/Arrow
+├── css/           # custom.css: palette, fonts, docs styling, shared header/footer/switch; research.css: thesis reader
+├── pages/         # landing page (index.js + index.css), Research overview (research.js)
+└── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, DocItem/Layout (TOC column on every page), DocBreadcrumbs (Research crumb), Icon/Arrow, MDXComponents
 docs/              # documentation pages (Markdown/MDX)
-diagrams/          # diagram sources: icons/ (Lucide), d2/
-scripts/           # build-diagrams.py (diagrams), build-llms.js (llms.txt)
-static/img/        # assistants/ (logos), diagrams/ (generated), favicon, social card
+research/          # thesis reader pages (generated, see Thesis Reader) and the paper placeholder
+diagrams/          # diagram icons (Lucide)
+scripts/           # build-diagrams.py (diagrams), build-figures.py (thesis charts), build-llms.js (llms.txt)
+static/img/        # assistants/ (logos), diagrams/ and figures/ (generated), favicon, social card
 ```
 
-Diagrams: edit `scripts/build-diagrams.py` or the sources in `diagrams/`, then run `python3 scripts/build-diagrams.py` (needs the `drawio` and `d2` CLIs on PATH). Output goes to `static/img/diagrams/<name>[-<variant>]-<light|dark>.svg`; don't edit it by hand.
+Diagrams and charts are built offline from a local checkout of the [thesis](https://github.com/sdi2200262/bsc-apm-thesis) and committed; don't edit the output by hand. Both keep the thesis figure's file name.
+
+- Diagrams: edit `scripts/build-diagrams.py` (the d2 diagrams are read from the thesis), then run `python3 scripts/build-diagrams.py <thesis>` (needs the `drawio` and `d2` CLIs on PATH). Output: `static/img/diagrams/<name>[-<variant>]-<light|dark>.svg`.
+- Charts: run `<thesis>/.venv/bin/python scripts/build-figures.py <thesis>`. It runs the thesis's own figure scripts on its local data, restyled for the site. Output: `static/img/figures/<name>-<light|dark>.svg`.
+
+## Thesis Reader
+
+The research section reads the [thesis](https://github.com/sdi2200262/bsc-apm-thesis) from its rolling `latest` release, which the thesis repo rebuilds on every push to main. `scripts/build-thesis.js` (runs as `prebuild` and `prestart`, needs [pandoc](https://pandoc.org) 3 on PATH) downloads the source and the compiled `thesis.pdf`, `.aux` and `.bbl`, then converts the LaTeX with pandoc and `scripts/thesis.lua` into `research/thesis/` (one MDX page per chapter), `research/thesis.json` and `static/research/thesis.pdf`. All are generated and gitignored. The reader is a second docs instance at `/research` (`sidebarsResearch.js`) that shares the docs theme: tables are Markdown tables, figures use the docs' `Diagram`, and only captions, table notes and references get their own styles (`src/css/research.css`). The conversion stops on any reference, citation, figure or LaTeX command it cannot place, and its numbering is checked against the PDF's.
 
 ## LLM Access
 

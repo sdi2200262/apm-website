@@ -1,0 +1,4 @@
+.stack { position: fixed; z-index: 40; left: 16px; bottom: 16px; max-width: 420px; margin-right: 72px; display: flex; flex-direction: column; gap: 8px; }
+.notice { padding: 12px 16px; border: 1px solid var(--apm-soft); background: var(--apm-paper); color: var(--apm-ink); font-size: 14px; line-height: 1.5; }
+.notice p { margin: 0 0 6px; }
+.notice button { padding: 0; border: 0; background: none; color: var(--apm-link); font: inherit; text-decoration: underline; cursor: pointer; }
