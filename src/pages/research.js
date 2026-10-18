@@ -61,8 +61,7 @@ export default function Research() {
                   </a>
                 </nav>
                 <div className={styles.paper}>
-                  <p>Paper</p>
-                  <p className={styles.status}>In preparation</p>
+                  <Link to="/research/paper">Read the paper</Link>
                 </div>
               </div>
             </aside>
