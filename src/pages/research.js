@@ -45,6 +45,7 @@ export default function Research() {
                 Both frameworks ran on Claude Code with Claude Opus 4.7 or Claude Sonnet 4.6. The comparison covers economic cost,
                 process, functional test scores, and developer perception.
               </p>
+              <p>A paper adaptation is in preparation.</p>
               <Note id="speckit-note" active={!!active} wave={draw?.note}>
                 The study used the Spec-kit releases available during its sessions. The findings concern those versions.
               </Note>
