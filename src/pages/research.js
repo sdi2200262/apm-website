@@ -63,7 +63,7 @@ export default function Research() {
                 <nav className={styles.links} aria-label="Thesis">
                   <Link to="/research/thesis/introduction">Read thesis</Link>
                   <a href={pdf} download="apm-thesis.pdf">Download thesis PDF</a>
-                  <a href={thesis.recordPage}>View in Pergamos</a>
+                  <a href={thesis.recordPage} target="_blank" rel="noopener noreferrer" title="Opens in a new tab">View in Pergamos <span aria-hidden="true">↗</span></a>
                 </nav>
               </article>
               <article className={styles.publication} aria-labelledby="paper-heading">
