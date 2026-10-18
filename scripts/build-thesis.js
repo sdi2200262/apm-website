@@ -80,14 +80,16 @@ async function main() {
   const [month, year] = arg(master, 'dateEn').split(' ').map((w) => w[0] + w.slice(1).toLowerCase());
   const institution = 'National and Kapodistrian University of Athens'; // set in apmthesis.cls
   const school = `Department of Informatics and Telecommunications, ${institution}`;
+  const record = 'https://pergamos.lib.uoa.gr/uoa/dl/object/5450026'; // the thesis's persistent Pergamos record
   fs.writeFileSync(path.join(root, 'research', 'thesis.json'), JSON.stringify({
     title,
     author: `${first} ${last}`,
     supervisor: arg(master, 'supervisorEn'),
     institution,
     date: `${month} ${year}`,
+    record,
     abstract: plain(arg(master, 'abstractEn')).split(/\n\s*\n/),
-    citation: `${initial} ${last}, “${title},” BSc thesis, ${school}, Athens, Greece, ${month.length > 4 ? `${month.slice(0, 3)}.` : month} ${year}.`,
+    citation: `${initial} ${last}, “${title},” BSc thesis, ${school}, Athens, Greece, ${month.length > 4 ? `${month.slice(0, 3)}.` : month} ${year}. [Online]. Available: ${record}`,
     // In the thesis's own references.bib style (biblatex): @thesis with its type, institution and location. Inner
     // braces keep the title's case (IEEE sentence-cases titles) and the institution whole (its "and"s split a list).
     biblatex: `@thesis{${last.toLowerCase()}${year}apm,
@@ -98,6 +100,7 @@ async function main() {
     location = {Athens, Greece},
     month = ${month.slice(0, 3).toLowerCase()},
     year = {${year}},
+    url = {${record}},
 }`,
     commit,
   }, null, 2));
