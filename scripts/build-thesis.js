@@ -88,6 +88,7 @@ async function main() {
     institution,
     date: `${month} ${year}`,
     record,
+    recordPage: 'https://pergamos.lib.uoa.gr/en/item/uoadl:5450026',
     abstract: plain(arg(master, 'abstractEn')).split(/\n\s*\n/),
     citation: `${initial} ${last}, “${title},” BSc thesis, ${school}, Athens, Greece, ${month.length > 4 ? `${month.slice(0, 3)}.` : month} ${year}. [Online]. Available: ${record}`,
     // In the thesis's own references.bib style (biblatex): @thesis with its type, institution and location. Inner

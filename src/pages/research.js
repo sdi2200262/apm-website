@@ -11,7 +11,7 @@ import thesis from '@site/research/thesis.json';
 import styles from './research.module.css';
 
 // Research overview, a book page like the landing page (shared parts: "Book pages" in src/css/custom.css), with
-// its header: the study's cover beside the mark and the publication links, then the abstract and the citation. Title, author,
+// its header: the study's cover beside the mark, then publications, the abstract and the citation. Title, author,
 // metadata, abstract and citations come from the thesis (research/thesis.json, scripts/build-thesis.js).
 export default function Research() {
   const draw = useDraw();
@@ -45,19 +45,31 @@ export default function Research() {
                 Both frameworks ran on Claude Code with Claude Opus 4.7 or Claude Sonnet 4.6. The comparison covers economic cost,
                 process, functional test scores, and developer perception.
               </p>
-              <p>A paper adaptation is in preparation.</p>
               <Note id="speckit-note" active={!!active} wave={draw?.note}>
                 The study used the Spec-kit releases available during its sessions. The findings concern those versions.
               </Note>
             </div>
-            <div className={styles.rail}>
-              <div className={styles.mark}>{draw && <Mark seed={draw.seed} size={144} intro />}</div>
-              <nav className={styles.links} aria-label="Publications">
-                <Link to="/research/thesis/introduction">Read thesis</Link>
-                <a href={pdf} download="apm-thesis.pdf">Download thesis PDF</a>
-                <a href={thesis.record}>View in Pergamos</a>
-                <Link to="/research/paper">Read paper</Link>
-              </nav>
+            <div className={styles.mark} aria-hidden="true">{draw && <Mark seed={draw.seed} size={144} intro />}</div>
+          </div>
+          <Wave w={draw?.waves[0]} />
+        </section>
+
+        <section className="wrap" aria-labelledby="publications-heading">
+          <div className="grid2">
+            <h2 id="publications-heading" className="label">Publications</h2>
+            <div className={styles.publications}>
+              <article className={styles.publication} aria-labelledby="thesis-heading">
+                <h3 id="thesis-heading">BSc thesis</h3>
+                <nav className={styles.links} aria-label="Thesis">
+                  <Link to="/research/thesis/introduction">Read thesis</Link>
+                  <a href={pdf} download="apm-thesis.pdf">Download thesis PDF</a>
+                  <a href={thesis.recordPage}>View in Pergamos</a>
+                </nav>
+              </article>
+              <article className={styles.publication} aria-labelledby="paper-heading">
+                <h3 id="paper-heading">Paper</h3>
+                <p>A paper adaptation is in preparation.</p>
+              </article>
             </div>
           </div>
           <Wave w={draw?.waves[0]} />
