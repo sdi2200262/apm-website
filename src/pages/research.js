@@ -56,7 +56,9 @@ export default function Research() {
                 <nav className={styles.links} aria-label="Thesis">
                   <Link to="/research/thesis/introduction">Read thesis</Link>
                   <a href={pdf} download="apm-thesis.pdf">Download PDF</a>
-                  <a href={thesis.recordPage} target="_blank" rel="noopener noreferrer" title="Opens in a new tab">View in Pergamos <span aria-hidden="true">↗</span></a>
+                  <a href={thesis.recordPage} target="_blank" rel="noopener noreferrer" title="Opens in a new tab">
+                    View in <span className={styles.externalLabel}>Pergamos <svg className={styles.externalIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10" /></svg></span>
+                  </a>
                 </nav>
                 <div className={styles.paper}>
                   <p>Paper</p>
