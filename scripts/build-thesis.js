@@ -80,7 +80,7 @@ async function main() {
   const [month, year] = arg(master, 'dateEn').split(' ').map((w) => w[0] + w.slice(1).toLowerCase());
   const institution = 'National and Kapodistrian University of Athens'; // set in apmthesis.cls
   const school = `Department of Informatics and Telecommunications, ${institution}`;
-  const record = 'PERGAMOS_URL'; // the thesis's record in Pergamos, the university library's repository
+  const record = 'https://pergamos.lib.uoa.gr/uoa/dl/object/5450026'; // the thesis's persistent Pergamos record
   fs.writeFileSync(path.join(root, 'research', 'thesis.json'), JSON.stringify({
     title,
     author: `${first} ${last}`,
