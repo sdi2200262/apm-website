@@ -90,13 +90,13 @@ async function main() {
     record,
     recordPage: 'https://pergamos.lib.uoa.gr/en/item/uoadl:5450026',
     abstract: plain(arg(master, 'abstractEn')).split(/\n\s*\n/),
-    citation: `${initial} ${last}, “${title},” BSc thesis, ${school}, Athens, Greece, ${month.length > 4 ? `${month.slice(0, 3)}.` : month} ${year}. [Online]. Available: ${record}`,
+    citation: `${initial} ${last}, “${title},” thesis, ${school}, Athens, Greece, ${month.length > 4 ? `${month.slice(0, 3)}.` : month} ${year}. [Online]. Available: ${record}`,
     // In the thesis's own references.bib style (biblatex): @thesis with its type, institution and location. Inner
     // braces keep the title's case (IEEE sentence-cases titles) and the institution whole (its "and"s split a list).
     biblatex: `@thesis{${last.toLowerCase()}${year}apm,
     author = {${last}, ${first}},
     title = {{${title}}},
-    type = {BSc thesis},
+    type = {Thesis},
     institution = {{${school}}},
     location = {Athens, Greece},
     month = ${month.slice(0, 3).toLowerCase()},
