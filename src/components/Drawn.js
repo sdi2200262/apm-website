@@ -47,14 +47,20 @@ export function NoteWave({ w }) {
   );
 }
 
-// The page-load seed (kept across client-side navigation, new on refresh), plus everything derived from it.
+// Each page scope and rule index gets its own random stream; navigation keeps shapes, refresh redraws them.
 // null during SSR and the hydrating first render.
-const drawFrom = (seed) => {
-  const rnd = rng(seed ^ 0x9e3779b9);
-  return { seed, waves: [wave(rnd), wave(rnd)], note: wave(rnd, 5 + Math.floor(rnd() * 2), 0.5, rnd() < 0.5 ? 1 : -1) };
+const drawFrom = (seed, scope) => {
+  let ruleSeed = seed ^ 0x9e3779b9;
+  for (const char of scope) ruleSeed = Math.imul(ruleSeed ^ char.charCodeAt(0), 16777619);
+  const rnd = rng(ruleSeed);
+  return {
+    seed,
+    wave: (index) => wave(rng(ruleSeed + index)),
+    note: wave(rnd, 5 + Math.floor(rnd() * 2), 0.5, rnd() < 0.5 ? 1 : -1),
+  };
 };
-export function useDraw() {
-  const [draw, setDraw] = useState(() => drawnSeed() && drawFrom(drawnSeed()));
-  useEffect(() => { if (!draw) setDraw(drawFrom(pageSeed())); }, [draw]);
-  return draw;
+export function useDraw(scope) {
+  const [seed, setSeed] = useState(drawnSeed);
+  useEffect(() => { if (!seed) setSeed(pageSeed()); }, [seed]);
+  return seed ? drawFrom(seed, scope) : null;
 }

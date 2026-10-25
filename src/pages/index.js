@@ -161,7 +161,7 @@ function GettingStarted() {
 }
 
 export default function Home() {
-  const draw = useDraw();
+  const draw = useDraw('home');
   const away = useAway();
   return (
     <Layout description={DESCRIPTION} noFooter>
@@ -177,7 +177,7 @@ export default function Home() {
             <div className="cover-mark">{draw && <Mark seed={draw.seed} size={144} intro />}</div>
             <Cover draw={draw} />
           </div>
-          <Wave w={draw?.waves[0]} />
+          <Wave w={draw?.wave(0)} />
         </section>
 
         <section className="wrap">
@@ -185,7 +185,7 @@ export default function Home() {
             <h2 className="label">Overview</h2>
             <Overview />
           </div>
-          <Wave w={draw?.waves[1]} />
+          <Wave w={draw?.wave(1)} />
         </section>
 
         <section className="wrap">
