@@ -14,7 +14,7 @@ import styles from './research.module.css';
 // its header: the study's cover beside the mark and publication links, then the abstract and the citation. Title, author,
 // metadata, abstract and citations come from the thesis (research/thesis.json, scripts/build-thesis.js).
 export default function Research() {
-  const draw = useDraw();
+  const draw = useDraw('research');
   const { active, ref, props } = useTerms();
   const pdf = useBaseUrl('/research/thesis.pdf');
   const [name, subtitle] = thesis.title.split(': ');
@@ -66,7 +66,7 @@ export default function Research() {
               </div>
             </aside>
           </div>
-          <Wave w={draw?.waves[0]} />
+          <Wave w={draw?.wave(0)} />
         </section>
 
         <section className="wrap">
@@ -74,7 +74,7 @@ export default function Research() {
             <h2 className="label">Abstract</h2>
             <div className={styles.text}>{thesis.abstract.map((p) => <p key={p}>{p}</p>)}</div>
           </div>
-          <Wave w={draw?.waves[1]} />
+          <Wave w={draw?.wave(1)} />
         </section>
 
         <section className="wrap">
