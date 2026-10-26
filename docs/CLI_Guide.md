@@ -105,7 +105,7 @@ It:
 3. Installs the new release, dropping any assistant it no longer offers.
 4. Writes fresh metadata.
 
-For official installations, the CLI prefers stable releases; on a pre-release, it offers both the latest stable and the latest pre-release. For custom installations, you choose from the releases newer than yours.
+For official installations, `apm update` moves to the newest stable release and never offers a pre-release from a stable install. To try a pre-release, install it with `apm init --tag <tag>`. On a pre-release, `apm update` offers both the latest stable and the latest pre-release. For custom installations, you choose from the releases newer than yours.
 
 | Component | On update |
 | :--- | :--- |
