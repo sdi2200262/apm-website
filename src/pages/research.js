@@ -45,25 +45,19 @@ export default function Research() {
                 Both frameworks ran on Claude Code with Claude Opus 4.7 or Claude Sonnet 4.6. The comparison covers economic cost,
                 process, functional test scores, and developer perception.
               </p>
-              <p>A paper adaptation is in preparation.</p>
               <Note id="speckit-note" active={!!active} wave={draw?.note}>
                 The study used the Spec-kit releases available during its sessions. The findings concern those versions.
               </Note>
             </div>
             <aside className={styles.rail} aria-label="Research links">
               <div className={styles.mark} aria-hidden="true">{draw && <Mark seed={draw.seed} size={144} intro />}</div>
-              <div className={styles.actions}>
-                <nav className={styles.links} aria-label="Thesis">
-                  <Link to="/research/thesis/introduction">Read thesis</Link>
-                  <a href={pdf} download="apm-thesis.pdf">Download PDF</a>
-                  <a href={thesis.recordPage} target="_blank" rel="noopener noreferrer" title="Opens in a new tab">
-                    View in <span className={styles.externalLabel}>Pergamos <svg className={styles.externalIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10" /></svg></span>
-                  </a>
-                </nav>
-                <div className={styles.paper}>
-                  <Link to="/research/paper">Read the paper</Link>
-                </div>
-              </div>
+              <nav className={styles.links} aria-label="Thesis">
+                <Link to="/research/thesis/introduction">Read thesis</Link>
+                <a href={pdf} download="apm-thesis.pdf">Download PDF</a>
+                <a href={thesis.recordPage} target="_blank" rel="noopener noreferrer" title="Opens in a new tab">
+                  View in <span className={styles.externalLabel}>Pergamos <svg className={styles.externalIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10" /></svg></span>
+                </a>
+              </nav>
             </aside>
           </div>
           <Wave w={draw?.wave(0)} />

@@ -26,7 +26,7 @@ src/
 ├── pages/         # landing page (index.js + index.css), Research overview (research.js)
 └── theme/         # Docusaurus overrides: Navbar/Logo, NavbarItem, Footer, Layout, TOC, DocItem/Layout (TOC column on every page), DocBreadcrumbs (Research crumb), Icon/Arrow, MDXComponents
 docs/              # documentation pages (Markdown/MDX)
-research/          # thesis reader pages (generated, see Thesis Reader) and the paper placeholder
+research/          # thesis reader pages (generated, see Thesis Reader)
 diagrams/          # diagram icons (Lucide)
 scripts/           # build-diagrams.py (diagrams), build-figures.py (thesis charts), build-llms.js (llms.txt)
 static/img/        # assistants/ (logos), diagrams/ and figures/ (generated), favicon, social card
