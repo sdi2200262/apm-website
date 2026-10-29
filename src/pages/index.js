@@ -32,10 +32,10 @@ const CAPTION = CAPTIONS.overview; // shared with the docs (src/captions.js)
 // Overview parts, in figure order (Figure 2..6): key = diagram variant (overview-<key>-<theme>.svg). Captions: src/captions.js.
 // A no-break space ties each caption's last two words, so no line ends on a lone word (Safari before 26 ignores text-wrap: pretty).
 const PARTS = Object.fromEntries(['planning', 'manager', 'workers', 'user', 'state'].map((k) => [k, CAPTIONS[`overview-${k}`].replace(/ (\S+)$/, '\u00a0$1')]));
-// [init flag, name, logo in static/img/assistants]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
+// [assistant key, name, logo in static/img/assistants]. Installation uses agents or claude. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
 const ASSISTANTS = [
   ['claude', 'Claude Code', 'claude.svg'],
-  ['codex', 'Codex CLI', ['codex-light.svg', 'codex-dark.svg']],
+  ['codex', 'Codex', ['codex-light.svg', 'codex-dark.svg']],
   ['cursor', 'Cursor', 'cursor.svg'],
   ['copilot', 'GitHub Copilot', 'github-copilot.svg', 'mask'],
   ['antigravity', 'Antigravity', 'antigravity.png'],
@@ -134,10 +134,10 @@ function GettingStarted() {
     <>
       <div className="steps hover-only">
         <h3>1. Install the CLI</h3>
-        <p>APM supports Claude Code, Codex CLI, Cursor, GitHub Copilot, Antigravity, and OpenCode. It installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later:</p>
+        <p>APM works with agents that use <code>AGENTS.md</code> and <code>.agents/skills/</code>, and with Claude Code. It installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later:</p>
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
-        <p>In your project directory, run the command below to install APM's commands, guides, skills, and document templates. Select your assistant when the CLI prompts you, or pass it with <code>-a</code>:</p>
+        <p>In your project directory, run the command below to install APM's skills, guides and document templates. Choose <code>agents</code> for agents using <code>AGENTS.md</code> and <code>.agents/skills/</code>, or <code>claude</code> for Claude Code. Select your assistant below to see its install command:</p>
         <div className="pick" role="group" aria-label="AI assistant">
           {ASSISTANTS.map(([id, name, file, mask]) => (
             <button key={id} type="button" aria-pressed={pick === id} onClick={() => setPick(pick === id ? null : id)}>
@@ -146,10 +146,10 @@ function GettingStarted() {
             </button>
           ))}
         </div>
-        <Code>{pick ? `apm init -a ${pick}` : 'apm init'}</Code>
+        <Code>{pick ? `apm init -a ${pick === 'claude' ? 'claude' : 'agents'}` : 'apm init'}</Code>
         <h3>3. Start the Planner</h3>
-        <p>Open your assistant in the project and run:</p>
-        <Code>{pick === 'codex' ? '$apm-1-initiate-planner' : '/apm-1-initiate-planner'}</Code>
+        <p>Open a new chat in your project and invoke the <code>apm-1-initiate-planner</code> skill{pick ? ':' : ' using your assistant’s skill syntax:'}</p>
+        <Code>{pick === 'claude' ? '/apm-1-initiate-planner' : pick === 'codex' ? '$apm-1-initiate-planner' : 'apm-1-initiate-planner'}</Code>
         <p>Describe what you want to build or change. The Planner works with you on the planning documents, then directs you to start the Manager in a new conversation. From there, each agent tells you what to run next and where. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">

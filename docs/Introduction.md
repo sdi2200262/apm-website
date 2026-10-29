@@ -11,7 +11,7 @@ import Diagram from '@site/src/components/Diagram';
 
 **A spec-driven multi-agent framework for AI-assisted software engineering.**
 
-APM is an open-source framework for managing ambitious software projects with AI assistants - Claude Code, Cursor, GitHub Copilot, Antigravity, OpenCode, and Codex. Instead of working in a single, increasingly long conversation, APM structures your work into a coordinated system where different agents handle planning, coordination, and execution, and their messages pass through you.
+APM is an open-source framework for managing ambitious software projects with AI assistants. It works with agents that use `AGENTS.md` and `.agents/skills/`, and with Claude Code. Instead of working in a single, increasingly long conversation, APM structures your work into a coordinated system where different agents handle planning, coordination, and execution, and their messages pass through you.
 
 ## The Problem
 

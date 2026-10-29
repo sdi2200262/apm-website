@@ -9,9 +9,7 @@ import Diagram from '@site/src/components/Diagram';
 
 # Agent Roles
 
-APM coordinates three agent roles that work together to execute a project. Each agent has a distinct role with carefully scoped context designed for its responsibilities.
-
-APM specialises its agents by scoping their context: each agent sees only the information relevant to its role. [Task Prompts](Agent_Orchestration.md#how-task-prompts-are-built) are self-contained, and agents have no reason to look beyond them. The mechanisms the roles share are covered in [Agent Orchestration](Agent_Orchestration.md).
+APM has three roles, each with the context its responsibilities need. The Planner defines the work, the Manager coordinates it, and Workers carry it out from self-contained [Task Prompts](Agent_Orchestration.md#how-task-prompts-are-built). [Agent Orchestration](Agent_Orchestration.md) covers how they work together.
 
 ## Comparison
 
@@ -31,11 +29,11 @@ The Planner operates once, at the start of a session, to turn your requirements 
 
 - **Context Gathering** - Assesses the workspace and conducts structured discovery to gather project context, producing an Understanding Summary for your review and approval. See [Context Gathering](Workflow_Overview.md#context-gathering) for the full procedure.
 
-- **Work Breakdown** - Decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) (Spec, Plan, and Rules), each reviewed with you before proceeding. The Planner may include notes in the Spec and Plan headers to pass context on to the Manager. Initialises the [Message Bus](Agent_Orchestration.md#the-message-bus) for all Workers defined in the Plan. See [Work Breakdown](Workflow_Overview.md#work-breakdown) for the full procedure.
+- **Work Breakdown** - Decomposes gathered context into three [planning documents](Agent_Orchestration.md#planning-documents) (Spec, Plan, and Rules), each reviewed with you before proceeding. The Planner may include Notes sections in the Spec and Plan to pass context on to the Manager. Initialises the [Message Bus](Agent_Orchestration.md#the-message-bus) for all Workers defined in the Plan. See [Work Breakdown](Workflow_Overview.md#work-breakdown) for the full procedure.
 
 ## Manager
 
-The Manager coordinates execution using the three planning documents and the [Tracker](Agent_Orchestration.md#the-tracker), recording Stage summaries and durable observations in the [Index](Agent_Orchestration.md#the-index). It operates throughout the project, assigning Tasks to Workers based on the Plan, extracting context from the Spec into Task assignments, and reviewing completed work.
+The Manager coordinates execution using the three planning documents and the [Tracker](Agent_Orchestration.md#the-tracker), recording Stage summaries and linking them from the [Index](Agent_Orchestration.md#the-index). It operates throughout the project, assigning Tasks to Workers based on the Plan, extracting context from the Spec into Task assignments, and reviewing completed work.
 
 <Diagram name="overview" variant="manager" alt="The overview diagram with the Manager and its Tracker highlighted." phone />
 
@@ -51,7 +49,7 @@ The Manager coordinates execution using the three planning documents and the [Tr
 
 - **Memory Maintenance** - Updates the [Tracker and Index](Agent_Orchestration.md#memory-and-session-state) after each Task Review and at Stage boundaries.
 
-- **Version Control Coordination** - Owns the version control lifecycle: sets conventions with your approval, manages branches and worktrees, and merges every accepted branch before a Stage closes.
+- **Version Control Coordination** - Owns the version control lifecycle: follows the conventions agreed during planning, manages branches and worktrees, and merges accepted branches before dependent work and Stage completion.
 
 ## Workers
 
@@ -59,15 +57,15 @@ Workers execute Tasks assigned by the Manager. Each Worker is defined in the Pla
 
 <Diagram name="overview" variant="workers" alt="The overview diagram with the Workers and Memory highlighted." phone />
 
-**Operational Context:** Sees its Task Prompt, the working context from its earlier Tasks, and the Rules. It sees other agents' work or the planning documents only when the Manager includes them in a Task Prompt.
+**Operational Context:** Sees its Task Prompt, the working context from its earlier Tasks, and the Rules. The Manager includes the needed context from other agents' work and planning documents in the Task Prompt. Workers do not read the Spec, Plan, Tracker or Index unless you widen their scope.
 
 **Core Responsibilities:**
 
-- **Task Execution** - Executes assigned Tasks following the Task Prompt instructions, validates results against its criteria, and iterates on failure, with a debug subagent when needed. See [Task Execution](Workflow_Overview.md#task-execution) for the full procedure.
+- **Task Execution** - Executes assigned Tasks following the Task Prompt instructions, validates results against its criteria, investigates failures and makes targeted fixes. It may delegate focused work to native subagents. See [Task Execution](Workflow_Overview.md#task-execution) for the full procedure.
 
 - **Task Logging** - Documents execution results in a structured Task Log and writes a Task Report to the Report Bus. See [Task Logging](Workflow_Overview.md#task-logging) for contents and procedure.
 
-- **Rules Proposals** - When you correct a Worker or give it a directive that could benefit all Workers, the Worker asks you after reporting whether the directive should become a Rule. The Rules change only with your approval.
+- **Rules Proposals** - When you correct a Worker or give it a directive that could benefit all Workers, the Worker asks at Task completion whether the directive should become a Rule for later Tasks. The Rules change only with your approval.
 
 ## Next Steps
 

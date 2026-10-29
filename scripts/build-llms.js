@@ -9,14 +9,14 @@ const siteUrl = 'https://agentic-project-management.dev';
 const DOC_ORDER = [
   { file: 'Introduction.md', slug: '/docs/introduction', desc: 'What APM is: context decay and context pressure, and how planning documents, separate agents, and coordination through the user address them' },
   { file: 'Getting_Started.md', slug: '/docs/getting-started', desc: 'Installing the agentic-pm CLI, initialising a project, and running a first APM session step by step' },
-  { file: 'Quick_Reference.md', slug: '/docs/quick-reference', desc: 'All APM slash commands, CLI commands, .apm/ file structure, and workflow steps in one page' },
+  { file: 'Quick_Reference.md', slug: '/docs/quick-reference', desc: 'All APM command skills, CLI commands, .apm/ file structure, and workflow steps in one page' },
   { file: 'Agent_Roles.md', slug: '/docs/agent-roles', desc: 'The three agent roles (Planner, Manager, Workers): their responsibilities, context scopes, and instances' },
   { file: 'Agent_Orchestration.md', slug: '/docs/agent-orchestration', desc: 'How agents coordinate through planning documents, file-based Message Bus, Task Prompts, structured Memory, and Handoff' },
   { file: 'Workflow_Overview.md', slug: '/docs/workflow-overview', desc: 'Every procedure of the Planning Phase and the Implementation Phase, in order' },
-  { file: 'Prompt_Engineering.md', slug: '/docs/prompt-engineering', desc: 'How APM\'s files (commands, guides, skills, agent files) are organised and written, and why' },
+  { file: 'Prompt_Engineering.md', slug: '/docs/prompt-engineering', desc: 'How APM\'s files (skills, guides and session documents) are organised and written, and why' },
   { file: 'Context_Engineering.md', slug: '/docs/context-engineering', desc: 'Why each role sees what it sees, how context crosses conversations, and the compression pipeline' },
   { file: 'CLI_Guide.md', slug: '/docs/cli', desc: 'The agentic-pm CLI - all commands (init, archive, update, custom, add, remove, status), options, directory structure, and metadata schema' },
-  { file: 'Troubleshooting_Guide.md', slug: '/docs/troubleshooting-guide', desc: 'Common issues in APM sessions, context recovery, and migrating from v0.5.x' },
+  { file: 'Troubleshooting_Guide.md', slug: '/docs/troubleshooting-guide', desc: 'Common issues in APM sessions, context recovery, and upgrading older installations' },
   { file: 'Tips_and_Tricks.md', slug: '/docs/tips-and-tricks', desc: 'Model selection per role, cost efficiency, and steering the workflow' },
   { file: 'Customisation_Guide.md', slug: '/docs/customisation-guide', desc: 'Custom repositories: forking APM, the build, what you can change, and the official adaptations' },
   { file: 'Security_Guide.md', slug: '/docs/security', desc: 'Trust model for APM template bundles, what custom bundles can and cannot do, and mitigation strategies' },
@@ -54,7 +54,7 @@ const refDocs = DOC_ORDER.slice(8);      // CLI Guide through Security Guide
 
 let llmsTxt = `# Agentic Project Management (APM)
 
-> A spec-driven multi-agent framework for AI-assisted software engineering. Open source and platform-agnostic: Claude Code, Cursor, GitHub Copilot, Antigravity, OpenCode, and Codex.
+> A spec-driven multi-agent framework for AI-assisted software engineering. Open source, for agents supporting AGENTS.md and .agents/skills/, and for Claude Code.
 
 APM addresses two problems of long LLM conversations: context decay (recall and reasoning weaken as context grows) and context pressure (each call costs more and nears the context window's limit). In the Planning Phase, a Planner works with the user to write three planning documents: the Spec, the Plan, and the Rules. In the Implementation Phase, a Manager assigns Tasks and Workers carry them out, each in its own conversation. Agents communicate only through the user, who delivers each message with a command and can review the work first; APM calls this productive friction. Session state lives in files under .apm/, outside any agent's context window.
 

@@ -13,7 +13,7 @@ This doc walks through every procedure in both phases of an APM session, in orde
 
 ## Planning Phase
 
-The Planning Phase produces the planning documents that guide all subsequent work. The [Planner](Agent_Roles.md#planner) works through two sequential procedures: Context Gathering, then Work Breakdown.
+The Planning Phase produces the planning documents that guide all subsequent work. The [Planner](Agent_Roles.md#planner) works through two procedures: Context Gathering develops the design and division of work with you; Work Breakdown turns the approved understanding into documents.
 
 <Diagram name="planning-phase-overview" alt="The Planner gathers context and elicits requirements from you, consolidates them and presents its understanding; once you agree, it creates the planning documents, which you review for completeness before planning completes." />
 
@@ -21,21 +21,23 @@ The Planning Phase produces the planning documents that guide all subsequent wor
 
 The Planner conducts structured discovery through three progressive question rounds, each building on the previous.
 
-Before the questions start, the Planner scans the workspace for repositories, existing materials, and your assistant's rules file. It treats materials you name in your initiation context as authoritative and asks you to confirm anything else it finds before exploring it in depth. Archived sessions in `.apm/archives/` are examined through the `apm-archive-explorer` subagent and checked against the current codebase. Context you pass with `/apm-1-initiate-planner` makes its questions more targeted, and discovery still runs.
+Before the questions start, the Planner scans the workspace for repositories, existing materials, and your assistant's rules file. It treats materials you name in your initiation context as authoritative and asks you to confirm anything else it finds before exploring it in depth. The Planner reads relevant archives in `.apm/archives/` and checks them against the current codebase. Context you pass with `/apm-1-initiate-planner` makes its questions more targeted, and discovery still runs.
 
 **Round 1 - Existing Materials and Vision.** What the project is, why it exists, and what materials and prior work you already have.
 
 **Round 2 - Technical Requirements.** Design decisions, constraints, dependencies, risks, and how the work will be validated.
 
-**Round 3 - Implementation Approach and Quality.** Your preferences for workflow, quality standards, and approvals, and the final design decisions.
+**Round 3 - Implementation Approach and Quality.** Your preferences for workflow, quality, Task size, Workers, parallelism and review points. The Planner also agrees Git use, base branches, branch and commit conventions, and whether to track APM files. If `.apm/` is inside a repository, ignoring it is the default proposal.
 
-After each round, the Planner follows up on any gaps. When your answers point to existing code, it explores it, sending subagents on substantial research to preserve its own context for Work Breakdown and checking their critical claims against the files. Each round ends with a short summary of what was gathered.
+After each round, the Planner follows up on any gaps. When your answers point to existing code, it explores it. It may delegate focused research to native subagents, then checks their findings before using them. Each round ends with a short summary of what was gathered.
 
-After all three rounds, the Planner presents a consolidated **Understanding Summary**. Corrections loop through targeted follow-ups until you approve, before any planning document is written.
+During the rounds, the Planner develops tentative Stages, Tasks and Workers with you, revising them as it learns. After agreeing the session's scope, it presents a consolidated **Understanding Summary**. Corrections loop through targeted follow-ups until you approve, before any planning document is written.
 
 ### Work Breakdown
 
-The Planner writes the three [planning documents](Agent_Orchestration.md#planning-documents) one at a time: the Spec, then the Plan, then the Rules. Before each, it presents its reasoning in chat, and you can redirect it before anything is written. It waits for your approval before starting the next.
+The Planner writes the three [planning documents](Agent_Orchestration.md#planning-documents) one at a time: the Spec, then the Plan, then the Rules. It explains its proposal, writes the document, then waits for your review and approval before starting the next.
+
+The Rules go in workspace-root `AGENTS.md`. The Planner preserves existing instructions and imports it from an existing workspace `CLAUDE.md` for Claude Code. Any agreed repository initialisation or ignore-file changes follow Rules approval.
 
 After all three approvals, the Planner initialises the [Message Bus](Agent_Orchestration.md#the-message-bus) and the Planning Phase is complete. The Manager checks the work against these documents, and Workers receive what they need from them through their Task Prompts. A gap here carries into implementation. To continue, open a new conversation and run `/apm-2-initiate-manager`.
 
@@ -47,11 +49,7 @@ The Implementation Phase executes the planning documents, with the [Manager](Age
 
 ### First Manager Initialisation
 
-The first Manager instance reads the planning documents, then:
-
-- Explores the git state of each working repository (branches, recent history, and existing patterns) and combines it with the Planner's notes in the Spec and Plan headers. If `.apm/` is inside a repository, it adds `.apm/` to `.gitignore` by default and asks whether you want to track any of it in git.
-- Presents an Understanding Summary alongside proposed version control conventions, for your approval.
-- On approval, writes the conventions to the Tracker and the Rules file, populates the Tracker with Stage 1 Tasks and all Workers, and begins dispatching.
+The first Manager reads the planning documents and explores the working codebases. It presents its understanding for your approval, then populates the Tracker with the first Stage's Tasks and the Workers. It dispatches under the Git agreements made during planning.
 
 ### Task Cycles
 
@@ -71,13 +69,13 @@ For Workers not yet initialised, you open a new conversation and run `/apm-3-ini
 
 The Worker receives the Task Prompt, either on initialisation or through `/apm-4-check-tasks` for later Tasks. It reads any files from [other agents' work](Agent_Orchestration.md#dependency-context) that the prompt names, executes the instructions under the Rules, and validates the result against the prompt's criteria. It completes autonomous checks first and pauses for you only when a criterion needs your judgement or action. You can interrupt or steer the Worker at any point.
 
-If validation fails, the Worker traces the root cause and retries, bringing in a debug subagent when a fix does not hold. If the issue persists, it presents the situation to you and reports Partial status.
+If validation fails, the Worker investigates and makes targeted fixes. It may use native subagents for focused work. Missing dependencies, conflicting instructions and problems beyond the Task need guidance. Success requires the objective and every validation criterion to pass; unavailable or unrun checks remain explicit limits.
 
-When you give a correction or directive during execution, the Worker complies immediately and continues. At Task completion, the correction is noted in the Task Log as an important finding for the Manager. After logging and reporting, the Worker asks whether the correction should become a Rule for all Workers; you may decline.
+When you give a correction or directive during execution, the Worker complies immediately and continues. At completion, the Worker asks whether corrections useful for later Tasks should become Rules and records the correction and your decision in its Task Log. It writes approved additions to the existing shared Rules file and records the path in its log.
 
 #### Task Logging
 
-Once execution is complete, the Worker writes a Task Log to Memory with the outcome status (Success, Partial, or Failed), validation results, deliverables, and any flags for the Manager. It then writes a brief Task Report to its Report Bus and directs you to deliver it to the Manager. Before you deliver it, you can review the work - the changes, the tests, the Worker's summary - and ask the Worker for more.
+With version control, the Worker commits its changes. It then writes a Task Log to Memory with the outcome status (Success, Partial, or Failed), validation results, deliverables, and any flags for the Manager. It then writes a brief Task Report to its Report Bus and directs you to deliver it to the Manager. Before you deliver it, you can review the work - the changes, the tests, the Worker's summary - and ask the Worker for more.
 
 For batch execution, the Worker logs each Task as it completes and writes one consolidated report at the end, or when it stops on a failure.
 
@@ -86,10 +84,10 @@ For batch execution, the Worker logs each Task as it completes and writes one co
 The Manager receives the report via `/apm-5-check-reports` (add a Worker's identifier when several are active) and reviews it as an outsider to the code. It reads the Task Log, checks that the claimed status matches the log's content, and checks the work against what it assigned and against the planning documents. For anything doubtful, it investigates itself or sends a subagent. There are three outcomes:
 
 - **Proceed** - The Manager updates the [Tracker](Agent_Orchestration.md#the-tracker), merges the dispatch unit's branch where needed, and dispatches newly ready Tasks.
-- **Follow-up** - The Worker retries from a new Task Prompt with refined instructions, overwriting its previous log.
+- **Follow-up** - The Worker retries from a new Task Prompt with refined instructions, replacing its previous log while preserving consequential earlier findings and their resolution. The Task keeps its ID and stays Active.
 - **Document modification** - Execution revealed a problem in the Spec, Plan, or Rules. The Manager works out the knock-on effects and brings you in when the change is beyond its authority. It then proceeds or issues a follow-up.
 
-A report from a [non-APM agent](Agent_Orchestration.md#the-message-bus) skips the log review.
+A report from a [non-APM agent](Agent_Orchestration.md#the-message-bus) carries its own evidence and skips Worker-log review. If required work or validation remains, the Task stays Active. You may accept a Partial outcome, but the recorded result keeps its limits.
 
 After each review, the Manager reassesses readiness and dispatches the next Task in the same turn when one is ready. It pauses only when no Tasks are ready and Workers are active, or when a decision requires your collaboration.
 
@@ -99,7 +97,7 @@ Stages are sequential: each begins once the previous one completes. Parallel wor
 
 <Diagram name="stage-progression" alt="Stage 1 holds Tasks such as data models, a storage layer, an auth handler, API endpoints, and integration tests; later Stages follow in order until the project is complete." />
 
-After all Tasks in a Stage are Done, the Manager decides from the Stage's complexity and the Task Reviews whether the Stage needs holistic verification, and runs it where needed. It then writes a Stage summary to the [Index](Agent_Orchestration.md#the-index) and moves to the next Stage.
+A Stage completes when all its Tasks are Done, required Stage verification is resolved and its branches are merged. The Manager verifies the Stage when you request it, the Plan calls for it, or any Task needed a follow-up or reported Important Findings. Otherwise it records why verification was skipped. It writes `stage-<NN>.summary.md` in the Stage's Memory folder and links it from the [Index](Agent_Orchestration.md#the-index) before moving on.
 
 ### Project Completion
 
@@ -107,11 +105,13 @@ After all Stages complete, the Manager marks the project as complete in the Trac
 
 ## Session Continuation
 
-When an APM session ends, whether through project completion, a decision to pause, or a shift in direction, you can archive the session and begin a new one.
+An APM session ends when its planned work is complete or you stop early. A larger goal can span several sessions, with archives carrying the history forward.
 
-1. **Summarise** - Run `/apm-8-summarize-session` in a new conversation. The summarisation agent reads the `.apm/` artifacts, validates them against the current codebase, and produces a session summary of decisions, completed work, and lessons learned. It also offers to archive the session.
-2. **Archive** - Run [`apm archive`](CLI_Guide.md#apm-archive) (or `apm archive --name custom-name`). This snapshots all `.apm/` contents except `archives/` into `.apm/archives/`, then removes the active session files, installed assistant files, and installation metadata.
-3. **Continue** - Run `apm init` to start a new APM session with fresh templates. The new Planner detects existing archives during Context Gathering and asks about their relevance. Each session can then build on earlier ones.
+Before summarising or archiving, pause active agents and record unfinished work and Git state.
+
+1. **Summarise (optional)** - Invoke `apm-8-summarize-session` in a new conversation, or ask the Manager at completion or early stopping. It checks the session records against deliverables and Git state, then writes `.apm/session.summary.md` with outcomes, consequential decisions, validation and remaining limits.
+2. **Archive (optional)** - Run [`apm archive`](CLI_Guide.md#apm-archive), with `--name <name>` if desired. The CLI preserves the session files and moves remaining worktrees through Git, including uncommitted contents. It verifies preservation before clearing active files and installed instructions. Worktrees stay attached to their source repositories; archiving does not finish, commit or merge their work.
+3. **Continue** - Run `apm init` for fresh templates and invoke `apm-1-initiate-planner` in a new conversation. The Planner asks which archives are relevant and checks them against current evidence.
 
 ## Next Steps
 

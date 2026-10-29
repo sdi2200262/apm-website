@@ -11,22 +11,20 @@ APM's workflow runs on structured files that agents read and follow. This doc ex
 
 ## File Types
 
-APM installs four types of files into your project:
+APM installs skills, guides and initial session documents:
 
-| Type | What it is | How it enters context |
+| Type | Purpose | How it enters context |
 | :--- | :--- | :--- |
-| **Commands** | Prompts you invoke by name (`/`, or `$` in Codex) | Delivered directly as a prompt |
-| **Guides** | One procedure each, for one role | Read by the role that performs it |
-| **Skills** | Protocols shared by several roles | Read at initialisation |
-| **Agent files** | Subagent configurations | Read when a subagent is launched |
+| **Command skills** | Initiate roles, deliver messages, hand off, recover or summarise | Invoked by you, using your assistant's skill syntax |
+| **Shared skill** | Communication and Message Bus rules | Read by every role at initiation |
+| **Guides** | A procedure for one role | Read by that role at initiation |
+| **Initial documents** | Starting structure for the Spec, Plan, Tracker and Index | Filled in and maintained during the session |
 
-Commands are the only files you send to the model. They set the agent's role and point it to the guides and skills it needs; the agent reads everything else itself.
+The numbered command skills are user-triggered and set `disable-model-invocation: true`. They establish the role or action and point to the files it needs. The communication skill also includes a guide for agents outside APM to join the Message Bus.
 
-Guides keep each procedure apart from the command, scoped to the one role that performs it, and each agent loads only its own. The Manager reads Task Assignment and Task Review at initialisation, and Workers read Task Execution and Task Logging. The Planner reads Context Gathering first and Work Breakdown only once you approve its understanding.
+Guides keep procedures separate from initiation. The Planner reads both Context Gathering and Work Breakdown at the start, so it can develop the division of work during questioning. The Manager reads Task Assignment and Task Review; Workers read Task Execution and Task Logging.
 
-Skills hold what several roles share. The communication skill defines the Message Bus protocol and how agents address you, and every role loads it at initialisation. A skill can also carry supporting files, such as the integration guide that lets agents outside APM join the Message Bus. Agent files configure APM's own subagents: currently the `apm-archive-explorer`, which the Planner uses to research archived sessions.
-
-Commands, skills, and agent files each carry a name and a one-line description in YAML frontmatter, which the build and your assistant use to identify them. Guides carry none.
+Each skill has a name and description in YAML frontmatter. Guides have no frontmatter. Native subagents are optional: each role can delegate focused work within its scope and must verify the findings. APM does not install subagent configurations.
 
 ## Writing Patterns
 
@@ -34,13 +32,15 @@ APM's files are written for two readers: the agent following them and the person
 
 ## Structured Formats
 
-APM's artifacts, such as Task Prompts, Task Logs, Handoff Logs, and the planning documents, pair YAML frontmatter with a Markdown body. The split follows how agents use the information.
+Task Prompts, reports and logs pair YAML frontmatter with a Markdown body. The split follows how agents use the information.
 
 YAML carries facts an agent should not have to infer: flags, identifiers, and states that decide the next step. A Task Log whose `status` is anything but Success, or which sets `important_findings: true`, tells the Manager to investigate before accepting the work. The Manager still checks each flag against the body, and a mismatch is a warning sign. Markdown carries everything that needs reading and judgement.
 
 ## Platform-Agnostic Design
 
-APM's files are written once and adapted to each assistant at build time. Placeholders in the source resolve to the platform's rules file (`CLAUDE.md` for Claude Code, `AGENTS.md` for the others), its install paths, its argument syntax, and its way of launching subagents. Each assistant installs the files in its own place and format. Codex, Copilot, and Antigravity receive APM's commands as skills. Codex invokes them with `$`; Copilot and Antigravity use the `/` menu. These remain user-triggered commands, separate from the procedural skills agents read. The workflow itself is identical everywhere: a Planner in Claude Code and a Planner in Cursor follow the same procedures and produce the same planning documents.
+APM's files are written once and built for two installation targets. `agents` installs skills and guides under `.agents/`; `claude` installs them under `.claude/`. Both share `.apm/` session documents and workspace-root `AGENTS.md` for Rules.
+
+Build placeholders resolve skill and guide paths, the template version and Claude-specific text. The instructions name skills without a command prefix because invocation syntax varies by assistant. The procedures and document formats remain the same for both targets.
 
 ## Terminology
 

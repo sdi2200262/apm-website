@@ -11,7 +11,7 @@ You can customise APM through a custom repository: a copy of the official reposi
 
 ## Custom Repositories
 
-The official repository holds source templates that a build turns into one bundle per assistant. A custom repository changes those templates and builds its own bundles.
+The official repository holds source templates that a build turns into one bundle per installation target. A custom repository changes those templates and builds its own bundles.
 
 The [APM repository](https://github.com/sdi2200262/agentic-project-management) supports both a GitHub fork and "Use this template":
 
@@ -25,7 +25,7 @@ The workflow:
 
 1. Fork or template the repository.
 2. Change the templates, add skills, adjust procedures.
-3. Build with `npm run build:release`, which writes the bundles to `dist/`.
+3. Build with `VERSION=1.1.0 npm run build:release`, which writes the bundles to `dist/`.
 4. Create a GitHub Release and attach every file from `dist/`.
 5. Install with `apm custom -r owner/repo`.
 
@@ -37,8 +37,10 @@ The repository includes a [customisation skill](https://github.com/sdi2200262/ag
 
 Two files configure the build:
 
-- **`build/build-config.json`** lists the targets. In the official repository each target is a supported assistant, with its config directory (such as `.claude/` or `.cursor/`), its directory layout, and its subagent guidance.
-- **`build/processors/placeholders.js`** resolves the placeholders in the templates, such as `{RULES_FILE}` and `{ARGS}`, to each target's values, and holds per-assistant rules such as argument syntax. A new target needs entries in both files. `{RULES_FILE}` becomes `CLAUDE.md` for Claude Code and `AGENTS.md` for the others.
+- **`build/build-config.json`** lists target IDs, display names, bundle names, skill and guide directories, and the minimum CLI version. Official targets are `agents` and `claude`. A target can declare older IDs it `replaces` so updates consolidate them.
+- **`build/processors/placeholders.js`** resolves `{VERSION}`, `{SKILL_PATH:name}`, `{SKILL_DIR:name}`, `{GUIDE_PATH:name}` and `{CLAUDE_ONLY:text}`. Rules use workspace-root `AGENTS.md` for both targets.
+
+Set `VERSION` when building locally. The Release Templates workflow sets it from the version input, or increments the latest stable patch when the input is empty.
 
 The build writes to `dist/` one ZIP bundle per target, with all placeholders resolved, and a release manifest, `apm-release.json`. The CLI reads the manifest to list the available assistants, then downloads the chosen bundle. A release without the manifest cannot be installed.
 
@@ -47,16 +49,13 @@ The build writes to `dist/` one ZIP bundle per target, with all placeholders res
 | What | Where | Effect |
 | :--- | :--- | :--- |
 | **Procedures** | `templates/guides/` | How each procedure runs, from Context Gathering to Task Review |
-| **Commands** | `templates/commands/` | Each agent's role, what it reads, and how it initialises |
+| **Commands** | `templates/skills/apm-<N>-<action>/SKILL.md` | Each agent's role, what it reads, and how it initialises |
 | **Communication** | `templates/skills/apm-communication/` | The Message Bus protocol and how agents address you |
 | **Artifact templates** | `templates/apm/` | The starting structure of the Spec, the Plan, the Tracker, and the Index |
 | **New skills** | `templates/skills/<name>/SKILL.md` | Protocols your agents can load |
-| **New subagents** | `templates/agents/` | Subagents your agents can launch |
+| **Delegation** | Role initiation skills | Optional native subagent guidance within each role's scope |
 
-For example, a team that wants every Task touching authentication checked for security might change two places:
-
-- **`templates/agents/apm-security-reviewer.md`** - A new subagent that reviews code for security issues.
-- **`templates/guides/task-review.md`** - A new step in Task Review: for Tasks that touch authentication, the Manager launches the security reviewer before accepting the work.
+For example, a team that wants authentication changes checked for security can add that requirement to `templates/guides/task-review.md`. State which Tasks need the review and what evidence the Manager should check. If the assistant supports native subagents, the Manager can delegate the review and verify its findings.
 
 The conventions the templates follow are in `templates/_standards/`. They guide your edits and are not shipped in the bundles.
 
@@ -84,7 +83,7 @@ apm custom -r sdi2200262/apm-auto
 
 ### APM Semi
 
-[APM Semi](https://github.com/sdi2200262/apm-semi) lets you claim any Task and do it yourself, at Plan review or at any point during implementation. While you work, the agent on your side, the Manager or a paused Worker, stays on standby: it answers questions, runs validation when you return, and writes the Task Log for you. It supports all six assistants. It may suit developers who want to write the substantial code themselves and give boilerplate and peripheral Tasks to agents.
+[APM Semi](https://github.com/sdi2200262/apm-semi) lets you claim any Task and do it yourself, at Plan review or at any point during implementation. While you work, the agent on your side, the Manager or a paused Worker, stays on standby: it answers questions, runs validation when you return, and writes the Task Log for you. Its available installation targets depend on the adaptation's release. It may suit developers who want to write the substantial code themselves and give boilerplate and peripheral Tasks to agents.
 
 ```bash
 apm custom -r sdi2200262/apm-semi

@@ -15,6 +15,6 @@ export const CAPTIONS = {
   'task-cycle': 'One Task through the cycle. The Task Prompt and the Task Report travel through the Message Bus, while the Task Log is written to Memory and reviewed from there.',
   'stage-progression': 'A project moves through its Stages in order, each starting once the previous one is complete. Within a Stage, Tasks whose dependencies are done can proceed together.',
   'message-bus': 'The Message Bus between the Manager and a Worker. The Manager writes Task Prompts to the Worker\'s Task Bus, and the Worker writes Task Reports to its Report Bus. Each is read when you deliver it with a command.',
-  'state-compression': 'From execution detail to session history. Workers record execution detail in Task Logs and the Manager records coordination detail in the Tracker. Both are condensed into Memory\'s Index as summaries and durable observations.',
+  'state-compression': 'From execution detail to session history. Workers record execution detail in Task Logs and the Manager records coordination detail in the Tracker. Stage summaries in Memory preserve outcomes, decisions and limits; the Index links to them and records lasting findings.',
   'handoff': 'A Handoff. The outgoing agent writes a Handoff Log to Memory and a Handoff Prompt to the Handoff Bus. In a fresh conversation, the incoming agent reads both, with other relevant session state, and continues.',
 };

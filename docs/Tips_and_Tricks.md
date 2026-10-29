@@ -7,20 +7,20 @@ sidebar_position: 12
 
 # Tips and Tricks
 
-Practical guidance for APM sessions: choosing models, keeping costs down, and steering the work.
+Practical guidance for choosing models, controlling coordination overhead and steering the work.
 
 ## Model Selection
 
 APM works best with capable reasoning models, such as the top models from Claude, GPT, or Gemini.
 
 - **Planner and Manager:** use the strongest model you can. Their planning and coordination decisions shape every Task.
-- **Workers:** a smaller model is often enough, since Workers mostly write code and run tools. Give harder Tasks to a stronger one.
+- **Workers:** choose a model for the Task's difficulty and required tools. A cheaper model may suit bounded, familiar work.
 
 If your model lets you set its reasoning effort, set it higher for the Planner and the Manager.
 
 ### Switching Models
 
-Switching models mid-conversation is generally safe for Workers, whose context is scoped to the current Task. Avoid it for the Planner, which relies on everything gathered during Context Gathering. The Manager can switch between Task cycles, but one model throughout coordinates more consistently.
+When switching models, check that the replacement understands the current state and instructions. Switching between Tasks gives you a clearer point to review this. For a fresh conversation with another model, use a [Handoff](Agent_Orchestration.md#handoff-and-continuity).
 
 ## Cost Efficiency
 
@@ -36,13 +36,13 @@ The Planner's initiation command accepts project context, which makes its questi
 
 ### Batch-Friendly Planning
 
-On platforms that bill per request, batch dispatch saves exchanges. Mention during Context Gathering that you prefer batch-friendly Tasks, and the Planner favours sequential chains for the same Worker. You can also ask the Manager to prefer batch dispatch when several Tasks for one Worker are ready. Batches also mean fewer exchanges pass through you, each covering more work.
+Batch dispatch reduces message deliveries. Mention during Context Gathering that you prefer batch-friendly Tasks, and the Planner favours sequential chains for the same Worker. You can also ask the Manager to prefer batch dispatch when several Tasks for one Worker are ready. Batches also mean fewer exchanges pass through you, each covering more work.
 
 ### Handoff Timing
 
-A [Handoff](Agent_Orchestration.md#handoff-and-continuity) before the context limit costs less than recovery after compaction, and an agent with clean context writes better Handoff artifacts. Trigger Handoffs from the context usage your platform shows. When a Worker is one or two Tasks from finishing, it can be simpler to let the platform compact, recover, and finish.
+Use the context usage your assistant shows to plan a [Handoff](Agent_Orchestration.md#handoff-and-continuity) before the limit. Check that its files describe the current work and next action. If compaction has already lost context, use recovery first.
 
-Knowing when to hand off is the hard part, since decay is often visible only after quality drops. Some platforms support hooks that fire at context thresholds. For Claude Code, [`cc-context-awareness`](https://github.com/sdi2200262/cc-context-awareness) sets such thresholds and can prompt the agent to start a Handoff.
+Some assistants support context reminders or hooks. These can help you choose when to hand off; you still review the continuation state.
 
 ### Subagents
 
@@ -64,55 +64,16 @@ If you want a milestone verified before the next Stage, tell the Manager. It can
 
 ### Steering
 
-You can steer the workflow at any point during implementation.
+You can steer implementation at any point:
 
-#### Directing Workers
-
-Correct or extend a Worker's Task mid-execution. Workers record your corrections in the Task Log for the Manager, and offer to add them to the Rules:
-
-```
-The API response format changed since the Plan was written - use the v2 format from docs/api-v2.md instead.
-```
-
-#### Adding Context to Reports
-
-Add your own notes when you deliver a report:
-
-```
-/apm-5-check-reports python-agent
-
-The task was executed but I noticed the error handling doesn't cover timeout scenarios. I want the next Task for this Worker to address that before moving on.
-```
-
-#### Working Notes and Rules
-
-Preferences or observations for the coming Tasks of a Stage go into the Tracker as working notes:
-
-```
-Add a working note: I prefer verbose logging during this Stage so I can monitor execution progress across Workers.
-```
-
-A pattern every Worker should follow for the rest of the project belongs in the Rules:
-
-```
-I want all new API endpoints to follow the error response format defined in docs/api-errors.md. Add this to Rules so all Workers follow it.
-```
-
-#### Tasks and Dispatch
-
-Ask the Manager for Tasks the Plan lacks, or suggest groupings from what you know about the work:
-
-```
-I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it before Stage 2.
-```
-
-```
-The database schema and the API routes don't depend on each other - dispatch them in parallel to separate Workers.
-```
+- **Correct a Worker** in its conversation. It applies the correction and records what matters for the Manager. At Task completion, it asks whether a correction useful for later Tasks should become a Rule.
+- **Add context when delivering a report.** Give the Manager your observations alongside `apm-5-check-reports`, such as a missed edge case or a changed requirement.
+- **Keep coordination notes in the Tracker.** Pending decisions, blockers and preferences for upcoming work belong there. Shared execution conventions belong in the Rules.
+- **Change the work or dispatch.** Ask the Manager for a missing Task or a different grouping. Changes affecting several Tasks, scope or design need your approval.
 
 ### Splitting Sessions
 
-For large projects, several APM sessions with an archive between each keep every session focused. Each new Planner examines the archives, and context carries forward. Common splits:
+For large projects, several APM sessions with an archive between each keep every session focused. Each new Planner examines relevant archives with your confirmation, and context carries forward. Common splits:
 
 - **Per feature:** one session per feature or deliverable.
 - **Per layer:** one session per layer, such as the database, then the backend, then the frontend.

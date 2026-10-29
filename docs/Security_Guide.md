@@ -16,21 +16,13 @@ APM installs from two sources:
 - **Official** (`apm init`) - Templates from the [APM repository](https://github.com/sdi2200262/agentic-project-management), reviewed by its maintainers.
 - **Custom** (`apm custom`) - Templates from any GitHub repository, which APM's maintainers have not reviewed.
 
-After installation, the CLI treats both alike. Review is the only difference.
+Both use the same extraction process. Official releases also use the CLI's major-version filter; custom releases do not.
 
-## What Custom Bundles Can Do
+## Bundle Contents and Limits
 
-A custom bundle is a ZIP archive extracted into your project. A malicious one could:
+A bundle is a ZIP archive extracted into your project. It can overwrite project files and install instructions that tell an agent to run harmful commands or expose data. Official bundles use `.agents/`, `.claude/` and `.apm/` by convention; custom bundles can use other project paths.
 
-- **Write files anywhere in the project** - A bundle can include `src/malicious.js`, `package.json`, `.env`, or any other path in the project. Official bundles write only to the assistant's directory (such as `.claude/`) and `.apm/`, by convention; the CLI does not enforce it.
-- **Overwrite APM's files** - It can replace commands, skills, or guides with versions that look the same but carry altered instructions.
-- **Instruct your agents** - Its templates can tell your agents to run harmful commands, exfiltrate data, or change code in subtle ways.
-
-## What Custom Bundles Cannot Do
-
-- **Run code during installation** - The CLI only extracts files. No scripts, hooks, or executables run during `apm init`, `apm custom`, `apm add`, or `apm update`.
-- **Write outside the project** - The CLI checks that every extracted path resolves inside the project, and blocks entries such as `../../etc/passwd` with a warning.
-- **Touch files outside the bundle** - Only the bundle's own files are written; nothing else is changed or deleted.
+The CLI checks extracted paths and blocks entries that resolve outside the project. It does not scan content or verify release signatures. Installation extracts files without running bundle scripts, but agents may act on those instructions later. Updates and archives also move session files and remove installed files recorded in metadata.
 
 ## The Security Disclaimer
 
@@ -47,12 +39,6 @@ apm custom --list              # Review saved repos and disclaimer status
 apm custom --remove-repo owner/repo   # Remove a saved repo (re-enables disclaimer)
 apm custom --clear             # Remove all saved repos
 ```
-
-## Known Limitations
-
-- **No release signatures** - The CLI relies on GitHub's HTTPS transport and the integrity of the source repository. A compromised GitHub account could serve malicious bundles that look legitimate.
-- **No content scanning** - The CLI enforces path boundaries but does not inspect what the files contain or whether their instructions are safe.
-- **Skippable disclaimer** - A saved repository that skips the disclaimer installs and updates silently. Nothing flags changes between releases.
 
 ## Mitigation Strategies
 

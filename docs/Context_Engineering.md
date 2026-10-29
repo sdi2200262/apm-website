@@ -29,7 +29,7 @@ The Manager works one layer above implementation. Its default context is coordin
 
 Each Worker sees its Task Prompt, the Rules, and the working context it builds over its Tasks. It generally never reads the Spec, the Plan, or the Tracker: the Manager writes what the Task needs from them into the prompt. The less coordination context a Worker carries, the more of its window remains for reading code, implementing, debugging, and validating.
 
-A Worker develops working knowledge in its conversation across the Tasks of its domain. Familiarity is the gain: the Manager can send a brief reminder about the Worker's own earlier work instead of full context. Decay is the cost, as the conversation grows, but can be countered using Handoffs. Workers still launch subagents for investigation or debugging, which keeps that load out of their own context.
+A Worker develops working knowledge in its conversation across the Tasks of its domain. Familiarity is the gain: the Manager can send a brief reminder about the Worker's own earlier work instead of full context. Decay is the cost, as the conversation grows, but can be countered using Handoffs. Workers may delegate focused investigation or debugging to native subagents, then verify the findings.
 
 ## Context Across Conversations
 
@@ -37,7 +37,7 @@ The Manager and Workers each have their own context, and only what the Message B
 
 This depends on where the session's state lives. All of it sits in files outside any agent's context window, so a conversation can end, fill, or be compacted without losing the session's state or history.
 
-The Manager coordinates every Task and reviews every outcome; its context grows with them. A compression pipeline is meant to prevent that, with each layer compressing the one below it. A Worker's Task Log reduces its reading, debugging, and iteration to the outcome and what the Manager needs to know. Additionally, at each Stage boundary, the Manager condenses the Stage's Task Logs into a summary in the Index and distils its working notes into Memory notes. Each layer is progressively smaller than the one before. For example, a future Manager uses the compressed Index to understand the big picture of the project and can operate from it, instead of reconstructing the project's entire coordination history from all the older Task Logs.
+The Manager coordinates every Task and reviews every outcome; its context grows with them. A compression pipeline is meant to prevent that, with each layer compressing the one below it. A Worker's Task Log reduces its reading, debugging, and iteration to the outcome and what the Manager needs to know. Additionally, at each Stage boundary, the Manager condenses the Stage's Task Logs into `stage-<NN>.summary.md`, links it from the Index and records lasting findings there with source links. Summaries retain consequential decisions and validation limits. Each layer is progressively smaller than the one before. For example, a future Manager uses the compressed Index to understand the big picture of the project and can operate from it, instead of reconstructing the project's entire coordination history from all the older Task Logs.
 
 The same reasoning explains why a Handoff is preferred to compaction. Compaction replaces the conversation's history with a summary, trading detail for space. Each later compaction condenses the summary further. A Handoff instead writes its record to files that persist. Successive Handoffs leave a durable history of the role's work, and you can invoke one early, before decay sets in.
 
