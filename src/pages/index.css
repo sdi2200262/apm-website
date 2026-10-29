@@ -27,11 +27,18 @@
 .steps h3:first-child { margin-top: 0; }
 .steps h3 + p { margin-top: 8px; }
 .steps p + p { margin-top: 16px; }
-.install-targets { display: grid; grid-template-columns: 3fr 2fr; gap: 12px; margin-top: 16px; }
-.landing-page .install-targets button { padding: 16px; border: 1px solid var(--apm-soft); font-size: 16px; line-height: 1.45; text-align: left; }
+.install-targets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.landing-page .install-targets button { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; min-width: 0; padding: 16px; border: 1px solid var(--apm-soft); font-size: 16px; line-height: 1.45; text-align: left; }
 .landing-page .install-targets button:hover { border-color: var(--apm-ink); }
 .landing-page .install-targets button:focus-visible { outline: 2px solid var(--apm-ink); outline-offset: 3px; }
 .landing-page .install-targets button[aria-pressed='true'] { background: var(--apm-deep); border-color: var(--apm-ink); box-shadow: inset 0 0 0 1px var(--apm-ink); }
+.target-icons { display: flex; align-items: center; gap: 12px; }
+.target-icon { display: block; width: 24px; height: 24px; flex: none; }
+.target-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.target-icon .target-icon-dark { display: none; }
+[data-theme='dark'] .target-icon .target-icon-light { display: none; }
+[data-theme='dark'] .target-icon .target-icon-dark { display: block; }
+.target-more { opacity: .65; }
 @media (max-width: 600px) { .install-targets { grid-template-columns: 1fr; } }
 
 /* Touch screens get a shorter page: phone diagrams, tap-to-toggle terms, two-line Getting started. */
