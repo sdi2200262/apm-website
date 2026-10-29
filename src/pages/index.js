@@ -146,7 +146,7 @@ function GettingStarted() {
         <h3>3. Start the Planner</h3>
         <p>Open a new chat in your assistant, invoke the <code>apm-1-initiate-planner</code> skill and describe what you want to build or change.</p>
         <p>For example, in Claude Code:</p>
-        <Code>/apm-1-initiate-planner</Code>
+        <Code>/apm-1-initiate-planner Create Claude Opus 6, make no mistakes.</Code>
         <p>Follow the full walkthrough in <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
