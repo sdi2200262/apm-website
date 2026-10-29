@@ -83,9 +83,9 @@ The Worker clears its Task Bus, writes its report and tells you how to deliver i
 
 #### Task Review
 
-The Manager checks the Task Log and deliverables against the assignment and planning documents. It investigates Important Findings, unmet criteria and inconsistent claims, resolving contained questions, checks and corrections during review. Its evidence stays separate from the Worker's recorded outcome. It then decides:
+The Manager checks the Task Log and deliverables against the assignment and planning documents. It investigates Important Findings, unmet criteria and inconsistent claims. When its context makes this more efficient than another dispatch, it can finish small amounts of remaining work, including code changes, and run final validation within the existing objective. Substantial implementation stays with Workers unless you approve the Manager doing it. It follows the Rules in the Task's workspace and records its work and validation separately from the Worker's outcome. It then decides:
 
-- **Accept** - Mark the Task Done, merge accepted work before dependent Tasks, and dispatch newly ready work. You may agree to accept a Partial outcome; its remaining work and validation limits stay recorded.
+- **Accept** - Mark completed work Done, including work the Manager finished and validated during review, merge accepted work before dependent Tasks, and dispatch newly ready work. You may agree to accept a Partial outcome; its remaining work and validation limits stay recorded.
 - **Follow-up** - Send concrete remaining work, reviewed findings and a completion check to the same Worker, using its established context. The Task keeps its ID; each attempt has a new numbered log linked to the original and previous follow-up. Unresolved criteria remain part of the Task's outcome.
 - **Planning change** - Update the affected requirements and Task fields before preparing further work. Contained changes can proceed; changes affecting several Tasks, design, scope or Stages need your approval.
 

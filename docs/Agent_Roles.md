@@ -32,7 +32,7 @@ The Planner explores the workspace and questions you about the work, then writes
 
 ## Manager
 
-The Manager assigns Tasks, reviews results and maintains the planning documents, live progress and work history. It investigates results, runs checks and makes contained corrections during review, leaving substantial implementation to Workers.
+The Manager assigns Tasks, reviews results and maintains the planning documents, live progress and work history. During review, it can investigate, finish small amounts of remaining work and run final validation. Substantial implementation stays with Workers unless you approve the Manager doing it.
 
 <Diagram name="overview" variant="manager" alt="The overview diagram with the Manager and its Tracker highlighted." phone />
 
