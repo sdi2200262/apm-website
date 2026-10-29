@@ -11,7 +11,7 @@ import Diagram from '@site/src/components/Diagram';
 
 **A spec-driven multi-agent framework for AI-assisted software engineering.**
 
-APM is an open-source framework for managing ambitious software projects with AI assistants. It works with agents that use `AGENTS.md` and `.agents/skills/`, and with Claude Code. Instead of working in a single, increasingly long conversation, APM structures your work into a coordinated system where different agents handle planning, coordination, and execution, and their messages pass through you.
+APM is an open-source framework for managing ambitious software projects with AI assistants. It works with agents that use `AGENTS.md` and `.agents/skills/`, and with Claude Code. An **APM session** takes one body of work through a Planning Phase and an Implementation Phase. A larger project can span several sessions.
 
 ## The Problem
 
@@ -24,11 +24,11 @@ A coding agent is an LLM working in a loop with tools. LLMs keep no state betwee
 
 APM counters each problem, and keeps you in charge throughout.
 
-- **Planning documents, against decay** - APM is **spec-driven**. Before any code is written, a Planner works with you to record the project's intent, requirements, and constraints in three planning documents: the Spec (what to build), the Plan (how the work is divided), and the Rules (how the work is carried out). Agents work from these documents instead of relying only on what their long conversation holds.
+- **Planning documents, against decay** - APM is **spec-driven**. Before any code is written, a Planner works with you to record the project's intent, requirements, and constraints in three planning documents: the Spec (what to build), the Plan (how the work is divided), and the Rules (how the work is carried out). The Plan groups Tasks (assignments with their own deliverables and checks) into Stages (ordered milestones).
 - **Separate agents, against pressure** - APM is a *multi-agent system* where a Manager hands out the work and Workers carry it out, each in its own conversation with only the context its work needs. Splitting the work this way keeps each conversation's context small and focused on its own job.
-- **Coordination through you** - The Planner, the Manager, and the Workers communicate only through you, by design. When one writes a message for another, it informs you, and you deliver it by running a command. Each exchange is a chance to review the work behind it and ask for changes before it moves on. How the work is divided and assigned sets how often exchanges pass through you. We call this *productive friction*. These pauses are deliberate: they aim to keep your understanding of the software you are building, and to let you catch mistakes before they spread through the codebase.
+- **Coordination through you** - The Planner, the Manager, and the Workers communicate only through you, by design. You deliver their messages by invoking skills in their chats. Each exchange is a chance to review the work and ask for changes before mistakes spread. How work is divided and assigned sets how often this happens. We call these deliberate review points *productive friction*.
 
-What distinguishes this from subagent-based approaches: the agents doing implementation work are not restarted fresh on each task. They accumulate working context across assignments, building familiarity with their domain as the project progresses. When context fills, a Handoff transfers that working knowledge to a fresh instance rather than discarding it. Any APM agent may delegate heavy work to its own subagents.
+Workers keep their conversations across assignments, building familiarity with their area. When context fills, a **Handoff** transfers the role to a fresh conversation. Agents can also delegate focused work to their assistant's built-in helper agents (native subagents), then verify the results.
 
 <Diagram name="overview" alt="The APM workflow: in the Planning Phase you and the Planner write the Spec, the Plan, and the Rules; in the Implementation Phase the Manager hands out assignments and Workers report back through you, with the session's state in shared files." phone />
 
@@ -36,15 +36,13 @@ Throughout implementation, the Manager checks the work against the planning docu
 
 ## Installation
 
-APM is installed via the [`agentic-pm`](https://www.npmjs.com/package/agentic-pm) CLI, which scaffolds the commands, guides, and skills that APM agents use into your project workspace. To get started, see [Getting Started](Getting_Started.md).
+The [`agentic-pm`](https://www.npmjs.com/package/agentic-pm) CLI installs APM's skills, guides and initial session files into your project. [Getting Started](Getting_Started.md) walks through installation and your first session.
 
 If you want your AI assistant to explain APM concepts or help with migration from an older version, the [`apm-assist`](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-assist) skill can be installed into any project and answers questions by reading the live documentation.
 
 ## Contributing
 
-APM is open source and welcomes contributions. Report bugs or request features via [GitHub Issues](https://github.com/sdi2200262/agentic-project-management/issues), or submit improvements via Pull Requests.
-
-For contribution guidelines, see [CONTRIBUTING.md](https://github.com/sdi2200262/agentic-project-management/blob/main/CONTRIBUTING.md).
+Report bugs and request features through [GitHub Issues](https://github.com/sdi2200262/agentic-project-management/issues). See [CONTRIBUTING.md](https://github.com/sdi2200262/agentic-project-management/blob/main/CONTRIBUTING.md) for contribution guidelines.
 
 ## Reading Order
 

@@ -7,7 +7,7 @@ sidebar_position: 8
 
 # CLI Guide
 
-The `agentic-pm` CLI manages APM installations, installation targets, template updates, and session archival. This doc covers every command, its options, and the files the CLI creates.
+The `agentic-pm` CLI installs APM templates, updates them and manages session archives. This guide covers its commands, options and installation files.
 
 ## Installation
 
@@ -44,9 +44,9 @@ apm init -a agents claude -t v1.1.0
 | `-t, --tag <tag>` | Install a specific release version |
 | `-a, --assistant <id...>` | Pre-select installation target(s) |
 
-It fetches the latest compatible release from GitHub, asks which target to install (pass both with `--assistant`, or add one later with `apm add`), and installs:
+Without `--tag`, it selects the newest stable official release matching the CLI's major version, then checks the release's minimum CLI requirement. Choose an installation target, the file layout your assistant uses, or pass its ID with `-a`. The CLI installs:
 
-- The `.apm/` directory, with templates for the Spec, the Plan, the Tracker, and the Index, and the installation metadata.
+- The `.apm/` directory with planning and tracking templates, the Memory Index and installation metadata.
 - Command skills, the communication skill and procedure guides in the selected target's directories.
 
 | Target | For | Skills | Guides |
@@ -54,7 +54,7 @@ It fetches the latest compatible release from GitHub, asks which target to insta
 | `agents` | Agents supporting `AGENTS.md` and `.agents/skills/` | `.agents/skills/` | `.agents/apm-guides/` |
 | `claude` | Claude Code | `.claude/skills/` | `.claude/apm-guides/` |
 
-Both targets share `.apm/`. Rules are written during planning to workspace-root `AGENTS.md`.
+Both targets share `.apm/`. Install both with `-a agents claude`, or add one later with `apm add`. Planning writes shared Rules to workspace-root `AGENTS.md`.
 
 ### apm custom
 
@@ -77,18 +77,7 @@ apm custom -r owner/repo -t v1.0.0 -a claude
 | `--clear` | Clear all saved custom repositories |
 | `-f, --force` | Skip confirmation when removing or clearing repositories |
 
-Without `--repo`, the CLI offers your saved repositories. A custom repository shows a security disclaimer on every install, unless you saved it and chose to skip the disclaimer. `--force` applies only to `--remove-repo` and `--clear`.
-
-> **Note:** A saved repository that skips the disclaimer gives no warning even if it is later compromised. See the [Security Guide](Security_Guide.md#the-security-disclaimer).
-
-**Repository management:**
-
-```bash
-apm custom --add-repo owner/repo
-apm custom --remove-repo owner/repo
-apm custom --list
-apm custom --clear
-```
+Without `--repo`, choose a saved repository or enter another. Custom installation asks for a [security acknowledgement](Security_Guide.md#the-security-disclaimer) unless you saved the repository with that prompt disabled. `--force` applies only to `--remove-repo` and `--clear`.
 
 ### apm update
 
@@ -105,22 +94,14 @@ apm update -n pre-update-backup
 | `-f, --force` | Skip confirmation prompt |
 | `-n, --name <name>` | Custom archive name for the pre-update snapshot |
 
-It:
+Stop active agents before updating. The CLI:
 
-1. Snapshots all current `.apm/` contents except `archives/` into `.apm/archives/`, then removes the active session files.
-2. Removes the installed assistant files.
+1. [Archives the session](#apm-archive), including remaining worktrees and uncommitted contents.
+2. Removes installed template files.
 3. Installs the new release, consolidating targets it replaces and dropping unsupported targets.
-4. Writes fresh metadata.
+4. Writes fresh installation metadata.
 
-Stop active agents before updating. Remaining worktrees move into the archive through Git with their uncommitted contents; they stay attached to their source repositories.
-
-For official installations, `apm update` moves to the newest stable release and never offers a pre-release from a stable install. To try a pre-release, install it with `apm init --tag <tag>`. On a pre-release, `apm update` offers both the latest stable and the latest pre-release. For custom installations, you choose from the releases newer than yours.
-
-| Component | On update |
-| :--- | :--- |
-| Skills and guides | Replaced with latest version |
-| `.apm/` project artifacts | Archived before replacement |
-| `.apm/archives/` | Preserved |
+Stable official installations update to the newest stable release. Pre-release installations offer available newer stable or pre-release versions. Custom installations offer newer releases from the same repository. To install a specific version, including a pre-release, use `apm init --tag <tag>` in a project without an active installation.
 
 ### apm archive
 
@@ -142,16 +123,15 @@ apm archive --clear
 | `--delete <name>` | Delete a specific archive |
 | `--clear` | Delete all archives |
 
-When creating an archive, the CLI:
+Stop active agents before archiving. The CLI:
 
-1. Copies session records into `.apm/archives/session-YYYY-MM-DD-NNN/` and moves remaining worktrees there through Git, including uncommitted contents. Existing archives stay in place.
-2. Writes the archive's `metadata.json`, with the archival time.
-3. Removes the installed assistant files.
-4. Removes the active session files and installation metadata, keeping existing archives.
+1. Copies session records into `.apm/archives/session-YYYY-MM-DD-NNN/` and moves remaining worktrees there through Git, including uncommitted contents.
+2. Writes archive metadata and verifies preservation.
+3. Clears active session files, installed templates and installation metadata.
 
-Stop active agents before archiving. The CLI verifies preservation before clearing the active session. Worktrees remain attached to their source repositories; the archive is local session context, not a standalone Git backup. Archiving does not finish Tasks, commit changes or merge branches. If archival fails, inspect the paths the error identifies before continuing.
+Existing archives and the Rules in `AGENTS.md` remain. Worktrees stay attached to their source repositories, so the archive is local session context rather than a standalone Git backup. Archiving does not finish Tasks, commit changes or merge branches. If it fails, inspect the paths the error identifies before continuing.
 
-APM is then uninstalled. Run `apm init` to begin a new session with fresh templates. The Rules stay in `AGENTS.md`. The archives stay in `.apm/archives/`, and the next Planner asks which are relevant during Context Gathering.
+Run `apm init` for fresh templates. The next Planner asks which archives are relevant.
 
 Deleting an archive also removes its worktrees and their uncommitted, untracked and ignored files. The confirmation describes what will be deleted; `-f` skips it. If deletion fails, the CLI stops and warns that cleanup may be partial. Branches remain.
 
@@ -186,7 +166,7 @@ apm remove -a agents claude -f
 | `-a, --assistant <id...>` | Targets to remove |
 | `-f, --force` | Skip confirmation prompt |
 
-It removes those targets' files and updates the metadata, warning you before removing the last one. Files also used by assistants that remain installed are kept. The `.apm/` artifacts stay.
+It removes those targets' files and updates the metadata, warning you before removing the last one. Files also used by targets that remain installed are kept. The `.apm/` artifacts stay.
 
 ### apm status
 
@@ -196,7 +176,7 @@ Shows the current installation state.
 apm status
 ```
 
-It shows the source (official or custom), the repository, the release and CLI versions, the install date, the installed assistants with their file counts, and the number of archives. It also checks whether the tracked files exist and flags missing files, with commands to restore them. It does not check their contents. Without an installation, it shows any archives or suggests `apm init`.
+It shows the source repository, template and CLI versions, install date, installed targets with file counts, and archive count. It flags missing installed files and gives restoration commands; it does not check file contents. Without an installation, it shows any archives or suggests `apm init`.
 
 ## Directory Structure
 
@@ -221,16 +201,16 @@ The `claude` target uses `.claude/skills/` and `.claude/apm-guides/`. During the
 
 ## Versioning
 
-The CLI and the template releases are versioned separately but share a major version.
+The CLI and templates follow Semantic Versioning separately and share a major version.
 
 | Track | Distribution | Update method |
 | :--- | :--- | :--- |
-| **CLI** (`agentic-pm`) | npm, follows semver | `npm update -g agentic-pm` |
-| **Template releases** | GitHub Releases, auto-incrementing patches | `apm update` |
+| **CLI** (`agentic-pm`) | npm | `npm update -g agentic-pm` |
+| **Template releases** | GitHub Releases | `apm update` |
 
 CLI v1.x fetches only v1.x.x releases from the official repository. Custom repositories have no version filter. A release's optional `minCliVersion` applies to both sources. The CLI refuses installation when it is older than that minimum. Older CLIs may not enforce it correctly; update the CLI before installing newer templates. Templates v1.1.0 require CLI v1.0.3 or later.
 
-Both tracks follow Semantic Versioning. Template patches normally auto-increment; minor and major versions are set when releasing. The [changelog](https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md) labels each entry by track, such as `CLI v1.0.2` or `Templates v1.0.3`.
+The [changelog](https://github.com/sdi2200262/agentic-project-management/blob/main/CHANGELOG.md) labels changes by track. See [Troubleshooting](Troubleshooting_Guide.md#upgrading-to-templates-v110) for the v1.1.0 upgrade steps.
 
 ## Terminal Input
 
@@ -250,7 +230,7 @@ Each installation has `.apm/metadata.json`, which `apm update`, `apm add`, `apm 
 | `repository` | string | Repository in `owner/repo` format |
 | `releaseVersion` | string | Release tag (e.g. `"v1.0.0"`) |
 | `cliVersion` | string | CLI version that performed the installation |
-| `assistants` | string[] | Installed assistant IDs (e.g. `["agents", "claude"]`) |
+| `assistants` | string[] | Installed target IDs (e.g. `["agents", "claude"]`) |
 | `assistantNames` | object | Display names by target ID; absent in older installations |
 | `installedFiles` | object | Map of target ID to installed file paths; `_apm` records shared session templates |
 | `installedAt` | string | ISO 8601 timestamp of installation |
@@ -268,7 +248,6 @@ Each archive in `.apm/archives/` contains its own `metadata.json` with the same 
 
 ## Related Docs
 
-- [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
-- [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency
+- [Troubleshooting Guide](Troubleshooting_Guide.md) - Restore an installation or recover a session
+- [Customisation Guide](Customisation_Guide.md) - Build and publish custom templates
+- [Security Guide](Security_Guide.md) - Bundle trust and security acknowledgements

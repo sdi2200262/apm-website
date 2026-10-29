@@ -7,7 +7,7 @@ sidebar_position: 9
 
 # Troubleshooting Guide
 
-Common issues in APM sessions and how to resolve them.
+Resolve interruptions and installation problems. For the normal session workflow, see [Getting Started](Getting_Started.md).
 
 ## Planning Changes and Interruptions
 
@@ -49,11 +49,11 @@ If the incoming agent's account of the current state and next action shows error
 
 ## Installation Issues
 
-Use the latest CLI when installing newer templates. A release can require a minimum CLI version; this applies to official and custom repositories.
+Keep the CLI up to date before installing newer templates. See [release compatibility](CLI_Guide.md#versioning) for version requirements.
 
 ### Missing Installed Files
 
-`apm status` checks the files recorded in installation metadata. If files are missing, it names the affected assistants. Run `apm remove -a <id>`, then `apm add -a <id>` to reinstall that assistant's files from the installed release. Session artifacts remain in `.apm/`.
+`apm status` names targets with missing installed files. Run `apm remove -a <id>`, then `apm add -a <id>` to restore that target from the installed release. Session artifacts remain in `.apm/`.
 
 ### Upgrading to Templates v1.1.0
 
@@ -64,7 +64,7 @@ npm update -g agentic-pm
 apm update
 ```
 
-CLI v1.0.3 consolidates older official target IDs into `agents`, keeps `claude` when installed, and removes the old installed files recorded in metadata. The current session is archived before fresh templates are installed. Both targets can coexist without overwriting each other's skills.
+CLI v1.0.3 consolidates older official target IDs into `agents` and keeps `claude` when installed. The update archives the current session, removes recorded template files and installs fresh templates. Both targets can coexist.
 
 If you installed a standalone APM skill in a directory that the CLI did not create, move it to your assistant's current skills directory yourself. Check `.apm/metadata.json` for the files managed by the CLI.
 
@@ -76,7 +76,5 @@ The optional [apm-assist skill](https://github.com/sdi2200262/agentic-project-ma
 
 ## Related Docs
 
-- [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
-- [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency
+- [CLI Guide](CLI_Guide.md) - Commands, installation targets and metadata
+- [Agent Orchestration](Agent_Orchestration.md#handoff-and-continuity) - Handoff and recovery mechanics

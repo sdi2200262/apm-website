@@ -10,7 +10,7 @@ const DOC_ORDER = [
   { file: 'Introduction.md', slug: '/docs/introduction', desc: 'What APM is: context decay and context pressure, and how planning documents, separate agents, and coordination through the user address them' },
   { file: 'Getting_Started.md', slug: '/docs/getting-started', desc: 'Installing the agentic-pm CLI, initialising a project, and running a first APM session step by step' },
   { file: 'Quick_Reference.md', slug: '/docs/quick-reference', desc: 'All APM command skills, CLI commands, .apm/ file structure, and workflow steps in one page' },
-  { file: 'Agent_Roles.md', slug: '/docs/agent-roles', desc: 'The three agent roles (Planner, Manager, Workers): their responsibilities, context scopes, and instances' },
+  { file: 'Agent_Roles.md', slug: '/docs/agent-roles', desc: 'The three agent roles (Planner, Manager, Workers): their responsibilities, context scopes and continuity' },
   { file: 'Agent_Orchestration.md', slug: '/docs/agent-orchestration', desc: 'How agents coordinate through planning documents, file-based Message Bus, Task Prompts, structured Memory, and Handoff' },
   { file: 'Workflow_Overview.md', slug: '/docs/workflow-overview', desc: 'Every procedure of the Planning Phase and the Implementation Phase, in order' },
   { file: 'Prompt_Engineering.md', slug: '/docs/prompt-engineering', desc: 'How APM\'s files (skills, guides and session documents) are organised and written, and why' },

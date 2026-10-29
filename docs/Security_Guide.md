@@ -7,7 +7,7 @@ sidebar_position: 11
 
 # Security Guide
 
-APM installs template files into your project. These templates define how your agents behave: what they read, which commands they follow, and how they structure their work. Files from a custom repository come from an unreviewed source, and installing them is a trust decision.
+APM installs templates that guide your agents' work. Review their source and instructions before using them.
 
 ## Trust Model
 
@@ -16,7 +16,7 @@ APM installs from two sources:
 - **Official** (`apm init`) - Templates from the [APM repository](https://github.com/sdi2200262/agentic-project-management), reviewed by its maintainers.
 - **Custom** (`apm custom`) - Templates from any GitHub repository, which APM's maintainers have not reviewed.
 
-Both use the same extraction process. Official releases also use the CLI's major-version filter; custom releases do not.
+Both use the same extraction process. See [CLI versioning](CLI_Guide.md#versioning) for release compatibility.
 
 ## Bundle Contents and Limits
 
@@ -26,11 +26,7 @@ The CLI checks extracted paths and blocks entries that resolve outside the proje
 
 ## The Security Disclaimer
 
-Each time you install, add, or update from a custom repository, the CLI warns that APM's maintainers have not reviewed it, and continues only once you accept.
-
-After installation, the CLI offers to save the repository and to skip the disclaimer for it from then on.
-
-The risk is that a repository compromised later, through account takeover, a malicious maintainer, or a supply chain attack, then installs and updates without any warning.
+Installing, adding or updating from a custom repository requires your acknowledgement that its templates are unreviewed. Saving the repository with `skipDisclaimer` enabled suppresses that prompt on later use. This setting does not verify the repository or warn if it is later compromised.
 
 To manage saved repositories:
 
@@ -42,20 +38,15 @@ apm custom --clear             # Remove all saved repos
 
 ## Mitigation Strategies
 
-1. **Review the repository before installing** - Check its README, issues, and commit history for signs of active maintenance and trust.
-2. **Inspect the installed files** - Read the commands and guides in your assistant's directory before your agents use them.
-3. **Pin a release** - Install a known-good tag with `--tag` instead of the latest.
-4. **Check the metadata** - Confirm the repository and version in `.apm/metadata.json`.
-5. **Prefer the official release** - Use `apm init` where you can.
-6. **Audit saved repositories** - Review them with `apm custom --list`, and remove those you have not checked recently so the disclaimer returns.
+1. **Review the source and instructions.** Check the repository's README and history, and inspect its skills and guides before agents use them.
+2. **Choose and confirm a release.** Pin a known release with `--tag` and check the repository and version in `.apm/metadata.json`.
+3. **Review saved repositories.** Check `apm custom --list`. Remove a saved source to restore its acknowledgement prompt.
 
 ## Reporting Security Issues
 
-To report a vulnerability in the CLI or the official templates, open an issue at [github.com/sdi2200262/agentic-project-management/issues](https://github.com/sdi2200262/agentic-project-management/issues) with the "security" label, or contact the maintainers directly. Please do not disclose a vulnerability publicly until it has been addressed.
+Report vulnerabilities through [GitHub Issues](https://github.com/sdi2200262/agentic-project-management/issues) or contact the maintainers directly. Share sensitive details privately until the issue is addressed.
 
 ## Related Docs
 
-- [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
-- [Tips and Tricks](Tips_and_Tricks.md) - Model selection, cost optimisation, and workflow efficiency
+- [CLI Guide](CLI_Guide.md#apm-custom) - Manage saved repositories and their settings
+- [Customisation Guide](Customisation_Guide.md) - Build and share custom templates

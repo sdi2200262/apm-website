@@ -7,7 +7,7 @@ sidebar_position: 3
 
 # Quick Reference
 
-A reference for APM sessions: the commands, file paths, and workflows in one place.
+Commands, paths and workflow steps to keep at hand. For your first session, follow [Getting Started](Getting_Started.md).
 
 ## Commands
 
@@ -22,7 +22,7 @@ Invoke these skills by name in your agent conversations. Examples use Claude Cod
 | `/apm-5-check-reports` | Deliver a Task Report to the Manager (add one or more Worker ids to target specific Workers) |
 | `/apm-6-handoff-manager` | Initiate Manager Handoff before context fills |
 | `/apm-7-handoff-worker` | Initiate Worker Handoff before context fills |
-| `/apm-8-summarize-session` | Write a structured session summary and offer to archive (in a new conversation, or as the Manager at completion or early stopping) |
+| `/apm-8-summarize-session` | Summarise a session and offer to archive it |
 | `/apm-9-recover [role]` | Reconstruct context after compaction or a lost conversation (e.g. `manager` or `frontend-agent`) |
 
 ## CLI
@@ -36,8 +36,8 @@ You run these in your terminal from the project workspace:
 | `apm update` | Archive the current session, then update templates to the latest compatible version |
 | `apm archive` | Archive the current session to `.apm/archives/` and remove installed assistant files |
 | `apm archive --name my-feature` | Archive with a custom name |
-| `apm add -a claude` | Add an assistant to an existing installation |
-| `apm remove -a claude` | Remove an assistant |
+| `apm add -a claude` | Add an installation target |
+| `apm remove -a claude` | Remove an installation target |
 | `apm status` | Show current installation state |
 
 For every option, see the [CLI Guide](CLI_Guide.md).
@@ -103,11 +103,11 @@ When an agent's context fills or quality degrades:
 3. Open a new conversation for the same role and run its initiation skill (for a Worker, with its identifier)
 4. Check the incoming agent's account of the current state and next action before continuing
 
-Handoff produces cleaner context than recovery (`/apm-9-recover`). Prefer it when the context limit is approaching.
+For context lost without a Handoff, see [Recovery](Troubleshooting_Guide.md#context-recovery).
 
 ## After Completion
 
-When the Manager finishes all Stages, you can archive the session and begin a new one. To leave future Planners a summary, run `/apm-8-summarize-session` in a new conversation first.
+At completion or early stopping, pause active agents and record unfinished work. An optional `/apm-8-summarize-session` can run in a new chat or in the Manager's chat. To archive and start another session:
 
 ```bash
 apm archive                        # move .apm/ artifacts to archives, clean workspace
