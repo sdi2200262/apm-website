@@ -27,13 +27,13 @@ Discovery follows three question rounds:
 2. **Technical Requirements** - Design choices, constraints, dependencies, risks and validation.
 3. **Implementation Approach and Quality** - Tools, quality, Task size, Workers, parallelism and review points. This includes Git use, base branches, branch and commit conventions, and whether to track APM files. Ignoring `.apm/` is the default proposal when it is inside a repository.
 
-Each round includes questions, research and follow-ups to resolve gaps, then a short summary. Context supplied at initiation makes questions more targeted but does not skip a round.
+Each round includes questions, research and follow-ups, then a short summary. The Planner resolves gaps needed to define the work or agrees with you how planned research will settle them. Context supplied at initiation makes questions more targeted but does not skip a round.
 
 The Planner develops tentative Stages, Tasks and Workers as it learns. Once the session's scope and important choices are settled, it presents an **Understanding Summary** for your approval. Corrections are resolved before document writing begins.
 
 ### Work Breakdown
 
-The Planner writes the [Spec, Plan and Rules](Agent_Orchestration.md#planning-documents) in that order. For each, it explains the proposal, writes the document and waits for your review and approval before starting the next. Corrections are applied to affected earlier documents too.
+The Planner writes the [Spec, Plan and Rules](Agent_Orchestration.md#planning-documents) in that order. For each, it explains the proposal, writes the document and waits for your review and approval before starting the next. Corrections are applied to affected earlier documents too. Task boundaries reflect the work's size, complexity, uncertainty, dependencies and expertise. Research, implementation and validation may share a Task or need separate Tasks; each Task has a clear output and validation criteria.
 
 After Rules approval, it performs any agreed repository initialisation and ignore-file changes. It then creates the Message Bus and directs you to start the Manager in a new conversation with `apm-2-initiate-manager`.
 
@@ -65,7 +65,7 @@ The Worker integrates the dependencies named in its prompt, follows the instruct
 
 Failed checks lead to investigation and targeted fixes. Missing dependencies, conflicting instructions and problems beyond the Task need guidance.
 
-You can correct the Worker during execution. At completion, it asks whether corrections useful for later Tasks should become Rules. Approved additions go in the existing shared Rules file and are recorded in the Task Log.
+You can correct the Worker during execution. At completion, it asks whether corrections to shared execution practices should become Rules. Approved additions go in the existing shared Rules file and are recorded in the Task Log.
 
 #### Task Logging
 

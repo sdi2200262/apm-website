@@ -23,7 +23,7 @@ A **Handoff** moves a role to a fresh conversation when context runs low. The ro
 
 ## Planner
 
-The Planner explores the workspace and questions you about the work, then writes the Spec (what to build), Plan (how work is divided) and Rules (shared execution conventions). Its role ends after planning.
+The Planner explores the workspace and questions you about the work, then writes the Spec (what to build), Plan (how work is divided) and Rules (shared Worker execution conventions). Its role ends after planning.
 
 <Diagram name="overview" variant="planning" alt="The overview diagram with the Planner, you, and the planning documents highlighted." phone />
 
@@ -48,7 +48,7 @@ Each Worker handles one area, such as the frontend or API, building familiarity 
 
 - **[Task Execution](Workflow_Overview.md#task-execution)** - Implements and validates assigned work, investigates failures, and asks for guidance on problems beyond its Task.
 - **[Task Logging](Workflow_Overview.md#task-logging)** - Records evidence in a **Task Log** and sends the Manager a short **Task Report** with the outcome and log path.
-- **Rules proposals** - Offers to retain your corrections as shared Rules when they would help later Tasks. Changes need your approval.
+- **Rules proposals** - Offers to retain corrections to shared execution practices as Rules. Changes need your approval.
 
 Any role may delegate focused work to native subagents and must verify their findings. These subagents are separate from APM Workers and stay within their parent's scope.
 

@@ -15,9 +15,11 @@ The [Planner, Manager and Workers](Agent_Roles.md) coordinate through planning d
 
 The Planner creates three documents:
 
-- **Spec** (`.apm/spec.md`) - Scope, design decisions, constraints and workspace references.
+- **Spec** (`.apm/spec.md`) - Required behavior, design decisions and constraints. Its Workspace section records repositories, references and agreed Git setup.
 - **Plan** (`.apm/plan.md`) - Ordered milestones called **Stages**, each containing bounded assignments called **Tasks**. Tasks name a Worker, dependencies, outputs and validation criteria.
-- **Rules** - Execution conventions shared by all or most Tasks, in the `APM_RULES` block of workspace-root `AGENTS.md`. For Claude Code, the Planner imports it from an existing workspace `CLAUDE.md`, preserving your instructions.
+- **Rules** - Shared Worker execution conventions, in the `APM_RULES` block of workspace-root `AGENTS.md`. For Claude Code, the Planner imports it from an existing workspace `CLAUDE.md`, preserving your instructions.
+
+Spec Notes hold design assumptions and context; Plan Notes hold coordination considerations. Settled requirements, dependencies and conventions stay in their owning sections. APM procedures stay in the role guides.
 
 The Manager maintains these documents and copies relevant Spec and Plan content into assignments called **Task Prompts**. Workers read the Rules directly. [Workflow Overview](Workflow_Overview.md#task-review) covers changes during implementation.
 
@@ -74,11 +76,11 @@ Shared files keep the session's state outside any conversation. The **Tracker** 
 
 ### The Tracker
 
-The Tracker (`.apm/tracker.md`) records Task states and next actions, branches and worktrees, each Worker's conversation number and context, and pending coordination notes. The Manager updates it after review and dispatch. Tasks are Waiting on dependencies, Ready to assign, Active through execution and review, or Done after a final decision.
+The Tracker (`.apm/tracker.md`) records Task states and next actions, branches and worktrees, each Worker's conversation number and context, and coordination notes. Notes remain while ongoing work needs them or their decisions await a Stage summary or Index entry. The Manager updates the Tracker after review and dispatch. Tasks are Waiting on dependencies, Ready to assign, Active through execution and review, or Done after a final decision.
 
 ### The Index
 
-The Index (`.apm/memory/index.md`) holds lasting findings with source links and a table linking to Stage summaries. Each summary records accepted outcomes, consequential findings and decisions, validation and limits, with links to its Task Logs.
+The Index (`.apm/memory/index.md`) holds brief findings and accepted or unresolved limits that later work needs, with source links and a table linking to Stage summaries. Each summary records accepted outcomes, consequential findings and decisions, validation and limits, with links to its Task Logs.
 
 ### File-based Memory
 

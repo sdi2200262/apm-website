@@ -71,7 +71,7 @@ The Planner writes three documents, in order:
 
 - **Spec** - What to build: design decisions, constraints and workspace references.
 - **Plan** - How work is divided: bounded assignments called **Tasks**, grouped into ordered milestones called **Stages**. Each Task names its implementation agent (**Worker**), deliverables, dependencies and validation criteria.
-- **Rules** - Shared execution conventions, written inside `APM_RULES` in workspace-root `AGENTS.md`. For Claude Code, the Planner imports this file from an existing workspace `CLAUDE.md`, preserving your instructions.
+- **Rules** - Shared Worker execution conventions, written inside `APM_RULES` in workspace-root `AGENTS.md`. For Claude Code, the Planner imports this file from an existing workspace `CLAUDE.md`, preserving your instructions.
 
 Review and approve each document before the next begins. These documents guide implementation, so settle unclear requirements and checks here. After Rules approval, the Planner applies agreed repository setup and creates the Message Bus, the files agents use to exchange assignments and reports.
 
