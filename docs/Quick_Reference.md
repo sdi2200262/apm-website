@@ -57,6 +57,7 @@ This is what `.apm/` looks like during a session:
 │   ├── index.md         # Lasting findings and links to Stage summaries
 │   ├── stage-01/        # Task Logs for Stage 1
 │   │   ├── task-01-01.log.md
+│   │   ├── task-01-01.followup-01.log.md
 │   │   ├── task-01-02.log.md
 │   │   └── stage-01.summary.md
 │   └── handoffs/        # Handoff Logs per agent

@@ -37,7 +37,7 @@ Agents share files, not conversations. Reading another Worker's code may show wh
 
 Shared records also keep the session independent of any one conversation:
 
-- **Task Logs** preserve results, validation and consequential findings from execution.
+- **Task Logs** preserve results, validation and consequential findings for each attempt. Follow-up logs link to earlier attempts, so continuation can follow the evidence it needs without loading the whole history.
 - **The Tracker** holds current coordination state and next actions.
 - **Stage summaries** condense accepted work, decisions and validation limits, with links to Task Logs.
 - **The Index** links to those summaries and holds findings useful beyond a Stage.

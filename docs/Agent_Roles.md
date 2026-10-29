@@ -32,7 +32,7 @@ The Planner explores the workspace and questions you about the work, then writes
 
 ## Manager
 
-The Manager assigns Tasks, reviews results and maintains the planning documents, live progress and work history. It works at the coordination level, reading code when needed to prepare an assignment or investigate a result.
+The Manager assigns Tasks, reviews results and maintains the planning documents, live progress and work history. It investigates results, runs checks and makes contained corrections during review, leaving substantial implementation to Workers.
 
 <Diagram name="overview" variant="manager" alt="The overview diagram with the Manager and its Tracker highlighted." phone />
 

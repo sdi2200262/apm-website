@@ -19,7 +19,7 @@ If planning is interrupted, continue in the same conversation. If that conversat
 
 When a Worker cannot resolve a problem within its Task, ask it to log the current result, failed or unavailable checks, and what guidance it needs. Deliver its report to the Manager with `apm-5-check-reports`.
 
-The Manager investigates and decides whether to send a follow-up, correct planning documents or ask you to choose a new approach. Required validation that remains unmet stays visible in the result.
+The Manager can resolve contained questions, checks and corrections during review. It sends remaining work to the Worker or asks you to settle a requirement or approach. Required validation that remains unmet stays visible in the result. See [Task Review](Workflow_Overview.md#task-review).
 
 ## Context Recovery
 

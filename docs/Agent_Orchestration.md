@@ -33,7 +33,7 @@ The Message Bus lives in `.apm/bus/`. Each Worker has a folder named by its iden
 | **Report Bus** | `report.md` | A Task Report from the Worker: the outcome and Task Log path |
 | **Handoff Bus** | `handoff.md` | A Handoff Prompt: instructions for a fresh conversation |
 
-The Manager's folder holds only `handoff.md`. Each file holds at most one pending message. An agent clears a processed message before replying; Handoff Prompts are cleared after loading.
+The Manager's folder holds only `handoff.md`. Each file holds at most one temporary message. An agent clears a processed message before replying; Handoff Prompts are cleared after loading. A Task Prompt stays populated during execution, so its presence does not prove delivery is still needed.
 
 You deliver each message by invoking a skill in its recipient's conversation. [Getting Started](Getting_Started.md#step-4-your-first-task-cycle) walks through the delivery steps.
 
@@ -45,7 +45,7 @@ Agents outside APM can contribute through their own bus folders. Their reports c
 
 ### How Task Prompts Are Built
 
-A Task Prompt gives a Worker the objective, instructions, working directory, expected output and validation. The Manager combines the Plan's Task entry with relevant Spec decisions, dependency outputs, coordination notes and lasting findings. This keeps each assignment self-contained.
+A Task Prompt gives a Worker the objective, instructions, working directory, expected output and validation. The Manager selects relevant Spec decisions, dependency outputs, coordination notes and lasting findings for the Plan's Task, including each needed contract once. This keeps each assignment self-contained.
 
 ### Dependency Context
 
@@ -76,7 +76,7 @@ Shared files keep the session's state outside any conversation. The **Tracker** 
 
 ### The Tracker
 
-The Tracker (`.apm/tracker.md`) records Task states and next actions, branches and worktrees, each Worker's conversation number and context, and coordination notes. Notes remain while ongoing work needs them or their decisions await a Stage summary or Index entry. The Manager updates the Tracker after review and dispatch. Tasks are Waiting on dependencies, Ready to assign, Active through execution and review, or Done after a final decision.
+The Tracker (`.apm/tracker.md`) records Task states and next actions, branches and worktrees, each Worker's conversation number and context, and coordination notes. Task IDs link to their latest reported logs; a pending attempt's destination stays in its Task Prompt. Notes remain while ongoing work needs them or their decisions await a Stage summary or Index entry. The Manager updates the Tracker after review and dispatch. Tasks are Waiting on dependencies, Ready to assign, Active through execution and review, or Done after a final decision.
 
 ### The Index
 
@@ -86,11 +86,11 @@ The Index (`.apm/memory/index.md`) holds brief findings and accepted or unresolv
 
 Memory lives in `.apm/memory/`:
 
-- **Task Logs** - A Worker's evidence and findings for one Task, at `stage-<NN>/task-<NN>-<MM>.log.md`.
+- **Task Logs** - A Worker's evidence and findings for each attempt. The original is `stage-<NN>/task-<NN>-<MM>.log.md`; follow-ups use `task-<NN>-<MM>.followup-01.log.md`, `followup-02` and onward in that folder. Each follow-up links to the original and previous follow-up, preserving earlier evidence.
 - **Stage summaries** - The Manager's record of a Stage, at `stage-<NN>/stage-<NN>.summary.md`.
 - **Handoff Logs** - Working context for the next conversation, at `handoffs/<agent-slug>/handoff-<NN>.log.md`.
 
-The Index provides navigation through these records. [Quick Reference](Quick_Reference.md#project-structure) shows the full directory layout.
+Stage summaries group each Task's attempt logs and record final review decisions. Index findings link to the attempt or summary that supports them. [Quick Reference](Quick_Reference.md#project-structure) shows the full directory layout.
 
 <Diagram name="state-compression" alt="Task Logs hold execution detail and the Tracker holds coordination detail; Stage summaries condense the results, and the Index links to them and records lasting findings." phone />
 
@@ -117,7 +117,7 @@ The Manager records outstanding assignments, reports and merges. A Worker mid-Ta
 
 An incoming Manager reads planning documents, the Tracker, the Index, its Handoff Log and the Task Logs needed for current coordination.
 
-An incoming Worker reads the Rules, its Handoff Log and its own current-Stage Task Logs. The Manager supplies richer dependency context for earlier work it has not read.
+An incoming Worker reads the Rules, its Handoff Log and the latest relevant attempt logs for its Tasks in the current Stage, following earlier links where needed. A pending attempt resumes with the log path in its Task Prompt. The Manager supplies richer dependency context for earlier work it has not read.
 
 ### Recovery
 

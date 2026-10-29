@@ -63,7 +63,7 @@ A Worker takes one dispatch at a time. New Workers receive it through `apm-3-ini
 
 The Worker integrates the dependencies named in its prompt, follows the instructions under the Rules and validates the result. It runs autonomous checks first, then pauses for checks needing your judgement or outside action.
 
-Failed checks lead to investigation and targeted fixes. Missing dependencies, conflicting instructions and problems beyond the Task need guidance.
+Failed checks lead to investigation and targeted fixes. Missing dependencies, conflicting instructions, repeated attempts without progress or work that substantially exceeds the assignment need guidance.
 
 You can correct the Worker during execution. At completion, it asks whether corrections to shared execution practices should become Rules. Approved additions go in the existing shared Rules file and are recorded in the Task Log.
 
@@ -83,11 +83,13 @@ The Worker clears its Task Bus, writes its report and tells you how to deliver i
 
 #### Task Review
 
-The Manager checks the Task Log and deliverables against the assignment and planning documents. It investigates Important Findings, unmet criteria and inconsistent claims before deciding:
+The Manager checks the Task Log and deliverables against the assignment and planning documents. It investigates Important Findings, unmet criteria and inconsistent claims, resolving contained questions, checks and corrections during review. Its evidence stays separate from the Worker's recorded outcome. It then decides:
 
 - **Accept** - Mark the Task Done, merge accepted work before dependent Tasks, and dispatch newly ready work. You may agree to accept a Partial outcome; its remaining work and validation limits stay recorded.
-- **Follow-up** - Send refined instructions to the same Worker. The Task keeps its ID and log path; its replacement log retains consequential earlier findings and their resolution.
-- **Planning change** - Correct the Spec, Plan, Rules and affected Task instructions. Contained changes can proceed; changes affecting several Tasks, design, scope or Stages need your approval.
+- **Follow-up** - Send concrete remaining work, reviewed findings and a completion check to the same Worker, using its established context. The Task keeps its ID; each attempt has a new numbered log linked to the original and previous follow-up. Unresolved criteria remain part of the Task's outcome.
+- **Planning change** - Update the affected requirements and Task fields before preparing further work. Contained changes can proceed; changes affecting several Tasks, design, scope or Stages need your approval.
+
+The Manager compares follow-ups with previous attempts. If another attempt has no supported approach or the remaining work substantially exceeds the assignment, it presents options to you before dispatching again.
 
 While a decision or follow-up is pending, the Task stays Active. Done is final: a later fix needs a new Task. Corrections to unreported active work preserve its current dispatch and valid progress; the Manager asks you to pause the Worker, revises the prompt and redelivers it through `apm-4-check-tasks`.
 
@@ -99,7 +101,7 @@ Stages run in order, with parallel Tasks within a Stage.
 
 <Diagram name="stage-progression" alt="Stage 1 holds Tasks such as data models, a storage layer, an auth handler, API endpoints, and integration tests; later Stages follow in order until the project is complete." />
 
-The Manager verifies a Stage when you request it, the Plan calls for it, or any Task needed a follow-up or reported Important Findings. Otherwise it records why verification was skipped.
+The Manager verifies the Stage's combined result when you request it, the Plan calls for it, or any Task needed a follow-up or reported Important Findings. Otherwise it records why verification was skipped. It uses relevant checks and preserves their reference inputs and evidence through cleanup.
 
 A Stage completes once all Tasks are Done, required verification is resolved and, with version control, its branches are merged. The Manager writes the Stage summary, links it from the Index and starts the next Stage. Summaries preserve consequential decisions, evidence and accepted limits.
 
