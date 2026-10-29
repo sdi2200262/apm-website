@@ -28,20 +28,10 @@
 .steps h3 + p { margin-top: 8px; }
 .steps p + p { margin-top: 16px; }
 .install-targets { display: grid; grid-template-columns: 3fr 2fr; gap: 12px; margin-top: 16px; }
-.install-targets label { display: flex; align-items: flex-start; gap: 10px; padding: 16px; border: 1px solid var(--apm-soft); cursor: pointer; }
-.install-targets label:is(:hover, :focus-within) { border-color: var(--apm-ink); }
-.install-targets label:has(input:checked) { background: var(--apm-deep); border-color: var(--apm-ink); }
-.install-targets input { margin: 5px 0 0; accent-color: var(--apm-ink); flex: none; }
-.install-targets strong { display: block; font-size: 16px; font-weight: 600; }
-.install-targets .target-description { display: block; margin-top: 6px; font-size: 14px; line-height: 1.45; color: color-mix(in srgb, var(--apm-ink) 75%, var(--apm-paper)); }
-.assistant-stack { display: flex; isolation: isolate; margin-bottom: 12px; }
-.assistant-icon { display: grid; place-items: center; width: 40px; height: 40px; padding: 7px; border: 1px solid var(--apm-soft); border-radius: 50%; background: var(--apm-paper); }
-.assistant-icon + .assistant-icon { margin-left: -10px; z-index: -1; }
-.assistant-icon:last-child { z-index: -2; }
-.assistant-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.assistant-icon .assistant-dark { display: none; }
-[data-theme='dark'] .assistant-icon .assistant-light { display: none; }
-[data-theme='dark'] .assistant-icon .assistant-dark { display: block; }
+.landing-page .install-targets button { padding: 16px; border: 1px solid var(--apm-soft); font-size: 16px; line-height: 1.45; text-align: left; }
+.landing-page .install-targets button:hover { border-color: var(--apm-ink); }
+.landing-page .install-targets button:focus-visible { outline: 2px solid var(--apm-ink); outline-offset: 3px; }
+.landing-page .install-targets button[aria-pressed='true'] { background: var(--apm-deep); border-color: var(--apm-ink); box-shadow: inset 0 0 0 1px var(--apm-ink); }
 @media (max-width: 600px) { .install-targets { grid-template-columns: 1fr; } }
 
 /* Touch screens get a shorter page: phone diagrams, tap-to-toggle terms, two-line Getting started. */

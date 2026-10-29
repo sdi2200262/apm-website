@@ -114,7 +114,6 @@ function Cover({ draw }) {
 
 function GettingStarted() {
   const [target, setTarget] = useState('agents');
-  const assistants = useBaseUrl('/img/assistants/');
   return (
     <>
       <div className="steps hover-only">
@@ -123,35 +122,19 @@ function GettingStarted() {
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
         <p>Choose an installation target, then run its command in your project directory:</p>
-        <div className="install-targets" role="radiogroup" aria-label="Installation target">
-          <label>
-            <input type="radio" name="install-target" value="agents" checked={target === 'agents'} onChange={() => setTarget('agents')} />
-            <span>
-              <span className="assistant-stack" aria-hidden="true">
-                {['codex', 'opencode', 'cursor'].map((name) => (
-                  <span className="assistant-icon" key={name}>
-                    {name === 'cursor' ? <img src={`${assistants}cursor.svg`} alt="" /> : <>
-                      <img className="assistant-light" src={`${assistants}${name}-light.svg`} alt="" />
-                      <img className="assistant-dark" src={`${assistants}${name}-dark.svg`} alt="" />
-                    </>}
-                  </span>
-                ))}
-              </span>
-              <strong>AGENTS.md assistants</strong>
-              <span className="target-description">Codex, Cursor, GitHub Copilot, Antigravity, OpenCode</span>
-            </span>
-          </label>
-          <label>
-            <input type="radio" name="install-target" value="claude" checked={target === 'claude'} onChange={() => setTarget('claude')} />
-            <span>
-              <span className="assistant-stack" aria-hidden="true"><span className="assistant-icon"><img src={`${assistants}claude.svg`} alt="" /></span></span>
-              <strong>Claude Code</strong><span className="target-description">Uses <code>.claude/skills/</code></span>
-            </span>
-          </label>
+        <div className="install-targets" role="group" aria-label="Installation target">
+          <button type="button" aria-pressed={target === 'agents'} onClick={() => setTarget('agents')}>
+            Any agent that uses <code>.agents/</code> and <code>AGENTS.md</code>
+          </button>
+          <button type="button" aria-pressed={target === 'claude'} onClick={() => setTarget('claude')}>
+            Claude Code
+          </button>
         </div>
         <Code key={target}>{`apm init -a ${target}`}</Code>
         <h3>3. Start the Planner</h3>
         <p>Open a new chat in your assistant, invoke the <code>apm-1-initiate-planner</code> skill and describe what you want to build or change.</p>
+        <p>For example, in Claude Code:</p>
+        <Code>/apm-1-initiate-planner</Code>
         <p>Follow the full walkthrough in <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
