@@ -114,6 +114,7 @@ function Cover({ draw }) {
 
 function GettingStarted() {
   const [target, setTarget] = useState('agents');
+  const assistants = useBaseUrl('/img/assistants/');
   return (
     <>
       <div className="steps hover-only">
@@ -124,17 +125,28 @@ function GettingStarted() {
         <p>Choose an installation target, then run its command in your project directory:</p>
         <div className="install-targets" role="group" aria-label="Installation target">
           <button type="button" aria-pressed={target === 'agents'} onClick={() => setTarget('agents')}>
-            Any agent that uses <code>.agents/</code> and <code>AGENTS.md</code>
+            <span className="target-icons" aria-hidden="true">
+              {['codex', 'opencode'].map((name) => (
+                <span className={`target-icon${name === 'codex' ? ' target-icon-codex' : ''}`} key={name}>
+                  <img className="target-icon-light" src={`${assistants}${name}-light.svg`} alt="" />
+                  <img className="target-icon-dark" src={`${assistants}${name}-dark.svg`} alt="" />
+                </span>
+              ))}
+              <img className="target-icon" src={`${assistants}cursor.svg`} alt="" />
+              <svg className="target-icon target-more" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+            </span>
+            <span>Any agent that uses <code>.agents/</code> and <code>AGENTS.md</code></span>
           </button>
           <button type="button" aria-pressed={target === 'claude'} onClick={() => setTarget('claude')}>
-            Claude Code
+            <span className="target-icons" aria-hidden="true"><img className="target-icon" src={`${assistants}claude.svg`} alt="" /></span>
+            <span>Claude Code</span>
           </button>
         </div>
         <Code key={target}>{`apm init -a ${target}`}</Code>
         <h3>3. Start the Planner</h3>
         <p>Open a new chat in your assistant, invoke the <code>apm-1-initiate-planner</code> skill and describe what you want to build or change.</p>
         <p>For example, in Claude Code:</p>
-        <Code>/apm-1-initiate-planner</Code>
+        <Code>/apm-1-initiate-planner Create Claude Opus 6, make no mistakes.</Code>
         <p>Follow the full walkthrough in <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
