@@ -7,120 +7,61 @@ sidebar_position: 12
 
 # Tips and Tricks
 
-Practical guidance for APM sessions: choosing models, keeping costs down, and steering the work.
+Practical choices for models, coordination overhead and review points during an APM session.
 
 ## Model Selection
 
-APM works best with capable reasoning models, such as the top models from Claude, GPT, or Gemini.
-
-- **Planner and Manager:** use the strongest model you can. Their planning and coordination decisions shape every Task.
-- **Workers:** a smaller model is often enough, since Workers mostly write code and run tools. Give harder Tasks to a stronger one.
-
-If your model lets you set its reasoning effort, set it higher for the Planner and the Manager.
+Use capable reasoning models for the Planner and Manager: their decisions shape many Tasks. Match each Worker to its Task's difficulty and required tools; a cheaper model may suit bounded, familiar work. Higher reasoning effort can be useful for complex planning or coordination when your model supports it.
 
 ### Switching Models
 
-Switching models mid-conversation is generally safe for Workers, whose context is scoped to the current Task. Avoid it for the Planner, which relies on everything gathered during Context Gathering. The Manager can switch between Task cycles, but one model throughout coordinates more consistently.
+Check that a replacement model understands the current state and instructions. Switching between Tasks gives you a clear point to review this. To move a Manager or Worker to a fresh conversation, use a [Handoff](Agent_Orchestration.md#handoff-and-continuity). Keep the Planner's gathered context available until its documents are approved.
 
 ## Cost Efficiency
 
-Thorough planning is the best saving. Time spent reviewing the planning documents before you approve them spares follow-ups and rework during implementation.
+Reviewing requirements and validation before implementation can prevent follow-ups and rework. Task size and dispatch also affect how much coordination passes through you.
 
 ### Context Up Front
 
-The Planner's initiation command accepts project context, which makes its questions more targeted and spares follow-up rounds:
-
-```
-/apm-1-initiate-planner We're building a REST API for a task management app. Here's the PRD: @docs/prd.md and the existing codebase is in src/
-```
+Give the Planner existing requirements, relevant code paths and known constraints when starting it. [Getting Started](Getting_Started.md#step-1-initiate-the-planner) shows how to include context with the initiation skill.
 
 ### Batch-Friendly Planning
 
-On platforms that bill per request, batch dispatch saves exchanges. Mention during Context Gathering that you prefer batch-friendly Tasks, and the Planner favours sequential chains for the same Worker. You can also ask the Manager to prefer batch dispatch when several Tasks for one Worker are ready. Batches also mean fewer exchanges pass through you, each covering more work.
+Ask for smaller Tasks when you want frequent review points, or for batches when you prefer fewer deliveries covering more work. Discuss this during planning so Task boundaries support your preference. The Manager chooses actual [dispatches](Agent_Orchestration.md#dispatch-modes) as dependencies become ready.
 
 ### Handoff Timing
 
-A [Handoff](Agent_Orchestration.md#handoff-and-continuity) before the context limit costs less than recovery after compaction, and an agent with clean context writes better Handoff artifacts. Trigger Handoffs from the context usage your platform shows. When a Worker is one or two Tasks from finishing, it can be simpler to let the platform compact, recover, and finish.
-
-Knowing when to hand off is the hard part, since decay is often visible only after quality drops. Some platforms support hooks that fire at context thresholds. For Claude Code, [`cc-context-awareness`](https://github.com/sdi2200262/cc-context-awareness) sets such thresholds and can prompt the agent to start a Handoff.
+Use your assistant's context display or reminders to plan a Handoff before the limit. Review its continuation files while the current work is still clear. If compaction has already lost context, use [recovery](Troubleshooting_Guide.md#context-recovery) first.
 
 ### Subagents
 
-If an agent spends its context on debugging, research, or exploration that could run in isolation, ask it to launch a subagent.
+Focused research, debugging or verification may suit a native subagent when it can work independently. The parent agent keeps its role's scope and checks the findings before using them.
 
 ## Workflow Efficiency
 
 ### Validation Criteria
 
-The validation criteria you give the Planner reach every Task Prompt. When they are specific and testable, Workers can execute, validate, and iterate on their own, sometimes completing complex work without your input. Workers validate with whatever tools the platform offers: a test suite, a linter or type checker, a browser tool for UI work.
+Give concrete pass/fail checks and identify anything that needs your judgement, access or outside action. This helps Workers validate independently and makes remaining limits clear during review. For example:
 
-Describe what "done" means in testable terms:
-
-```
-Each API endpoint should return the correct status codes and response shapes. The Worker should validate by running the existing test suite (npm test) and adding new tests for any endpoints it creates.
+```text
+Each API endpoint must return the documented status codes and response shape. Run the existing test suite and add tests for the new endpoints, including timeout handling.
 ```
 
-If you want a milestone verified before the next Stage, tell the Manager. It can run checks, examine edge cases, or send a verification subagent.
+If a milestone needs verification across Tasks, tell the Planner so it appears in the Plan, or ask the Manager before the Stage closes.
 
 ### Steering
 
-You can steer the workflow at any point during implementation.
+- Correct a Worker in its conversation; it records consequential corrections for the Manager and asks before adding them to Rules.
+- Give the Manager your observations when delivering a report, such as a missed edge case or changed requirement.
+- Ask the Manager to record pending decisions and blockers in the Tracker, or to change Task structure and dispatch where needed.
 
-#### Directing Workers
-
-Correct or extend a Worker's Task mid-execution. Workers record your corrections in the Task Log for the Manager, and offer to add them to the Rules:
-
-```
-The API response format changed since the Plan was written - use the v2 format from docs/api-v2.md instead.
-```
-
-#### Adding Context to Reports
-
-Add your own notes when you deliver a report:
-
-```
-/apm-5-check-reports python-agent
-
-The task was executed but I noticed the error handling doesn't cover timeout scenarios. I want the next Task for this Worker to address that before moving on.
-```
-
-#### Working Notes and Rules
-
-Preferences or observations for the coming Tasks of a Stage go into the Tracker as working notes:
-
-```
-Add a working note: I prefer verbose logging during this Stage so I can monitor execution progress across Workers.
-```
-
-A pattern every Worker should follow for the rest of the project belongs in the Rules:
-
-```
-I want all new API endpoints to follow the error response format defined in docs/api-errors.md. Add this to Rules so all Workers follow it.
-```
-
-#### Tasks and Dispatch
-
-Ask the Manager for Tasks the Plan lacks, or suggest groupings from what you know about the work:
-
-```
-I need a new Task for setting up CI/CD - this wasn't in the Plan but we need it before Stage 2.
-```
-
-```
-The database schema and the API routes don't depend on each other - dispatch them in parallel to separate Workers.
-```
+[Workflow Overview](Workflow_Overview.md#task-cycles) explains how these changes affect active work, follow-ups and approvals.
 
 ### Splitting Sessions
 
-For large projects, several APM sessions with an archive between each keep every session focused. Each new Planner examines the archives, and context carries forward. Common splits:
-
-- **Per feature:** one session per feature or deliverable.
-- **Per layer:** one session per layer, such as the database, then the backend, then the frontend.
-- **After a change of direction:** when execution hits a blocker that changes the plan, run `/apm-8-summarize-session` in a new conversation, then archive the session. A new Planner plans the revised approach with the archive in view.
+Split a large goal when later work depends on decisions the current session must settle. Natural boundaries include a feature, a software layer or a change in direction. Agree the current scope with the Planner; a later session can use its archive. See [Session Continuation](Workflow_Overview.md#session-continuation) for closing and restarting.
 
 ## Related Docs
 
-- [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Troubleshooting Guide](Troubleshooting_Guide.md) - Common issues and recovery procedures
-- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
-- [Security Guide](Security_Guide.md) - Trust model, risks, and mitigation for custom repositories
+- [Getting Started](Getting_Started.md) - Running a first session
+- [Troubleshooting Guide](Troubleshooting_Guide.md) - Recovering context and resolving blocked work

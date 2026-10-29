@@ -32,15 +32,6 @@ const CAPTION = CAPTIONS.overview; // shared with the docs (src/captions.js)
 // Overview parts, in figure order (Figure 2..6): key = diagram variant (overview-<key>-<theme>.svg). Captions: src/captions.js.
 // A no-break space ties each caption's last two words, so no line ends on a lone word (Safari before 26 ignores text-wrap: pretty).
 const PARTS = Object.fromEntries(['planning', 'manager', 'workers', 'user', 'state'].map((k) => [k, CAPTIONS[`overview-${k}`].replace(/ (\S+)$/, '\u00a0$1')]));
-// [init flag, name, logo in static/img/assistants]. Logo: one file, or [light, dark]; 'mask' = monochrome, painted in --apm-ink.
-const ASSISTANTS = [
-  ['claude', 'Claude Code', 'claude.svg'],
-  ['codex', 'Codex CLI', ['codex-light.svg', 'codex-dark.svg']],
-  ['cursor', 'Cursor', 'cursor.svg'],
-  ['copilot', 'GitHub Copilot', 'github-copilot.svg', 'mask'],
-  ['antigravity', 'Antigravity', 'antigravity.png'],
-  ['opencode', 'OpenCode', ['opencode-light.svg', 'opencode-dark.svg']],
-];
 
 // The cover's bottom is above 40% of the viewport: the theme switch slides away.
 function useAway() {
@@ -98,13 +89,6 @@ function Overview() {
   );
 }
 
-function Logo({ file, mask }) {
-  const src = useBaseUrl('/img/assistants/');
-  if (mask) return <span className="logo mask" style={{ maskImage: `url(${src}${file})` }} />;
-  if (Array.isArray(file)) return <><img className="logo only-light" src={src + file[0]} alt="" /><img className="logo only-dark" src={src + file[1]} alt="" /></>;
-  return <img className="logo" src={src + file} alt="" />;
-}
-
 // Cover text with its two problems and its closing term as italic terms (useTerms). Their
 // definitions show in a note line below, which keeps its height when empty (nothing shifts) and keeps
 // the last definition while fading out.
@@ -129,28 +113,46 @@ function Cover({ draw }) {
 }
 
 function GettingStarted() {
-  const [pick, setPick] = useState(null);
+  const [target, setTarget] = useState('agents');
+  const assistants = useBaseUrl('/img/assistants/');
   return (
     <>
       <div className="steps hover-only">
         <h3>1. Install the CLI</h3>
-        <p>APM supports Claude Code, Codex CLI, Cursor, GitHub Copilot, Antigravity, and OpenCode. It installs through <code>agentic-pm</code>, a command-line tool on npm that needs Node.js 18 or later:</p>
+        <p>Requires Node.js 18 or later.</p>
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
-        <p>In your project directory, run the command below to install APM's commands, guides, skills, and document templates. Select your assistant when the CLI prompts you, or pass it with <code>-a</code>:</p>
-        <div className="pick" role="group" aria-label="AI assistant">
-          {ASSISTANTS.map(([id, name, file, mask]) => (
-            <button key={id} type="button" aria-pressed={pick === id} onClick={() => setPick(pick === id ? null : id)}>
-              <Logo file={file} mask={mask} />
-              {name}
-            </button>
-          ))}
+        <p>Choose an installation target, then run its command in your project directory:</p>
+        <div className="install-targets" role="radiogroup" aria-label="Installation target">
+          <label>
+            <input type="radio" name="install-target" value="agents" checked={target === 'agents'} onChange={() => setTarget('agents')} />
+            <span>
+              <span className="assistant-stack" aria-hidden="true">
+                {['codex', 'opencode', 'cursor'].map((name) => (
+                  <span className="assistant-icon" key={name}>
+                    {name === 'cursor' ? <img src={`${assistants}cursor.svg`} alt="" /> : <>
+                      <img className="assistant-light" src={`${assistants}${name}-light.svg`} alt="" />
+                      <img className="assistant-dark" src={`${assistants}${name}-dark.svg`} alt="" />
+                    </>}
+                  </span>
+                ))}
+              </span>
+              <strong>AGENTS.md assistants</strong>
+              <span className="target-description">Codex, Cursor, GitHub Copilot, Antigravity, OpenCode</span>
+            </span>
+          </label>
+          <label>
+            <input type="radio" name="install-target" value="claude" checked={target === 'claude'} onChange={() => setTarget('claude')} />
+            <span>
+              <span className="assistant-stack" aria-hidden="true"><span className="assistant-icon"><img src={`${assistants}claude.svg`} alt="" /></span></span>
+              <strong>Claude Code</strong><span className="target-description">Uses <code>.claude/skills/</code></span>
+            </span>
+          </label>
         </div>
-        <Code>{pick ? `apm init -a ${pick}` : 'apm init'}</Code>
+        <Code key={target}>{`apm init -a ${target}`}</Code>
         <h3>3. Start the Planner</h3>
-        <p>Open your assistant in the project and run:</p>
-        <Code>{pick === 'codex' ? '$apm-1-initiate-planner' : '/apm-1-initiate-planner'}</Code>
-        <p>Describe what you want to build or change. The Planner works with you on the planning documents, then directs you to start the Manager in a new conversation. From there, each agent tells you what to run next and where. For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
+        <p>Open a new chat in your assistant, invoke the <code>apm-1-initiate-planner</code> skill and describe what you want to build or change.</p>
+        <p>Follow the full walkthrough in <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
         <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project directory from your terminal.</p>

@@ -7,44 +7,48 @@ sidebar_position: 7
 
 # Context Engineering
 
-APM's design starts from the two problems with long LLM conversations, described in the [Introduction](Introduction.md#the-problem): *context decay*, where the LLM recalls earlier decisions less reliably as context accumulates, and *context pressure*, where each call costs more and the conversation nears the context window's limit. Context engineering is the practice of managing everything a model's context holds, keeping its limited attention and tokens on relevant material. This doc explains the choices APM makes and the intent behind them.
+Context engineering keeps a model's limited attention on relevant information. APM uses role boundaries, shared records and Handoffs to address the [context decay and pressure](Introduction.md#the-problem) that build up in long conversations.
 
-[Agent Orchestration](Agent_Orchestration.md) describes the mechanisms themselves. This doc covers the reasoning underneath them.
+[Agent Orchestration](Agent_Orchestration.md) explains the mechanisms. This doc explains why they are designed that way.
 
 ## Context Scoping
 
-Each role sees a deliberately limited view of the project, shaped by what it needs to do its job.
-
 ### Planner
 
-The Planner gives its whole context window to planning and takes no part in implementation. Separating the two phases is meant to keep execution history from competing with the project's intent while that intent is still being settled.
+The Planner's conversation is devoted to understanding and planning the work. Separating planning from implementation keeps execution history from competing with requirements while they are still being settled.
 
-The Planner's conversation does not carry into implementation. It holds exploration, discarded options, and corrections, and only the end results, approved by you, move on in the Spec, the Plan, and the Rules. The Manager starts from these documents. Workers receive the Rules and the context each Task needs through its Task Prompt. The Planner's conversation can simply end.
+The Spec, Plan and Rules preserve the approved decisions from that exploration. These documents carry the result into implementation; the Manager and Workers do not need to reconstruct the planning conversation.
 
 ### Manager
 
-The Manager works one layer above implementation. Its default context is coordination-level: the planning documents, the Tracker, the Index, and Task Logs. It goes deeper when it needs to, reading source files to write a Task Prompt or to investigate a doubtful result, then returns to coordination. Staying at that level is intended to let one Manager coordinate many Tasks across several Workers without its context growing in proportion.
+The Manager works from planning documents, live coordination state and recorded outcomes. It reads source code when preparing an assignment or investigating a result, leaving routine implementation to Workers. This lets it coordinate across areas without carrying every Worker's debugging and execution history.
 
 ### Workers
 
-Each Worker sees its Task Prompt, the Rules, and the working context it builds over its Tasks. It generally never reads the Spec, the Plan, or the Tracker: the Manager writes what the Task needs from them into the prompt. The less coordination context a Worker carries, the more of its window remains for reading code, implementing, debugging, and validating.
+A Worker receives the Rules and a self-contained Task Prompt. The Manager includes the design decisions, dependency context and constraints the Task needs. Keeping the Spec, Plan, Tracker and Index outside the Worker's usual scope leaves more room for code, implementation and validation.
 
-A Worker develops working knowledge in its conversation across the Tasks of its domain. Familiarity is the gain: the Manager can send a brief reminder about the Worker's own earlier work instead of full context. Decay is the cost, as the conversation grows, but can be countered using Handoffs. Workers still launch subagents for investigation or debugging, which keeps that load out of their own context.
+Workers retain familiarity across assignments in their area. The Manager can refer briefly to a Worker's own earlier outputs, while unfamiliar dependencies need reading and integration instructions. A Handoff trades some of that familiarity for a fresh conversation, so later Task Prompts give fuller context for earlier work it has not read.
+
+Any role may delegate focused work to native subagents within its scope, then verify their findings. This keeps isolated research or debugging out of the main conversation without changing the role's responsibilities.
 
 ## Context Across Conversations
 
-The Manager and Workers each have their own context, and only what the Message Bus carries passes between them. This matters because Workers share a codebase and can read each other's output, but not the reasoning behind it: why it was built that way and how it connects to other work. The Manager holds that reasoning, since it assigned and reviewed the earlier work, so it supplies whatever the next Worker lacks.
+Agents share files, not conversations. Reading another Worker's code may show what it does without explaining the decisions or constraints behind it. The Manager supplies that missing context through Task Prompts, using the earlier work's logs and evidence.
 
-This depends on where the session's state lives. All of it sits in files outside any agent's context window, so a conversation can end, fill, or be compacted without losing the session's state or history.
+Shared records also keep the session independent of any one conversation:
 
-The Manager coordinates every Task and reviews every outcome; its context grows with them. A compression pipeline is meant to prevent that, with each layer compressing the one below it. A Worker's Task Log reduces its reading, debugging, and iteration to the outcome and what the Manager needs to know. Additionally, at each Stage boundary, the Manager condenses the Stage's Task Logs into a summary in the Index and distils its working notes into Memory notes. Each layer is progressively smaller than the one before. For example, a future Manager uses the compressed Index to understand the big picture of the project and can operate from it, instead of reconstructing the project's entire coordination history from all the older Task Logs.
+- **Task Logs** preserve results, validation and consequential findings for each attempt. Follow-up logs link to earlier attempts, so continuation can follow the evidence it needs without loading the whole history.
+- **The Tracker** holds current coordination state and next actions.
+- **Stage summaries** condense accepted work, decisions and validation limits, with links to Task Logs.
+- **The Index** links to those summaries and holds findings useful beyond a Stage.
 
-The same reasoning explains why a Handoff is preferred to compaction. Compaction replaces the conversation's history with a summary, trading detail for space. Each later compaction condenses the summary further. A Handoff instead writes its record to files that persist. Successive Handoffs leave a durable history of the role's work, and you can invoke one early, before decay sets in.
+An incoming Manager can start with the Index and summaries, then follow sources where more detail is needed. This reduces how much history it must load while keeping the evidence available.
 
-[Session archives](Workflow_Overview.md#session-continuation) carry the same principle across sessions. A new Planner examines relevant archives during Context Gathering and checks them against the current codebase, so each session can build on the last.
+A Handoff applies the same principle to a role's working context. The outgoing agent writes a durable record of what the next conversation needs and checks current state before transferring the role. Platform compaction instead replaces conversation history with a summary that later compactions may condense again. The Handoff files remain available for verification and continuation.
+
+[Archives](Workflow_Overview.md#session-continuation) carry this history between APM sessions. A new Planner reads relevant records and checks their claims against the current codebase, since archived decisions and results may no longer describe it.
 
 ## Related Docs
 
-- [Prompt Engineering](Prompt_Engineering.md) - How APM's files are designed and structured
-- [CLI Guide](CLI_Guide.md) - All CLI commands and options
-- [Customisation Guide](Customisation_Guide.md) - Custom repositories and template customisation
+- [Agent Orchestration](Agent_Orchestration.md) - Communication, Memory and continuity mechanisms
+- [Prompt Engineering](Prompt_Engineering.md) - How instructions and records are structured
