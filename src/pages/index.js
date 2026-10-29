@@ -127,7 +127,7 @@ function GettingStarted() {
           <button type="button" aria-pressed={target === 'agents'} onClick={() => setTarget('agents')}>
             <span className="target-icons" aria-hidden="true">
               {['codex', 'opencode'].map((name) => (
-                <span className="target-icon" key={name}>
+                <span className={`target-icon${name === 'codex' ? ' target-icon-codex' : ''}`} key={name}>
                   <img className="target-icon-light" src={`${assistants}${name}-light.svg`} alt="" />
                   <img className="target-icon-dark" src={`${assistants}${name}-dark.svg`} alt="" />
                 </span>

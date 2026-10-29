@@ -32,8 +32,9 @@
 .landing-page .install-targets button:hover { border-color: var(--apm-ink); }
 .landing-page .install-targets button:focus-visible { outline: 2px solid var(--apm-ink); outline-offset: 3px; }
 .landing-page .install-targets button[aria-pressed='true'] { background: var(--apm-deep); border-color: var(--apm-ink); box-shadow: inset 0 0 0 1px var(--apm-ink); }
-.target-icons { display: flex; align-items: center; gap: 12px; }
+.target-icons { display: flex; min-height: 28px; align-items: center; gap: 12px; }
 .target-icon { display: block; width: 24px; height: 24px; flex: none; }
+.target-icon-codex { width: 28px; height: 28px; }
 .target-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .target-icon .target-icon-dark { display: none; }
 [data-theme='dark'] .target-icon .target-icon-light { display: none; }
