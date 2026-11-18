@@ -31,6 +31,8 @@ export default {
   plugins: [
     ['@docusaurus/plugin-content-docs', { id: 'research', path: 'research', routeBasePath: 'research', sidebarPath: './sidebarsResearch.js',
       remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex] }],
+    // Tips and Tricks was folded into Getting Started in v1.2.0.
+    ['@docusaurus/plugin-client-redirects', { redirects: [{ from: '/docs/tips-and-tricks', to: '/docs/getting-started' }] }],
   ],
 
   presets: [

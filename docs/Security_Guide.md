@@ -45,8 +45,3 @@ apm custom --clear             # Remove all saved repos
 ## Reporting Security Issues
 
 Report vulnerabilities through [GitHub Issues](https://github.com/sdi2200262/agentic-project-management/issues) or contact the maintainers directly. Share sensitive details privately until the issue is addressed.
-
-## Related Docs
-
-- [CLI Guide](CLI_Guide.md#apm-custom) - Manage saved repositories and their settings
-- [Customisation Guide](Customisation_Guide.md) - Build and share custom templates
