@@ -19,14 +19,14 @@ import './index.css';
 // other book pages, the palette, fonts and the header/footer/switch parts in src/css/custom.css and src/components.
 // Everything random (mark, waves) is drawn after mount from one seed, so SSR output stays deterministic.
 
-// The cover text and the overview's captions are mirrored word for word in the APM repo's README; change both together.
+// The cover text and the overview-planning, -manager, -user and -state captions are mirrored in the APM repo's README; change both together.
 // Short description for search engines and link previews.
-const DESCRIPTION = 'APM is a spec-driven multi-agent framework for AI-assisted software engineering, with planning documents, separate agent conversations, and coordination through you.';
+const DESCRIPTION = 'APM is a spec-driven multi-agent framework for AI-assisted software engineering, with planning documents, separate agent conversations, and involvement you choose.';
 // Definitions for the cover's terms: key -> definition (the note shows it without repeating the term).
 const DEFS = {
   decay: 'The longer the conversation and the more context accumulates, the less reliably the LLM recalls earlier decisions and instructions, and the less consistently it reasons about them.',
-  pressure: 'Every call to the LLM resends the whole conversation; each step costs more than the last and nears the context window\'s limit, where the conversation must be cut or summarised.',
-  friction: 'Influential human–computer interaction research places friction carefully at chosen points in an interface, as pauses that invite reflection. APM\'s user-mediated coordination aims to create such pauses, allowing you to keep authority over, and understanding of, the software you build.',
+  pressure: 'Every call to the LLM resends the whole conversation. Each call costs more than the last and brings the conversation closer to the context window\'s limit, where the platform must cut or summarise it.',
+  friction: 'Human–computer interaction research places friction at chosen points in an interface, as pauses that invite reflection. APM lets you add such points, from code reviews and manual testing to writing parts of the code yourself.',
 };
 const CAPTION = CAPTIONS.overview; // shared with the docs (src/captions.js)
 // Overview parts, in figure order (Figure 2..6): key = diagram variant (overview-<key>-<theme>.svg). Captions: src/captions.js.
@@ -61,16 +61,15 @@ function Overview() {
   return (
     <div>
       <p className="lead" ref={lead}>
-        An APM session runs in two phases. The {term('planning', 'Planner')} writes three planning documents with you: the Spec, the
-        Plan, and the Rules. The {term('manager', 'Manager')} then hands out assignments and {term('workers', 'Workers')} carry them out. Their messages pass
-        through {term('user', 'you')}, and the {term('state', 'session\'s state')} lives in shared files outside any conversation. Any agent
-        can still offload work to its own subagents for efficiency.
+        An APM session runs in two phases. The {term('planning', 'Planner')} writes two planning documents with you: the Spec and the
+        Plan. The {term('manager', 'Manager')} then coordinates the work through its subagents or <span className="nobr">{term('workers', 'Workers')}.</span>{' '}
+        {term('user', 'You')} choose where and how you take part, and the {term('state', 'session\'s state')} lives in shared files.
       </p>
       <figure className="plate">
         <div className="plate-images">
           {isBrowser && <picture style={{ opacity: active ? 0 : 1 }}>
             <source media="(any-hover: none)" srcSet={svg('-phone')} />
-            <img src={svg()} alt="APM overview: the Planner, the Manager, and Workers, coordinated through the user, with shared files" />
+            <img src={svg()} alt="APM overview: the Planner, the Manager, and Workers, with the user and shared files" />
           </picture>}
           {isBrowser && keys.map((k) => (
             <picture key={k} style={{ opacity: active === k ? 1 : 0 }}>
@@ -100,12 +99,14 @@ function Cover({ draw }) {
   return (
     <div ref={ref}>
       <p>
-        APM is an open-source framework for managing ambitious software projects with AI assistants. On long tasks, the LLM
-        behind your agent suffers from {term('decay', <em>context decay</em>)} and {term('pressure', <em>context pressure</em>)} as
-        its conversation grows. APM counters the first by recording the project&apos;s intent in planning documents, and the second by
-        splitting the work among agents in separate conversations. Coordination between the agents is mediated by you, making each
-        exchange a chance to review the work and intervene before issues propagate.
-        We call this {term('friction', <em>productive friction</em>)}.
+        APM is an open-source framework for AI-assisted software development. As an agent&apos;s conversation grows, its LLM
+        suffers from {term('decay', <em>context decay</em>)} and <span className="nobr">{term('pressure', <em>context pressure</em>)}.</span> APM counters the first by recording the project&apos;s intent in planning documents, and the second by
+        splitting the work among agents in separate conversations.
+      </p>
+      <p>
+        The workflow is flexible: you choose where and how you take part in development. You can let the agents carry
+        most of the work, or add points of {term('friction', <em>productive friction</em>)} that help you keep authority over, and
+        understanding of, the software being built.
       </p>
       <Note id="cover-note" active={!!active} wave={draw?.note}>{DEFS[last.current]}</Note>
     </div>
@@ -144,14 +145,15 @@ function GettingStarted() {
         </div>
         <Code key={target}>{`apm init -a ${target}`}</Code>
         <h3>3. Start the Planner</h3>
-        <p>Open a new chat in your assistant, invoke the <code>apm-1-initiate-planner</code> skill and describe what you want to build or change.</p>
+        <p>Open a new chat in your assistant, start the Planner and describe what you want to build or change.</p>
         <p>For example, in Claude Code:</p>
-        <Code>/apm-1-initiate-planner Create Claude Opus 6, make no mistakes.</Code>
+        <Code>/apm-1-initiate-planner Plan the Jira ticket I owe.</Code>
         <p>Follow the full walkthrough in <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
       <div className="steps touch-only">
-        <p>APM runs inside your AI assistant. A command-line tool, <code>agentic-pm</code>, installs its files into your project directory from your terminal.</p>
-        <p>For installation and first steps, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
+        <p>APM runs inside your AI assistant. From your terminal, install the <code>agentic-pm</code> CLI and run <code>apm init</code> in your project directory.</p>
+        <p>Then open a new chat in your assistant and start the Planner with <code>apm-1-initiate-planner</code>.</p>
+        <p>For the full walkthrough, see <Link to="/docs/getting-started">Getting Started</Link>.</p>
       </div>
     </>
   );
