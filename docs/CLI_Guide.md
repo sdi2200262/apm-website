@@ -100,7 +100,7 @@ apm update -n pre-update-backup
 
 Pause active agents with their work preserved before updating. The CLI:
 
-1. [Archives the session](#apm-archive), including remaining worktrees and uncommitted contents.
+1. [Archives the session](#apm-archive), including remaining worktrees under `.apm/worktrees/` and their uncommitted contents.
 2. Removes installed template files.
 3. Installs the new release, consolidating targets it replaces and dropping unsupported targets.
 4. Writes fresh installation metadata.
@@ -129,7 +129,7 @@ apm archive --clear
 
 Pause active agents with their work preserved before archiving. The CLI:
 
-1. Copies session files into `.apm/archives/session-YYYY-MM-DD-NNN/` and moves remaining worktrees there through Git, including uncommitted contents.
+1. Copies session files into `.apm/archives/session-YYYY-MM-DD-NNN/` and moves worktrees from `.apm/worktrees/` there through Git, including uncommitted contents.
 2. Writes archive metadata and verifies preservation.
 3. Clears active session files, installed templates and installation metadata.
 

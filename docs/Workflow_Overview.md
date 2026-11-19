@@ -131,7 +131,7 @@ After all Stages complete, the Manager records completion and reports the delive
 A larger goal can span several APM sessions. Before summarising or archiving, pause active work and record what's unfinished; if you stop early, the Manager does this with you.
 
 1. **Summarise** - Invoke `apm-8-summarize-session` in a new conversation, or ask the Manager at completion or early stopping. It checks the Tracker and Memory against the deliverables and writes `.apm/session.summary.md` with outcomes, decisions, validation and open issues.
-2. **Archive** - Run [`apm archive`](CLI_Guide.md#apm-archive), optionally with `--name <name>`. It preserves the session's `.apm/` files and remaining worktrees before clearing active files and installed instructions. Archiving does not finish, commit or merge work.
+2. **Archive** - Run [`apm archive`](CLI_Guide.md#apm-archive), optionally with `--name <name>`. It preserves the session's `.apm/` files and worktrees under `.apm/worktrees/` before clearing active files and installed instructions. Archiving does not finish, commit or merge work.
 3. **Continue** - Run `apm init`, then invoke `apm-1-initiate-planner` in a new conversation. The Planner checks relevant archives against the current workspace.
 
 ## Next Steps
