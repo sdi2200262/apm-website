@@ -48,8 +48,8 @@ For every option, see the [CLI Guide](CLI_Guide.md).
 
 ```text
 .apm/
-├── spec.md              # What to build (design decisions, constraints, workspace)
-├── plan.md              # How work is divided (Stages, Tasks, dependencies)
+├── spec.md              # What to deliver (requirements, design, acceptance criteria)
+├── plan.md              # How to deliver it (Stages, Tasks, dependencies, checks)
 ├── tracker.md           # Progress, next actions and blockers
 ├── metadata.json        # Installation metadata (source, version, assistants)
 ├── session.summary.md   # Optional, from /apm-8-summarize-session
@@ -81,8 +81,8 @@ Lasting workspace conventions live in workspace-root `AGENTS.md`, which the Plan
 ## Planning Phase
 
 1. **Start the Planner** - Open a new agent conversation, run `/apm-1-initiate-planner`
-2. **Answer questions** - Three topics: existing materials and vision; technical requirements; and implementation approach, quality and coordination, including Git and how you'll stay involved
-3. **Approve the Understanding Summary** - Verify the Planner understands the project
+2. **Discuss each topic** - Existing materials and vision, technical requirements, and implementation approach, quality and coordination. Agree on version control and how you'll take part during coordination.
+3. **Approve the Understanding Summary** - Check what the session will deliver and how the work will proceed.
 4. **Review planning documents** - Approve the Spec, then the Plan
 5. **Review `AGENTS.md` updates** - The Planner proposes changes
 6. **Done** - The Planner creates the Message Bus. Open a new conversation for the Manager.

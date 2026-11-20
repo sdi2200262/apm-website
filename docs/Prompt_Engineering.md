@@ -21,7 +21,7 @@ APM runs on files that agents read and follow. This doc explains their structure
 
 The numbered command skills set `disable-model-invocation: true` and point to the files their action needs. Each skill has a name and description in YAML frontmatter; guides have none. The communication skill includes a supporting guide for agents outside APM to join the Message Bus.
 
-Guides separate procedures from initiation. The Planner reads both Context Gathering and Work Breakdown at the start, so it can develop the division of work during questioning. The Manager reads Task Assignment and Task Review, plus Task Execution and Task Logging for its own Tasks; Workers read Task Execution and Task Logging.
+Guides separate procedures from initiation. The Planner reads Context Gathering and Work Breakdown at the start. It follows Work Breakdown after you approve its understanding. The Manager reads Task Assignment and Task Review, plus Task Execution and Task Logging for its own Tasks. Workers read Task Execution and Task Logging.
 
 ## Writing Patterns
 

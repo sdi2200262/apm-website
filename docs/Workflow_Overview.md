@@ -26,7 +26,7 @@ You can change where you take part, and who does the work, by telling the Manage
 
 ## Planning Phase
 
-The Planner develops the design and division of work with you during Context Gathering, then writes the planning documents during Work Breakdown.
+The Planner works with you during Context Gathering to agree what the session will deliver and how the work will proceed. Once you approve its understanding, it writes the planning documents during Work Breakdown.
 
 <Diagram name="planning-phase" alt="The Planner gathers context and elicits requirements from you, consolidates them and presents its understanding; once you agree, it creates the planning documents, which you review for completeness before planning completes." />
 
@@ -38,15 +38,17 @@ The Planner's questions cover three topics:
 
 1. **Existing Materials and Vision** - Purpose, scope, deliverables and prior work.
 2. **Technical Requirements** - Design choices, constraints, dependencies, risks and validation.
-3. **Implementation Approach, Quality and Coordination** - Tools, quality, Task size, Workers, parallelism, and how you want to stay involved. Where you use version control, agree on base branches, branch and commit conventions, and whether to track APM files.
+3. **Implementation Approach, Quality and Coordination** - Tools, quality, how the agents will work together, and where you want to stay involved. Where you use version control, agree on base branches, branch and commit conventions, and whether to track APM files.
 
-Each topic includes questions, research and follow-ups, then a short summary. The Planner returns to earlier topics when later answers affect them. Context you supply makes its questions more targeted; where your materials already answer a topic, it confirms its understanding and asks what to add or correct. When planning depends on implementation results, the Planner usually recommends a later session.
+The Planner has at least one exchange with you on each topic and returns to earlier topics when later answers affect them. It signals when the conversation moves to a new topic. Where the context already answers its questions, it confirms its understanding and asks what to add or correct. When planning depends on implementation results, the Planner usually recommends a later session.
 
-The Planner develops tentative Stages, Tasks and assignments as it learns. Once the session's scope and important choices are settled, it presents an **Understanding Summary** for your approval. It resolves corrections before writing the documents.
+Before presenting its **Understanding Summary**, the Planner confirms how you'll take part. It points out work that can proceed independently or overlap, and work that benefits from the same agent carrying it through in sequence. The summary covers what the session will deliver and how the work will proceed. Review and correct it before giving your approval.
 
 ### Work Breakdown
 
-The Planner writes the [Spec and Plan](Agent_Orchestration.md#planning-documents) in that order. For each, it explains the proposal, writes the document and waits for your approval before starting the next. It applies corrections to affected earlier documents too. Task boundaries reflect the work's size, complexity, uncertainty and dependencies. Research, implementation and validation may share a Task or need separate Tasks; each Task has a clear output and validation criteria.
+The Planner writes the [Spec and Plan](Agent_Orchestration.md#planning-documents) in that order. For each, it explains the proposal, writes the document and waits for your approval before starting the next. It applies corrections to affected earlier documents too.
+
+The Plan gives each Task a useful result with the setup and checks it needs. The Planner weighs dependencies, size and coordination cost when splitting or combining work. It groups Tasks that can be assessed together into Stages and prefers fewer Stages for small sessions. You can also agree to reviews within a Stage.
 
 After Plan approval, it reviews workspace-root `AGENTS.md` and proposes updates, creating the file if it's missing. It then creates the Message Bus and directs you to start the Manager in a new conversation with `apm-2-initiate-manager`.
 

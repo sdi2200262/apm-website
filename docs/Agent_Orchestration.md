@@ -15,12 +15,12 @@ The [Planner, Manager and Workers](Agent_Roles.md) coordinate through planning d
 
 The Planner creates two documents:
 
-- **Spec** (`.apm/spec.md`) - Intended outcomes, required behavior, design decisions and constraints, including the version control agreement.
-- **Plan** (`.apm/plan.md`) - Ordered milestones called **Stages**, each containing bounded units of work called **Tasks**. Each Task names who carries it out (the Manager or a Worker), its dependencies, outputs and validation criteria.
+- **Spec** (`.apm/spec.md`) - Intended outcomes, required behavior, design decisions, acceptance criteria and constraints, including the version control agreement.
+- **Plan** (`.apm/plan.md`) - How to deliver and check the work through ordered milestones called **Stages**, each containing bounded units of work called **Tasks**. Each Task names who carries it out (the Manager or a Worker), its dependencies, outputs and checks.
 
 Lasting workspace conventions live in workspace-root `AGENTS.md`. The Planner proposes changes to it for your approval, and the Manager and Workers keep it current. For Claude Code, the Planner adds an import of `AGENTS.md` to an existing `CLAUDE.md`, preserving your instructions.
 
-The Spec and Plan each have a Notes section. Spec Notes hold design assumptions, open decisions and alternatives. They also describe any optional documents agreed for the session, such as research under `.apm/research/`. Plan Notes record where you agreed to take part and how Tasks coordinate.
+The Spec and Plan each have a Notes section. Spec Notes hold assumptions, open decisions and alternatives that apply across the design. They also describe any optional documents agreed for the session, such as research under `.apm/research/`. Plan Notes record where you agreed to take part and how Tasks coordinate. They can suggest coordination options and say when those options would help.
 
 The Manager maintains these documents and copies relevant Spec and Plan content into **Task Prompts**, the messages that assign Tasks to Workers. Workers read `AGENTS.md` directly. [Workflow Overview](Workflow_Overview.md#task-review) covers changes during implementation.
 

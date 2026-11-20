@@ -17,11 +17,11 @@ Context engineering keeps a model's limited attention on relevant information. A
 
 The Planner's conversation is devoted to understanding and planning the work. Separating planning from implementation keeps execution history from competing with requirements while they are still being settled.
 
-The Spec and Plan preserve the approved decisions from that exploration, and `AGENTS.md` keeps lasting workspace conventions. These documents carry the result into implementation; the Manager and Workers do not need to reconstruct the planning conversation.
+The Spec and Plan preserve the approved decisions and relevant findings from that exploration, with reasons and sources where useful. The Planner adapts its explanations to your expertise and how closely you want to review the work. `AGENTS.md` keeps lasting workspace conventions.
 
 ### Manager
 
-The Manager works from planning documents, current coordination and recorded outcomes. It reads source code when preparing a Task Prompt or investigating a result, and hands substantial implementation to subagents or Workers. It does not carry their debugging and execution history.
+The Manager works from planning documents, current coordination and recorded outcomes. It uses the documents' sources and current code to fill in the technical detail needed for implementation, prepare Task Prompts and investigate results. It hands substantial implementation to subagents or Workers. It does not carry their debugging and execution history.
 
 ### Workers
 

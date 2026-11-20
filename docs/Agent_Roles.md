@@ -25,12 +25,12 @@ Any role can delegate focused work to its own subagents and check their results.
 
 ## Planner
 
-The Planner explores the workspace and questions you about the work, then writes the Spec (what to build) and Plan (how work is divided). It also reviews `AGENTS.md` for lasting workspace conventions. Its role ends after planning.
+The Planner explores the workspace and discusses the work with you. It writes the Spec (what to deliver and what makes it acceptable) and Plan (how to deliver and check it). It also reviews `AGENTS.md` for lasting workspace conventions. Its role ends after planning.
 
 <Diagram name="overview" variant="planning" alt="The overview diagram with the Planner, you, and the planning documents highlighted." phone />
 
-- **[Context Gathering](Workflow_Overview.md#context-gathering)** - Researches requirements, develops design and the division of work with you, and presents its understanding for approval.
-- **[Work Breakdown](Workflow_Overview.md#work-breakdown)** - Writes the two planning documents for separate approval, proposes any `AGENTS.md` updates, then creates the Message Bus for the Manager and Workers.
+- **[Context Gathering](Workflow_Overview.md#context-gathering)** - Researches the work, agrees on requirements, design and delivery with you, and presents its understanding for approval.
+- **[Work Breakdown](Workflow_Overview.md#work-breakdown)** - Writes the Spec for approval, then organises the work into Stages and Tasks in the Plan for separate approval. It proposes any `AGENTS.md` updates and creates the Message Bus for the Manager and Workers.
 
 ## Manager
 

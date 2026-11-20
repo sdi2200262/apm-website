@@ -59,20 +59,20 @@ The Planner uses this context to focus its questions.
 
 ### Context Gathering
 
-The Planner surveys the workspace and explores relevant code while questioning you on three topics:
+The Planner surveys the workspace and explores relevant code. It discusses each of these three topics with you:
 
 1. Existing materials, vision and scope.
 2. Technical requirements, constraints and validation.
 3. Implementation approach, quality and coordination preferences, including version control.
 
-It develops design choices and a tentative division of work with you, resolves gaps, and agrees what this APM session covers. Review its **Understanding Summary** and correct anything missing before approving it.
+The Planner develops design choices with you, resolves gaps and points out what can overlap and what is best done in sequence. Review its **Understanding Summary** for what the session will deliver and how the work will proceed. Correct anything missing before approving it.
 
 ### Work Breakdown
 
 The Planner writes two documents, in order:
 
-- **Spec** - What to build: intended outcomes, design decisions, constraints and workspace references.
-- **Plan** - How work is divided: bounded units of work called **Tasks**, grouped into ordered milestones called **Stages**. Each Task names who carries it out (the Manager or a Worker), its deliverables, dependencies and validation criteria. The Plan also records how you agreed to stay involved.
+- **Spec** - What the session will deliver, the agreed design and constraints, and what makes the result acceptable.
+- **Plan** - How to deliver and check the work. It groups bounded units of work called **Tasks** into ordered milestones called **Stages**. Each Task names who carries it out (the Manager or a Worker), its deliverables, dependencies and checks. The Plan also records how you agreed to stay involved.
 
 Approve each document before the next begins. Settle unclear requirements and checks here, before implementation. Name any checks only you can run, such as trying a feature on your own machine. Task size also sets how often Worker messages pass through you: smaller Tasks for frequent review, batches for fewer exchanges.
 
