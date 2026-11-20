@@ -68,13 +68,15 @@ The Manager's subagents can take one Task, a group of related Tasks or part of s
 
 ## Memory and Session State
 
-Shared files keep the session's state outside any conversation. The **Tracker** holds current coordination; **Memory** preserves work history and continuation context.
+The **Tracker** and **Memory** are the coordination documents. The Tracker shows what is happening now and what needs to happen next. Memory preserves work history and context for later work.
 
 <Diagram name="overview" variant="state" alt="The overview diagram with the planning documents, the Tracker, and Memory highlighted." phone />
 
 ### The Tracker
 
 The Tracker (`.apm/tracker.md`) records Task states and next actions, branches and worktrees, the Manager's and each Worker's conversation number, and current coordination notes. Each Handoff starts a role's next numbered conversation; the number identifies which conversation wrote each log. Tasks are Waiting on dependencies, Ready to assign, Active through execution and review, or Done after a final decision.
+
+Tracker Notes explain blockers, pending decisions, tentative preferences and proposals that affect current work. They say when the information applies and how it affects the next action or decision.
 
 ### File-based Memory
 
@@ -88,7 +90,9 @@ Memory lives in `.apm/memory/`:
 
 ### The Index
 
-The Index (`.apm/memory/index.md`) holds lasting findings and the unresolved or accepted issues later work needs, with source links and a table linking to Stage summaries. Each summary records accepted outcomes, findings, decisions, validation results and any issues you accepted, with links to its Task Logs.
+The Index (`.apm/memory/index.md`) lists Stage outcomes and links to their summaries. Index Notes preserve findings, limits, established preferences and agreed changes that matter to later work, with links to their sources. Each Stage summary records accepted outcomes, findings, decisions, validation results and any issues you accepted, with links to its Task Logs.
+
+When a Tracker or Index note describes a consequential document update, it gives the before and after, the reason for the change, and its effect on the work. It links to the updated section.
 
 <Diagram name="state-compression" alt="Task Logs hold execution detail and the Tracker holds coordination detail; Stage summaries condense the results, and the Index links to them and records lasting findings." phone />
 

@@ -22,7 +22,7 @@ A few points are built in: the approvals in planning and when the Manager starts
 5. **At a Handoff** - The outgoing agent recaps what passes on, and you start the fresh conversation.
 6. **At completion** - You review the deliverables and decide whether to summarise and archive the session.
 
-You can change where you take part, and who does the work, by telling the Manager.
+You can change where you take part and who does the work by telling the Manager. When you agree on an ongoing change, the Manager replaces the earlier agreement in the Plan and updates affected Task instructions before the work continues.
 
 ## Planning Phase
 
