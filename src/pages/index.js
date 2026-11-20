@@ -120,7 +120,7 @@ function GettingStarted() {
     <>
       <div className="steps hover-only">
         <h3>1. Install the CLI</h3>
-        <p>Requires Node.js 18 or later.</p>
+        <p>Requires Node.js 18.17+ (18.x) or 20.5+.</p>
         <Code>npm install -g agentic-pm</Code>
         <h3>2. Initialise your project</h3>
         <p>Choose an installation target, then run its command in your project directory:</p>

@@ -100,12 +100,13 @@ apm update -n pre-update-backup
 
 Pause active agents with their work preserved before updating. The CLI:
 
-1. [Archives the session](#apm-archive), including linked Git worktrees under `.apm/worktrees/` and their uncommitted contents.
-2. Removes installed template files.
-3. Installs the new release, consolidating targets it replaces and dropping unsupported targets.
-4. Writes fresh installation metadata.
+1. Downloads the new template bundles. If a download fails, the active session stays intact.
+2. [Archives the session](#apm-archive), including linked Git worktrees under `.apm/worktrees/` and their uncommitted contents.
+3. Removes installed template files.
+4. Installs the new release, consolidating targets it replaces and dropping unsupported targets.
+5. Writes fresh installation metadata.
 
-Stable official installations update to the newest stable release. Pre-release installations offer available newer stable or pre-release versions. Custom installations offer newer releases from the same repository. The CLI downloads all required bundles before archiving. To install a specific version, including a pre-release, use `apm init --tag <tag>` in a project without an active installation.
+Stable official installations update to the newest stable release. Pre-release installations offer available newer stable or pre-release versions. Custom installations offer newer releases from the same repository. To install a specific version, including a pre-release, use `apm init --tag <tag>` in a project without an active installation.
 
 ### apm archive
 

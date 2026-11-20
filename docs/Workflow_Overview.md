@@ -126,7 +126,7 @@ The Manager runs any Stage checks you or the Plan asked for, and tests how the S
 
 ### Project Completion
 
-After all Stages complete, the Manager records completion and reports the deliverables, findings that matter for later work, and any issues you accepted. It offers an optional session summary and archive.
+After all Stages complete, the Manager records completion and reports the deliverables, findings that matter for later work, and any issues you accepted. It explains what archiving preserves and clears before asking if you want a saved summary, an archive, or both.
 
 ## Session Continuation
 
