@@ -38,7 +38,7 @@ The Planner's questions cover three topics:
 
 1. **Existing Materials and Vision** - Purpose, scope, deliverables and prior work.
 2. **Technical Requirements** - Design choices, constraints, dependencies, risks and validation.
-3. **Implementation Approach, Quality and Coordination** - Tools, quality, Task size, Workers, parallelism, and how you want to stay involved. This includes Git use, base branches, branch and commit conventions, and whether to track APM files.
+3. **Implementation Approach, Quality and Coordination** - Tools, quality, Task size, Workers, parallelism, and how you want to stay involved. Where you use version control, agree on base branches, branch and commit conventions, and whether to track APM files.
 
 Each topic includes questions, research and follow-ups, then a short summary. The Planner returns to earlier topics when later answers affect them. Context you supply makes its questions more targeted; where your materials already answer a topic, it confirms its understanding and asks what to add or correct. When planning depends on implementation results, the Planner usually recommends a later session.
 
@@ -48,7 +48,7 @@ The Planner develops tentative Stages, Tasks and assignments as it learns. Once 
 
 The Planner writes the [Spec and Plan](Agent_Orchestration.md#planning-documents) in that order. For each, it explains the proposal, writes the document and waits for your approval before starting the next. It applies corrections to affected earlier documents too. Task boundaries reflect the work's size, complexity, uncertainty and dependencies. Research, implementation and validation may share a Task or need separate Tasks; each Task has a clear output and validation criteria.
 
-After Plan approval, it reviews workspace-root `AGENTS.md` and proposes updates, creating the file if it's missing. It then applies agreed repository setup, creates the Message Bus and directs you to start the Manager in a new conversation with `apm-2-initiate-manager`.
+After Plan approval, it reviews workspace-root `AGENTS.md` and proposes updates, creating the file if it's missing. It then creates the Message Bus and directs you to start the Manager in a new conversation with `apm-2-initiate-manager`.
 
 ## Implementation Phase
 
@@ -58,7 +58,7 @@ The Manager coordinates repeated cycles of assignment, execution, logging and re
 
 ### First Manager Initialisation
 
-The Manager reads the planning documents and explores the working codebases. It presents its understanding for your approval, then populates the Tracker and starts ready work as agreed during planning.
+The Manager reads the planning documents and explores the working codebases. It presents its understanding for your approval. If the session uses version control, it includes the setup for the first work and the conventions it will follow. After approval, it populates the Tracker, applies any agreed setup and starts ready work.
 
 ### Task Cycles
 
@@ -70,7 +70,7 @@ A Task assigned to a Worker passes through four procedures:
 
 #### Task Assignment
 
-The Manager chooses ready work and a [dispatch mode](Agent_Orchestration.md#dispatch-modes), prepares its branch or worktree when using Git, and writes a self-contained Task Prompt to the Worker's bus. It tells you which Worker conversation to use and which skill to invoke.
+The Manager chooses ready work and a [dispatch mode](Agent_Orchestration.md#dispatch-modes), prepares the workspace and writes a self-contained Task Prompt to the Worker's bus. It tells you which Worker conversation to use and which skill to invoke.
 
 A Worker takes one Task or batch at a time. New Workers receive it through `apm-3-initiate-worker <id>`; existing Workers through `apm-4-check-tasks`.
 
@@ -131,7 +131,7 @@ After all Stages complete, the Manager records completion and reports the delive
 A larger goal can span several APM sessions. Before summarising or archiving, pause active work and record what's unfinished; if you stop early, the Manager does this with you.
 
 1. **Summarise** - Invoke `apm-8-summarize-session` in a new conversation, or ask the Manager at completion or early stopping. It checks the Tracker and Memory against the deliverables and writes `.apm/session.summary.md` with outcomes, decisions, validation and open issues.
-2. **Archive** - Run [`apm archive`](CLI_Guide.md#apm-archive), optionally with `--name <name>`. It preserves the session's `.apm/` files and worktrees under `.apm/worktrees/` before clearing active files and installed instructions. Archiving does not finish, commit or merge work.
+2. **Archive** - Run [`apm archive`](CLI_Guide.md#apm-archive), optionally with `--name <name>`. It preserves the session's `.apm/` files and linked Git worktrees under `.apm/worktrees/` before clearing active files and installed instructions. Archiving does not finish, commit or merge work.
 3. **Continue** - Run `apm init`, then invoke `apm-1-initiate-planner` in a new conversation. The Planner checks relevant archives against the current workspace.
 
 ## Next Steps

@@ -63,7 +63,7 @@ The Planner surveys the workspace and explores relevant code while questioning y
 
 1. Existing materials, vision and scope.
 2. Technical requirements, constraints and validation.
-3. Implementation approach, quality and coordination preferences, including Git use and conventions.
+3. Implementation approach, quality and coordination preferences, including version control.
 
 It develops design choices and a tentative division of work with you, resolves gaps, and agrees what this APM session covers. Review its **Understanding Summary** and correct anything missing before approving it.
 
@@ -76,7 +76,7 @@ The Planner writes two documents, in order:
 
 Approve each document before the next begins. Settle unclear requirements and checks here, before implementation. Name any checks only you can run, such as trying a feature on your own machine. Task size also sets how often Worker messages pass through you: smaller Tasks for frequent review, batches for fewer exchanges.
 
-After Plan approval, the Planner proposes updates to `AGENTS.md`, the workspace-root file of lasting conventions for your agents. It creates the file if it's missing. It then applies agreed repository setup and creates the Message Bus, the files that carry messages between the Manager and any Workers.
+After Plan approval, the Planner proposes updates to `AGENTS.md`, the workspace-root file of lasting conventions for your agents. It creates the file if it's missing. It then creates the Message Bus, the files that carry messages between the Manager and any Workers.
 
 ## Step 3: Initiate the Manager
 
@@ -86,7 +86,7 @@ The **Manager** coordinates implementation. Open a new chat and run:
 /apm-2-initiate-manager
 ```
 
-It reads the planning documents, explores the codebases and presents its understanding for approval. Once approved, it starts on ready Tasks and maintains the **Tracker**, which records progress and next actions. It pauses at the points you agreed during planning. You can change them as the work goes; see [Where You Take Part](Workflow_Overview.md#where-you-take-part).
+It reads the planning documents, explores the codebases and presents its understanding for approval. If you agreed to use version control, it explains the setup for the first work and the conventions it will follow. After approval, it applies the agreed setup and starts on ready Tasks. It maintains the **Tracker**, which records progress and next actions, and pauses at the points you agreed during planning. You can change those points as the work goes. See [Where You Take Part](Workflow_Overview.md#where-you-take-part).
 
 ## Step 4: Your First Tasks
 

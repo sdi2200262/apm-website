@@ -100,7 +100,7 @@ apm update -n pre-update-backup
 
 Pause active agents with their work preserved before updating. The CLI:
 
-1. [Archives the session](#apm-archive), including remaining worktrees under `.apm/worktrees/` and their uncommitted contents.
+1. [Archives the session](#apm-archive), including linked Git worktrees under `.apm/worktrees/` and their uncommitted contents.
 2. Removes installed template files.
 3. Installs the new release, consolidating targets it replaces and dropping unsupported targets.
 4. Writes fresh installation metadata.
@@ -129,11 +129,11 @@ apm archive --clear
 
 Pause active agents with their work preserved before archiving. The CLI:
 
-1. Copies session files into `.apm/archives/session-YYYY-MM-DD-NNN/` and moves worktrees from `.apm/worktrees/` there through Git, including uncommitted contents.
+1. Copies session files into `.apm/archives/session-YYYY-MM-DD-NNN/` and moves linked Git worktrees from `.apm/worktrees/` there, including uncommitted contents.
 2. Writes archive metadata and verifies preservation.
 3. Clears active session files, installed templates and installation metadata.
 
-Existing archives and `AGENTS.md` remain. Worktrees stay attached to their source repositories, so the archive is local session context rather than a standalone Git backup. Archiving does not finish Tasks, commit changes or merge branches. If it fails, inspect the paths the error identifies before continuing.
+Existing archives and `AGENTS.md` remain. Git worktrees stay attached to their source repositories and rely on them for history. Keep other working copies outside `.apm/` and arrange their preservation separately. Archiving does not finish Tasks, commit changes or merge branches. If it fails, inspect the paths the error identifies before continuing.
 
 Run `apm init` for fresh templates. The next Planner asks which archives are relevant.
 
@@ -201,7 +201,7 @@ project/
 └── AGENTS.md                  # Workspace conventions, reviewed during planning
 ```
 
-The other targets use the directories in the [target table](#apm-init). During the session, agents create the Message Bus, Task Logs and summaries under `.apm/`; parallel work also creates `.apm/worktrees/`. See [Quick Reference](Quick_Reference.md#project-structure) for the full session layout.
+The other targets use the directories in the [target table](#apm-init). During the session, agents create the Message Bus, Task Logs and summaries under `.apm/`. APM-managed Git worktrees go under `.apm/worktrees/`. See [Quick Reference](Quick_Reference.md#project-structure) for the full session layout.
 
 ## Versioning
 

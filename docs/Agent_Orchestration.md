@@ -15,7 +15,7 @@ The [Planner, Manager and Workers](Agent_Roles.md) coordinate through planning d
 
 The Planner creates two documents:
 
-- **Spec** (`.apm/spec.md`) - Intended outcomes, required behavior, design decisions and constraints, including the agreed Git setup.
+- **Spec** (`.apm/spec.md`) - Intended outcomes, required behavior, design decisions and constraints, including the version control agreement.
 - **Plan** (`.apm/plan.md`) - Ordered milestones called **Stages**, each containing bounded units of work called **Tasks**. Each Task names who carries it out (the Manager or a Worker), its dependencies, outputs and validation criteria.
 
 Lasting workspace conventions live in workspace-root `AGENTS.md`. The Planner proposes changes to it for your approval, and the Manager and Workers keep it current. For Claude Code, the Planner adds an import of `AGENTS.md` to an existing `CLAUDE.md`, preserving your instructions.
@@ -58,7 +58,7 @@ A dispatch sends ready work to a free Worker:
 
 - **Single** - One Task.
 - **Batch** - Two or three Tasks for the same Worker: independent ready Tasks or a dependency chain. The Worker runs them in order and reports once.
-- **Parallel** - Independent Tasks or batches for different Workers at the same time. With Git, each uses a separate worktree. Without Git, the Manager gives parallel Tasks separate files and resources. The same applies when the Manager runs its own Tasks in parallel through subagents.
+- **Parallel** - Independent Tasks or batches for different Workers at the same time. For work in one repository, use separate working copies where available, such as Git worktrees, Jujutsu workspaces or Mercurial shared clones. Check what state and resources they still share. In a shared working directory, give each Task separate writable paths and keep inputs stable. The same rules apply to the Manager's subagents.
 
 The Manager integrates accepted work as agreed during planning and makes sure each Task has the earlier work it depends on.
 
@@ -94,7 +94,7 @@ The Index (`.apm/memory/index.md`) holds lasting findings and the unresolved or 
 
 ## Handoff and Continuity
 
-A Handoff transfers a Manager or Worker role to a fresh conversation. The outgoing agent checks current files and Git state, writes its Handoff Log and Handoff Prompt and gives you a short recap; reviewing them is optional. [Getting Started](Getting_Started.md#context-limits) gives the steps.
+A Handoff transfers a Manager or Worker role to a fresh conversation. The outgoing agent checks current files and any version control state, writes its Handoff Log and Handoff Prompt, and gives you a short recap. Reviewing the Handoff files is optional. [Getting Started](Getting_Started.md#context-limits) gives the steps.
 
 ### Why Handoff Works
 
