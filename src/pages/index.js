@@ -26,7 +26,7 @@ const DESCRIPTION = 'APM is a spec-driven multi-agent framework for AI-assisted 
 const DEFS = {
   decay: 'The longer the conversation and the more context accumulates, the less reliably the LLM recalls earlier decisions and instructions, and the less consistently it reasons about them.',
   pressure: 'Every call to the LLM resends the whole conversation. Each call costs more than the last and brings the conversation closer to the context window\'s limit, where the platform must cut or summarise it.',
-  friction: 'Human–computer interaction research places friction at chosen points in an interface, as pauses that invite reflection. APM lets you add such points, from code reviews and manual testing to writing parts of the code yourself.',
+  friction: 'Human–computer interaction research places friction at chosen points in an interface, as pauses that invite reflection. APM lets you choose where and how such points occur, from code reviews and manual testing to writing parts of the code yourself.',
 };
 const CAPTION = CAPTIONS.overview; // shared with the docs (src/captions.js)
 // Overview parts, in figure order (Figure 2..6): key = diagram variant (overview-<key>-<theme>.svg). Captions: src/captions.js.
@@ -104,8 +104,8 @@ function Cover({ draw }) {
         splitting the work among agents in separate conversations.
       </p>
       <p>
-        The workflow is flexible: you choose where and how you take part in development. You can let the agents carry
-        most of the work, or add points of {term('friction', <em>productive friction</em>)} that help you keep authority over, and
+        The workflow is flexible. You can let the agents carry
+        most of the work, or step in wherever and however you see fit, as {term('friction', <em>productive friction</em>)} that helps you keep authority over, and
         understanding of, the software being built.
       </p>
       <Note id="cover-note" active={!!active} wave={draw?.note}>{DEFS[last.current]}</Note>
