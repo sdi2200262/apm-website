@@ -110,7 +110,7 @@ If another attempt seems unlikely to help, the Manager presents options to you f
 
 For its own Tasks, the Manager hands substantial implementation to subagents and focuses on coordination and review. It handles small investigations, corrections and final checks itself, and does substantial implementation directly only if you explicitly agree and the Plan records it.
 
-The Manager checks the subagents' results and validates each Task. Substantial or uncertain work normally gets the same independent review. It then writes one Task Log for the Task, using the same outcomes as Worker logs. If any work or checks remain unmet, it asks you before accepting the Task.
+The Manager checks the subagents' results and validates each Task. Substantial or uncertain work normally gets the same independent review. It then writes one Task Log for the Task, using the same outcomes as Worker logs. It accepts unmet work or checks only with your agreement.
 
 ### Your Own Work
 

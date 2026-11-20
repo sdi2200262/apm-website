@@ -49,7 +49,7 @@ Set `VERSION` when building locally. The Release Templates workflow sets it from
 | **Commands** | `templates/skills/apm-<N>-<action>/SKILL.md` | Each agent's role, what it reads, and how it initialises |
 | **Communication** | `templates/skills/apm-communication/` | The Message Bus protocol and how agents address you |
 | **Initial documents** | `templates/apm/` | The starting structure of the Spec, the Plan, the Tracker, and the Index |
-| **New skills** | `templates/skills/<name>/SKILL.md` | Protocols your agents can load |
+| **New skills** | `templates/skills/<name>/SKILL.md` | Protocols your agents can load. Map shared skills in `build/processors/paths.js` when building single-skill layouts |
 | **Delegation** | Role initiation skills and `templates/guides/task-assignment.md` | When each role uses subagents and how it briefs them |
 
 For example, a team that wants authentication changes checked for security can add that requirement to `templates/guides/task-review.md`. State which Tasks need the review and what evidence the Manager should check. If the assistant supports native subagents, the Manager can delegate the review and verify its findings.

@@ -11,7 +11,7 @@ The `agentic-pm` CLI installs APM templates, updates them and manages session ar
 
 ## Installation
 
-Requires Node.js v18 or higher.
+Requires Node.js 18.17 or newer in the 18.x series, or Node.js 20.5 or later.
 
 **Global install (recommended):**
 
@@ -105,7 +105,7 @@ Pause active agents with their work preserved before updating. The CLI:
 3. Installs the new release, consolidating targets it replaces and dropping unsupported targets.
 4. Writes fresh installation metadata.
 
-Stable official installations update to the newest stable release. Pre-release installations offer available newer stable or pre-release versions. Custom installations offer newer releases from the same repository. To install a specific version, including a pre-release, use `apm init --tag <tag>` in a project without an active installation.
+Stable official installations update to the newest stable release. Pre-release installations offer available newer stable or pre-release versions. Custom installations offer newer releases from the same repository. The CLI downloads all required bundles before archiving. To install a specific version, including a pre-release, use `apm init --tag <tag>` in a project without an active installation.
 
 ### apm archive
 
@@ -133,7 +133,7 @@ Pause active agents with their work preserved before archiving. The CLI:
 2. Writes archive metadata and verifies preservation.
 3. Clears active session files, installed templates and installation metadata.
 
-Existing archives and `AGENTS.md` remain. Git worktrees stay attached to their source repositories and rely on them for history. Keep other working copies outside `.apm/` and arrange their preservation separately. Archiving does not finish Tasks, commit changes or merge branches. If it fails, inspect the paths the error identifies before continuing.
+Existing archives and `AGENTS.md` remain. Git worktrees stay attached to their source repositories and rely on them for history. Git must be able to move each linked worktree. Locked worktrees and worktrees with submodules can block archival. Keep other working copies outside `.apm/` and arrange their preservation separately. Task completion, commits and merges are separate decisions. If archiving fails, inspect the paths the error identifies before continuing.
 
 Run `apm init` for fresh templates. The next Planner asks which archives are relevant.
 

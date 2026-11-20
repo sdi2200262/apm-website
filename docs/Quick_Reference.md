@@ -33,7 +33,7 @@ Run these in a terminal in the project workspace:
 | :--- | :--- |
 | `apm init` | Initialise APM with official templates |
 | `apm custom -r owner/repo` | Initialise from a custom repository |
-| `apm update` | Archive the current session, then update templates to the latest compatible version |
+| `apm update` | Archive the session and install an available update from its source |
 | `apm archive` | Archive the current session to `.apm/archives/` and remove installed assistant files |
 | `apm archive --name my-feature` | Archive with a custom name |
 | `apm add -a claude` | Add an installation target |
@@ -107,7 +107,7 @@ When a Manager's or Worker's context fills or quality degrades:
 1. Run `/apm-6-handoff-manager` or `/apm-7-handoff-worker` in the outgoing conversation
 2. The agent saves a Handoff Log and Handoff Prompt and gives you a short recap
 3. Open a new conversation for the same role and run its initiation skill (for a Worker, with its identifier)
-4. Check the incoming agent's account of the current state and next action before continuing
+4. The incoming agent recaps the current state and next action. Correct any gaps you notice
 
 For context lost without a Handoff, see [Recovery](Troubleshooting_Guide.md#context-recovery).
 

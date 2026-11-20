@@ -22,7 +22,7 @@ Both use the same extraction process. See [CLI versioning](CLI_Guide.md#versioni
 
 A bundle is a ZIP archive extracted into your project. It can overwrite project files and install instructions that tell an agent to run harmful commands or expose data. Official bundles use `.agents/`, `.claude/` and `.apm/` by convention; custom bundles can use other project paths.
 
-The CLI checks extracted paths and blocks entries that resolve outside the project. It does not scan content or verify release signatures. Installation extracts files without running bundle scripts, but agents may act on those instructions later. Updates and archives also move session files and remove installed files recorded in metadata.
+The CLI checks archive-entry paths against the project root, skips entries under `.apm/archives/` and refuses extraction through existing symbolic links within the project. It does not scan content or verify release signatures. Installation extracts files without running bundle scripts, but agents may act on those instructions later. Updates and archives also move session files and remove installed files recorded in metadata.
 
 ## The Security Disclaimer
 

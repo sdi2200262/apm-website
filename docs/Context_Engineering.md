@@ -42,7 +42,7 @@ Shared files also keep the session independent of any one conversation:
 - **Stage summaries** condense accepted work, decisions and any issues you accepted, with links to Task Logs.
 - **The Index** links to those summaries and holds lasting findings.
 
-An incoming Manager can start with the Index and summaries, then follow sources where it needs more detail.
+An incoming Manager reads the current Spec, Plan, Tracker and Index. It uses Handoff and relevant Task Logs to check progress and find where to resume.
 
 A Handoff applies the same principle to a role's conversation. The outgoing agent writes down what the next conversation needs and checks current state before transferring the role. Platform compaction instead replaces conversation history with a summary that later compactions may condense again. The Handoff files remain available for verification and continuation.
 

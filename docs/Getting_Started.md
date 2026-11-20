@@ -11,7 +11,7 @@ This guide takes you through installation, planning and your first assignments.
 
 ## Prerequisites
 
-You need Node.js 18 or later, a project directory, and an assistant that supports `AGENTS.md` and `.agents/skills/`, or Claude Code. Use capable reasoning models for the Planner and Manager, since their decisions shape many Tasks. A cheaper model may suit Workers and subagents on bounded work.
+You need Node.js 18.17 or newer in the 18.x series, or Node.js 20.5 or later. Use a project directory and either Claude Code or an assistant that supports `AGENTS.md` and `.agents/skills/`. Use capable reasoning models for the Planner and Manager, since their decisions shape many Tasks. A cheaper model may suit Workers and subagents on bounded work.
 
 ## Installation
 
@@ -90,7 +90,7 @@ It reads the planning documents, explores the codebases and presents its underst
 
 ## Step 4: Your First Tasks
 
-The Manager carries out its own Tasks through subagents. It reviews and validates their results, then records each outcome in a **Task Log** in **Memory**, the session's work history. You see the results when you agreed to review them and in each Stage report, and can ask for changes.
+The Manager normally carries out substantial work in its own Tasks through subagents. If your assistant lacks native subagents, agree during planning to use separate Workers or have the Manager do the work directly. The Manager reviews and validates its Task results, then records each outcome in a **Task Log** in **Memory**, the session's work history. You see the results when you agreed to review them and in each Stage report, and can ask for changes.
 
 ### Working with a Worker
 
