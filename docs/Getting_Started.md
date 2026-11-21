@@ -37,8 +37,6 @@ The CLI installs skills and procedure guides for your target, plus session files
 
 APM's commands are skills. Examples here use Claude Code's `/` syntax; in Codex, use `$`, such as `$apm-1-initiate-planner`. Other assistants use their skill picker or chat syntax. Each APM agent works in its own conversation; keep active chats open.
 
-A single-skill research preview provides the same workflow through one `apm` skill; see [apm init](CLI_Guide.md#apm-init). The numbered commands below are for the standard targets.
-
 ## Step 1: Initiate the Planner
 
 The **Planner** defines the work with you. Open a new chat in your project and run:
@@ -54,6 +52,16 @@ You can include your project request and reference documents:
 ```
 
 The Planner uses this context to focus its questions.
+
+:::info[Research preview]
+Two additional research-preview installation targets, `claude-single-skill` and `agents-single-skill`, provide the same workflow through one `apm` skill. The preview explores whether a single skill makes the workflow more flexible. See [apm init](CLI_Guide.md#apm-init) for installing them.
+
+With a single-skill target, start planning by invoking `apm` in a new chat:
+
+```markdown
+/apm Plan the Jira ticket I owe.
+```
+:::
 
 ## Step 2: Work Through the Planning Phase
 
