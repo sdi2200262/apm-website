@@ -108,12 +108,13 @@ class D:
 
 def fades(hl):
     # Which groups fade when `hl` is highlighted: P/I planning/implementation agents, M/W the Manager/Workers,
-    # PS/IS their files (MS the Manager's Tracker, WS the Workers' Memory edge),
+    # PS/IS their files (MS the Manager's Tracker, WS the Workers' Memory edge, SP the Spec/Plan node itself),
     # U the users and relays, H the Planning-to-Implementation arrow. Phase maps keep their own files.
     return dict(P=hl not in (None, 'planning'), I=hl not in (None, 'manager', 'workers'), M=hl not in (None, 'manager'), W=hl not in (None, 'workers'),
                 PS=hl not in (None, 'planning', 'state'), IS=hl not in (None, 'state', 'manager', 'workers'),
                 MS=hl not in (None, 'state', 'manager'), WS=hl not in (None, 'state', 'workers'),
-                U=hl not in (None, 'user'), H=hl is not None and hl != 'user')
+                U=hl not in (None, 'user'), H=hl is not None and hl != 'user',
+                SP=hl not in (None, 'planning', 'state', 'manager'))  # Spec/Plan node: the Manager keeps them current
 
 
 def desktop(t, hl):
@@ -134,7 +135,7 @@ def desktop(t, hl):
     d.edge(u1, ma, (1, .5), (0, .5), dashed=True, fade=f['H'])  # hand-off from Planning to Implementation
     d.edge(ma, u2, (1, .5), (0, .5), both=True, fade=f['M'] and f['U'])
     d.edge(u2, wo, (1, .5), (0, .5), both=True, fade=f['W'] and f['U'])
-    sp = d.icon('file-cog', (X[0] + X[1]) / 2, FY, 'Spec, Plan', f['PS'])
+    sp = d.icon('file-cog', (X[0] + X[1]) / 2, FY, 'Spec, Plan', f['SP'])
     d.edge(d.point(X[0], LY), sp, en=(0, .5), line=True, dashed=True, fade=f['PS'], wp=[(X[0], FY)])
     d.edge(d.point(X[1], LY), sp, en=(1, .5), line=True, dashed=True, fade=f['PS'], wp=[(X[1], FY)])
     bus = d.icon('inbox', X[3], BY, 'Message Bus', f['IS'] and f['U'])
@@ -160,7 +161,7 @@ def phone(t, hl=None):
     pl = d.icon('bot', L, A, 'Planner', f['P'])
     u1 = d.icon('user', R, A, 'User', f['P'] and f['U'])
     d.edge(pl, u1, (1, .5), (0, .5), both=True, fade=f['P'] and f['U'])
-    sp = d.icon('file-cog', M, S, 'Spec, Plan', f['PS'])
+    sp = d.icon('file-cog', M, S, 'Spec, Plan', f['SP'])
     d.edge(d.point(L, A + LB), sp, en=(0, .5), line=True, dashed=True, fade=f['PS'], wp=[(L, S)])
     d.edge(d.point(R, A + LB), sp, en=(1, .5), line=True, dashed=True, fade=f['PS'], wp=[(R, S)])
     d.text(M, T2, 300, 'Implementation Phase', f['I'])
