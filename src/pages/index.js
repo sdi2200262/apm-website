@@ -19,7 +19,7 @@ import './index.css';
 // other book pages, the palette, fonts and the header/footer/switch parts in src/css/custom.css and src/components.
 // Everything random (mark, waves) is drawn after mount from one seed, so SSR output stays deterministic.
 
-// The cover text and the overview-planning, -manager, -user and -state captions are mirrored in the APM repo's README; change both together.
+// The cover text, the overview lead and the overview-planning, -manager, -workers, -user and -state captions are mirrored in the APM repo's README Overview; change both together.
 // Short description for search engines and link previews.
 const DESCRIPTION = 'APM is a spec-driven multi-agent framework for AI-assisted software engineering, with planning documents, separate agent conversations, and involvement you choose.';
 // Definitions for the cover's terms: key -> definition (the note shows it without repeating the term).
@@ -31,7 +31,7 @@ const DEFS = {
 const CAPTION = CAPTIONS.overview; // shared with the docs (src/captions.js)
 // Overview parts, in figure order (Figure 2..6): key = diagram variant (overview-<key>-<theme>.svg). Captions: src/captions.js.
 // A no-break space ties each caption's last two words, so no line ends on a lone word (Safari before 26 ignores text-wrap: pretty).
-const PARTS = Object.fromEntries(['planning', 'manager', 'workers', 'user', 'state'].map((k) => [k, CAPTIONS[`overview-${k}`].replace(/ (\S+)$/, '\u00a0$1')]));
+const PARTS = Object.fromEntries(['planning', 'manager', 'workers', 'state', 'user'].map((k) => [k, CAPTIONS[`overview-${k}`].replace(/ (\S+)$/, '\u00a0$1')]));
 
 // The cover's bottom is above 40% of the viewport: the theme switch slides away.
 function useAway() {
@@ -61,9 +61,9 @@ function Overview() {
   return (
     <div>
       <p className="lead" ref={lead}>
-        An APM session runs in two phases. The {term('planning', 'Planner')} writes two planning documents with you: the Spec and the
-        Plan. The {term('manager', 'Manager')} then coordinates the work through its subagents or <span className="nobr">{term('workers', 'Workers')}.</span>{' '}
-        {term('user', 'You')} choose where and how you take part, and the {term('state', 'session\'s state')} lives in shared files.
+        An APM session starts with a conversation where you and a {term('planning', 'Planner')} decide what to build and how.
+        Afterwards, in a new conversation, a {term('manager', 'Manager')} coordinates the work, using its own subagents or separate {term('workers', 'Worker')} conversations.
+        The {term('state', 'session\'s state')} lives in shared files that outlast any conversation. Throughout, {term('user', 'you')} choose how you take part.
       </p>
       <figure className="plate">
         <div className="plate-images">
