@@ -50,7 +50,9 @@ Subagents get a shorter brief from the agent that delegates to them: the objecti
 
 ### Dependency Context
 
-A Task depends on another when it needs that Task's output. For a Worker's own earlier work, the Manager points briefly to the key outputs. For work the Worker hasn't seen, including its own earlier work after a Handoff, it explains what was produced, which files to read and how to build on it.
+A Task depends on another when it needs that Task's output. Before starting a Task, the Manager checks its listed dependencies against the results it needs and resolves any mismatches in the Plan and Tracker.
+
+For a Worker's own earlier work, the Manager points briefly to the key outputs. For work the Worker hasn't seen, including its own earlier work after a Handoff, it explains what was produced, which files to read and how to build on it.
 
 ### Dispatch Modes
 
@@ -90,7 +92,9 @@ Memory lives in `.apm/memory/`:
 
 ### The Index
 
-The Index (`.apm/memory/index.md`) lists Stage outcomes and links to their summaries. Index Notes preserve findings, limits, established preferences and agreed changes that matter to later work, with links to their sources. Each Stage summary records accepted outcomes, findings, decisions, validation results and any issues you accepted, with links to its Task Logs.
+The Index (`.apm/memory/index.md`) lists Stage outcomes and links to their summaries. Index Notes preserve findings, limits, established preferences and agreed changes that matter to later work, with links to their sources.
+
+Each Stage summary records accepted outcomes, findings, decisions, validation results and any issues you accepted, with links to its Task Logs. The Manager keeps the summary current until the next Stage starts or the session closes. When a later Stage changes an earlier result, its summary links to the earlier work.
 
 When a Tracker or Index note describes a consequential document update, it gives the before and after, the reason for the change, and its effect on the work. It links to the updated section.
 

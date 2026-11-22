@@ -9,7 +9,7 @@ import Diagram from '@site/src/components/Diagram';
 
 # Agent Roles
 
-APM has three roles: the Planner defines the work, the Manager coordinates it and carries out its own Tasks through subagents, and Workers carry out Tasks in separate conversations. Each works in its own conversation with the context its responsibilities need. You decide where you take part and who does each Task; see [Where You Take Part](Workflow_Overview.md#where-you-take-part).
+APM has three roles. The Planner defines the work, the Manager coordinates implementation, and Workers carry out Tasks in separate conversations. Each works in its own conversation with the context its responsibilities need. You decide where you take part and who does each Task. See [Where You Take Part](Workflow_Overview.md#where-you-take-part).
 
 ## Comparison
 
@@ -34,11 +34,11 @@ The Planner explores the workspace and discusses the work with you. It writes th
 
 ## Manager
 
-The Manager coordinates Tasks, reviews results and maintains the planning documents, the Tracker and Memory. It carries out its own Tasks through subagents, and does substantial implementation itself only if you explicitly agree and the Plan records it.
+The Manager coordinates Tasks, reviews results and maintains the planning documents, the Tracker and Memory. It delegates substantial implementation in its own Tasks to subagents. It does substantial implementation itself only if you explicitly agree and the Plan records it.
 
 <Diagram name="overview" variant="manager" alt="The overview diagram with the Manager and its Tracker highlighted." phone />
 
-- **[Task Assignment](Workflow_Overview.md#task-assignment)** - Chooses ready work, briefs subagents for its own Tasks, and sends each Worker a self-contained assignment, the **Task Prompt**.
+- **[Task Assignment](Workflow_Overview.md#task-assignment)** - Chooses ready work, briefs its subagents, and sends each Worker a self-contained assignment, the **Task Prompt**.
 - **[Task Review](Workflow_Overview.md#task-review)** - Checks results from subagents and Workers, usually has a separate subagent review substantial work, and decides whether to accept them, request another attempt or update planning documents.
 - **Tracking and version control** - Records progress and findings, manages branches and worktrees, and integrates accepted work under the conventions agreed during planning.
 

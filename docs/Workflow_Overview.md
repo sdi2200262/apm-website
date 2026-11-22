@@ -50,11 +50,11 @@ The Planner writes the [Spec and Plan](Agent_Orchestration.md#planning-documents
 
 The Plan gives each Task a useful result with the setup and checks it needs. The Planner weighs dependencies, size and coordination cost when splitting or combining work. It groups Tasks that can be assessed together into Stages and prefers fewer Stages for small sessions. You can also agree to reviews within a Stage.
 
-After Plan approval, it reviews workspace-root `AGENTS.md` and proposes updates, creating the file if it's missing. It then creates the Message Bus and directs you to start the Manager in a new conversation with `apm-2-initiate-manager`.
+After Plan approval, the Planner reviews workspace-root `AGENTS.md`. It proposes updates, or a new file if one is missing, and applies any agreed changes. It then creates the Message Bus and directs you to start the Manager in a new conversation with `apm-2-initiate-manager`.
 
 ## Implementation Phase
 
-The Manager coordinates repeated cycles of assignment, execution, logging and review. Its own Tasks run through its subagents. When the work uses Workers in separate conversations, as the diagram shows, their messages go through the Message Bus and you deliver them.
+The Manager coordinates repeated cycles of assignment, execution, logging and review. It delegates substantial implementation in its own Tasks to subagents. When the work uses Workers in separate conversations, as the diagram shows, their messages go through the Message Bus and you deliver them.
 
 <Diagram name="implementation-phase" alt="The Manager reviews the planning documents and writes assignments, keeping the Tracker; you deliver their assignments to the Workers, who execute, log to Memory, and report through the Message Bus; you deliver the reports to the Manager, who reviews logs and reports, until the project is complete." />
 
@@ -64,7 +64,7 @@ The Manager reads the planning documents and explores the working codebases. It 
 
 ### Task Cycles
 
-The Plan names who carries out each Task: the Manager, through its subagents, or a Worker.
+The Plan assigns each Task to the Manager or a Worker.
 
 A Task assigned to a Worker passes through four procedures:
 
@@ -122,11 +122,13 @@ Stages run in order. Within a Stage, Tasks whose dependencies are done can run i
 
 <Diagram name="stage-progression" alt="Stage 1 holds Tasks such as data models, a storage layer, an auth handler, API endpoints, and integration tests; later Stages follow in order until the project is complete." />
 
-The Manager runs any Stage checks you or the Plan asked for, and tests how the Stage's work fits together where Task checks haven't already covered it. Once all Tasks are Done and those checks are resolved, it writes the Stage summary, reports the Stage to you and asks before starting the next one, unless you agreed otherwise. The summary keeps the Stage's decisions, validation results and any issues you accepted.
+The Manager runs the Stage checks you or the Plan asked for. It reuses Task validation and review evidence that still applies and checks any gaps that could affect acceptance. Once all Tasks are Done and those checks are resolved, it updates the Stage summary and Index, reports the Stage to you and asks before starting the next one, unless you agreed otherwise. The summary keeps the Stage's decisions, validation results and any issues you accepted.
 
 ### Project Completion
 
-After all Stages complete, the Manager records completion and reports the deliverables, findings that matter for later work, and any issues you accepted. It explains what archiving preserves and clears before asking if you want a saved summary, an archive, or both.
+At session close, the Manager updates [Index Notes](Agent_Orchestration.md#the-index) with any remaining information that may help in a later session. It then clears obsolete Tracker notes and context, keeping the final state and what's needed to resume unfinished work.
+
+The Manager then reports the deliverables, findings that matter for later work, and any issues you accepted. It explains what archiving preserves and clears before asking if you want a saved summary, an archive, both, or neither.
 
 ## Session Continuation
 

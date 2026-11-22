@@ -84,7 +84,7 @@ The Planner writes two documents, in order:
 
 Approve each document before the next begins. Settle unclear requirements and checks here, before implementation. Name any checks only you can run, such as trying a feature on your own machine. Task size also sets how often Worker messages pass through you: smaller Tasks for frequent review, batches for fewer exchanges.
 
-After Plan approval, the Planner proposes updates to `AGENTS.md`, the workspace-root file of lasting conventions for your agents. It creates the file if it's missing. It then creates the Message Bus, the files that carry messages between the Manager and any Workers.
+After Plan approval, the Planner reviews `AGENTS.md`, the workspace-root file of lasting conventions for your agents. It proposes updates, or a new file if one is missing. It applies any agreed changes before creating the Message Bus, the files that carry messages between the Manager and any Workers.
 
 ## Step 3: Initiate the Manager
 

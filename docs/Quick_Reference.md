@@ -90,7 +90,7 @@ Lasting workspace conventions live in workspace-root `AGENTS.md`, which the Plan
 ## Implementation Phase
 
 1. **Start the Manager** - Run `/apm-2-initiate-manager`, approve its understanding of the planning documents
-2. **Manager starts ready Tasks** - It carries out its own Tasks through subagents. For a Worker's Task, it writes a Task Prompt and tells you which Worker to go to
+2. **Manager starts ready Tasks** - It delegates substantial implementation in its own Tasks to subagents. For a Worker's Task, it writes a Task Prompt and tells you which Worker to go to
 3. **Start or switch to the Worker** - Run `/apm-3-initiate-worker <id>` for new Workers, or `/apm-4-check-tasks` for existing ones
 4. **Worker executes** - It follows the Task Prompt, validates results, and logs the outcome
 5. **Deliver the report** - Run `/apm-5-check-reports` in the Manager's conversation
