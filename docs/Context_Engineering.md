@@ -29,7 +29,7 @@ A Worker works from `AGENTS.md` and a self-contained Task Prompt. The Manager in
 
 Workers keep what they learn about their area across assignments. The Manager can refer briefly to a Worker's own earlier outputs, while work the Worker hasn't seen needs instructions on what to read and how to build on it. After a Handoff, Task Prompts give fuller context for earlier work the new conversation has not read.
 
-Any role may delegate focused work, such as research, debugging or parts of a Task, to subagents within its scope, then verify their findings. That work stays out of the role's own conversation. A subagent starts with only its brief and suits bounded work. A Worker suits an area where familiarity across assignments helps, or where you want to work closely with it.
+Any role may delegate focused work, such as research, debugging or parts of a Task, to subagents within its scope, then verify their findings. That work stays out of the role's own conversation. A subagent suits bounded work. Its parent can reuse it when earlier context helps with the next assignment. A Worker suits an area where familiarity across assignments helps, or where you want to work closely with it.
 
 ## Context Across Conversations
 

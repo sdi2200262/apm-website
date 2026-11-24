@@ -11,13 +11,13 @@ Resolve interruptions and installation problems. For the normal session workflow
 
 ## Planning Changes and Interruptions
 
-Give corrections to the Planner during planning, or to the Manager during implementation. The agent updates affected documents and asks for approval when a change affects the scope, design or several Tasks.
+During planning, give corrections to the Planner. During implementation, discuss changes to the Spec or Plan with the Manager. You can correct a Worker directly on work within its assigned Task. The Planner or Manager updates the affected documents and asks for approval when a change affects the scope, design or several Tasks.
 
-If planning is interrupted, continue in the same conversation. If that conversation is lost, invoke `apm-1-initiate-planner` in a new one. Tell it which documents were approved and what remains.
+If planning is interrupted, continue in the same conversation. If that conversation is lost, [start the Planner](Getting_Started.md#step-1-initiate-the-planner) in a new one. Tell it which documents were approved and what remains.
 
 ## Blocked Tasks
 
-When a Worker cannot resolve a problem within its Task, ask it to log the current result, failed or unavailable checks, and what guidance it needs. Deliver its report to the Manager with `apm-5-check-reports`.
+When a Worker needs guidance, it explains what is blocked, what it tried and whether the problem needs the Manager. It pauses the affected work and continues what it can. If the attempt ends with work or checks outstanding, the Worker logs the result and sends a Task Report for you to deliver to the Manager.
 
 During review, the Manager can investigate, run final checks, and make small corrections itself or through a subagent. It can also send the Worker a follow-up or ask you to settle a requirement or approach. When a Task the Manager carries out through its subagents is blocked, it raises the problem with you directly. Unmet required validation stays recorded in the result. See [Task Review](Workflow_Overview.md#task-review).
 
@@ -27,7 +27,7 @@ A [Handoff](Agent_Orchestration.md#handoff-and-continuity) is the planned way to
 
 ### Recovery
 
-Recovery covers the Manager and Workers; for a Planner, see [Planning Changes and Interruptions](#planning-changes-and-interruptions). Run the recovery command in the agent's conversation, or in a new one if the old one is gone:
+Recovery covers the Manager and Workers; for a Planner, see [Planning Changes and Interruptions](#planning-changes-and-interruptions). Use the agent's conversation, or a new one if the old one is gone. In the single-skill preview, invoke `apm` and ask to recover the Manager or the Worker with its identifier. With numbered skills, use the recovery command:
 
 ```markdown
 /apm-9-recover manager          # recover the Manager
@@ -53,7 +53,7 @@ Keep the CLI up to date before installing newer templates. See [release compatib
 
 ### Missing Installed Files
 
-`apm status` names targets with missing installed files. Run `apm remove -a <id>`, then `apm add -a <id>` to restore that target from the installed release. Session files remain in `.apm/`.
+When [`apm status`](CLI_Guide.md#apm-status) reports missing paths for a target, save any changes you made to its installed instructions. Run `apm remove -a <id>`, then `apm add -a <id>` to restore that target from the installed release. Session files remain in `.apm/`.
 
 ### Upgrading to Templates v1.2.0
 
@@ -66,9 +66,11 @@ apm update
 
 The update archives the current session, removes recorded template files and installs fresh templates. Templates v1.2.0 drop Rules. If your `AGENTS.md` has an `APM_RULES` block, keep any rules you still want as ordinary instructions and delete the markers. The CLI does not change `AGENTS.md`.
 
-The CLI also consolidates target IDs from releases before v1.1.0 into `agents`, and rejects conflicting targets, such as both formats for `claude`, before changing any files.
+Updates from v1.1.0 keep `agents` and `claude`. For older installations, `codex`, `cursor`, `copilot`, `antigravity` and `opencode` map to `agents`. The `claude` target keeps its ID. The CLI drops unsupported targets when at least one installed target can be updated. If none can be updated, or the resulting targets conflict, it stops before changing files.
 
 If you installed a standalone APM skill in a directory that the CLI did not create, move it to your assistant's current skills directory yourself. Check `.apm/metadata.json` for the files managed by the CLI.
+
+After the update, [start the Planner](Getting_Started.md#step-1-initiate-the-planner) in a new conversation.
 
 ## Older Installations
 

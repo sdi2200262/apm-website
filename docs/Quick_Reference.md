@@ -53,7 +53,7 @@ For every option, see the [CLI Guide](CLI_Guide.md).
 ├── tracker.md           # Progress, next actions and blockers
 ├── metadata.json        # Installation metadata (source, version, assistants)
 ├── session.summary.md   # Optional, from /apm-8-summarize-session
-├── research/            # Optional session documents, if agreed during planning
+├── research/            # Optional research records agreed for the session
 ├── memory/
 │   ├── index.md         # Lasting findings and links to Stage summaries
 │   ├── stage-01/        # Task Logs for Stage 1
@@ -73,7 +73,7 @@ For every option, see the [CLI Guide](CLI_Guide.md).
 │       └── handoff.md    # Handoff Prompt
 ├── worktrees/            # Git worktrees for parallel work
 └── archives/             # Archived sessions from previous runs
-    └── index.md          # One row per archived session
+    └── index.md          # Entries added by the agent after archival
 ```
 
 Lasting workspace conventions live in workspace-root `AGENTS.md`, which the Planner reviews during planning.

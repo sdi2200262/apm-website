@@ -29,6 +29,8 @@ Then run `apm init` in your project directory (with a local install, `npx apm in
 
 ## Commands
 
+Run `apm --help` for the list of commands and options.
+
 ### apm init
 
 Installs APM from the official releases, in a project without APM. If APM is already installed, it shows the current state and suggests `apm add`, `apm update`, or `apm archive`.
@@ -56,7 +58,7 @@ Without `--tag`, it selects the newest stable official release matching the CLI'
 | `agents-single-skill` | Research preview of `agents` with one `apm` skill | `.agents/skills/apm/` | `.agents/skills/apm/guides/` |
 | `claude-single-skill` | Research preview of `claude` with one `apm` skill | `.claude/skills/apm/` | `.claude/skills/apm/guides/` |
 
-All targets share `.apm/`. Choose one format for each assistant family: `agents` or `agents-single-skill`, and `claude` or `claude-single-skill`. Install several with `-a`, for example `-a agents claude-single-skill`, or add one later with `apm add`. The CLI rejects conflicting targets before changing any files.
+All targets share `.apm/`. For assistants that use `.agents/skills/`, choose `agents` or `agents-single-skill`. For Claude Code, choose `claude` or `claude-single-skill`. Install several with `-a`, for example `-a agents claude-single-skill`, or add one later with `apm add`. The CLI rejects conflicting targets before changing any files.
 
 After installing, the CLI shows the release's startup steps. It does not change workspace-root `AGENTS.md`; the Planner reviews it during planning.
 
@@ -136,7 +138,7 @@ Pause active agents with their work preserved before archiving. The CLI:
 
 Existing archives and `AGENTS.md` remain. Git worktrees stay attached to their source repositories and rely on them for history. Git must be able to move each linked worktree. Locked worktrees and worktrees with submodules can block archival. Keep other working copies outside `.apm/` and arrange their preservation separately. Task completion, commits and merges are separate decisions. If archiving fails, inspect the paths the error identifies before continuing.
 
-Run `apm init` for fresh templates. The next Planner asks which archives are relevant.
+Run `apm init` for fresh templates. The next Planner checks relevant archives against the current workspace and asks you if it is unclear which sources to use.
 
 Deleting an archive also removes its worktrees and their uncommitted, untracked and ignored files. The confirmation describes what will be deleted; `-f` skips it. If deletion fails, the CLI stops and warns that cleanup may be partial. Branches remain.
 
@@ -181,7 +183,7 @@ Shows the current installation state.
 apm status
 ```
 
-It shows the source repository, template and CLI versions, install date, installed targets with file counts, and archive count. It flags missing installed files and gives restoration commands; it does not check file contents. Without an installation, it shows any archives or suggests `apm init`.
+It shows the source repository, template and CLI versions, install date, installed targets with file counts, and archive count. It checks whether the paths recorded for each target exist and gives restoration commands for missing paths. File types, contents and shared `.apm/` records are outside this check. If installation metadata is missing, it shows any archives or suggests `apm init`. If the metadata exists but cannot be read, it reports an error.
 
 ## Directory Structure
 
@@ -196,10 +198,9 @@ project/
 │   ├── memory/
 │   │   └── index.md           # Lasting findings and summary links
 │   └── metadata.json          # Installation metadata
-├── .agents/
-│   ├── skills/                # Command and communication skills
-│   └── apm-guides/            # Procedure guides
-└── AGENTS.md                  # Workspace conventions, reviewed during planning
+└── .agents/
+    ├── skills/                # Command and communication skills
+    └── apm-guides/            # Procedure guides
 ```
 
 The other targets use the directories in the [target table](#apm-init). During the session, agents create the Message Bus, Task Logs and summaries under `.apm/`. APM-managed Git worktrees go under `.apm/worktrees/`. See [Quick Reference](Quick_Reference.md#project-structure) for the full session layout.
@@ -234,7 +235,7 @@ Each installation has `.apm/metadata.json`, which `apm update`, `apm add`, `apm 
 | `source` | string | `"official"` or `"custom"` |
 | `repository` | string | Repository in `owner/repo` format |
 | `releaseVersion` | string | Release tag (e.g. `"v1.0.0"`) |
-| `cliVersion` | string | CLI version that performed the installation |
+| `cliVersion` | string | CLI version last used to install or update the templates, or to add or remove a target |
 | `assistants` | string[] | Installed target IDs (e.g. `["agents", "claude"]`) |
 | `assistantNames` | object | Display names by target ID; absent in older installations |
 | `installedFiles` | object | Map of target ID to installed file paths; `_apm` records shared session templates |

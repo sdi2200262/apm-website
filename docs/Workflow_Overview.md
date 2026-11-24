@@ -9,7 +9,7 @@ import Diagram from '@site/src/components/Diagram';
 
 # Workflow Overview
 
-An APM session moves from planning to implementation, ending when the planned work is complete or you stop early. This walkthrough builds on [Agent Roles](Agent_Roles.md) and the mechanisms in [Agent Orchestration](Agent_Orchestration.md).
+An APM session moves from planning to implementation, ending when the planned work is complete or you stop early. This walkthrough builds on [Agent Roles](Agent_Roles.md) and the mechanisms in [Agent Orchestration](Agent_Orchestration.md). If your assistant uses the single-skill preview, invoke `apm` and ask for the action described by each numbered skill below.
 
 ## Where You Take Part
 
@@ -50,7 +50,7 @@ The Planner writes the [Spec and Plan](Agent_Orchestration.md#planning-documents
 
 The Plan gives each Task a useful result with the setup and checks it needs. The Planner weighs dependencies, size and coordination cost when splitting or combining work. It groups Tasks that can be assessed together into Stages and prefers fewer Stages for small sessions. You can also agree to reviews within a Stage.
 
-After Plan approval, the Planner reviews workspace-root `AGENTS.md`. It proposes updates, or a new file if one is missing, and applies any agreed changes. It then creates the Message Bus and directs you to start the Manager in a new conversation with `apm-2-initiate-manager`.
+After Plan approval, the Planner reviews workspace-root `AGENTS.md`. It proposes updates, or a new file if one is missing, and applies any agreed changes. It then creates the Message Bus and directs you to start the Manager in a new conversation using the skill installed for that assistant.
 
 ## Implementation Phase
 

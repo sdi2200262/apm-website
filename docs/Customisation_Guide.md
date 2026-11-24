@@ -35,7 +35,7 @@ The [customisation skill](https://github.com/sdi2200262/agentic-project-manageme
 Two files configure the build:
 
 - **`build/build-config.json`** lists target IDs, display names, bundle names, skill and guide directories, and the minimum CLI version. Official targets are `agents` and `claude`, plus the research-preview `agents-single-skill` and `claude-single-skill`, which set `format` to `single-skill` and build from the entry skill in `templates/entrypoints/`. A target can declare older IDs it `replaces` so updates consolidate them, and targets it `conflictsWith` so the CLI refuses to install both.
-- **`build/processors/placeholders.js`** resolves `{VERSION}`, `{SKILL_PATH:name}`, `{SKILL_DIR:name}`, `{GUIDE_PATH:name}` and `{CLAUDE_ONLY:text}`.
+- **`build/processors/placeholders.js`** resolves `{VERSION}`, `{SKILL_PATH:name}`, `{SKILL_DIR:name}`, `{GUIDE_PATH:name}`, `{START_MANAGER}` and `{CLAUDE_ONLY:text}`.
 
 Set `VERSION` when building locally. The Release Templates workflow sets it from the version input, or increments the latest stable patch when the input is empty.
 

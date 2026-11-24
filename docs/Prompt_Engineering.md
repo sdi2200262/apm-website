@@ -17,7 +17,7 @@ APM runs on files that agents read and follow. This doc explains their structure
 | **Shared skill** | Communication and Message Bus rules | Read by every role at initiation |
 | **Guides** | A procedure, such as Task Execution | Read at initiation by the roles that use it |
 | **Initial documents** | Starting structure for the Spec, Plan, Tracker and Index | Filled in and maintained during the session |
-| **Single-skill entry** | One `apm` skill for the research-preview targets | Invoked by you; routes each request to the matching role or procedure |
+| **Single-skill entry** | One `apm` skill for the research-preview targets | You can invoke it directly. An agent may also load it to suggest APM and starts a session with your agreement. |
 
 The numbered command skills set `disable-model-invocation: true` and point to the files their action needs. Each skill has a name and description in YAML frontmatter; guides have none. The communication skill includes a supporting guide for agents outside APM to join the Message Bus.
 

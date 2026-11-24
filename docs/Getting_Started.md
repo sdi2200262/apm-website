@@ -59,8 +59,10 @@ Two additional research-preview installation targets, `claude-single-skill` and 
 With a single-skill target, start planning by invoking `apm` in a new chat:
 
 ```markdown
-/apm Plan the Jira ticket I owe.
+/apm We're building Horse Tinder, a dating app for horses: owners swipe through profiles and match horses from nearby stables. Next.js frontend, Firebase backend. Here's the PRD: @docs/prd.md
 ```
+
+For the later steps in this guide, use the format installed for the assistant in each chat. With a single-skill target, invoke `apm` and ask for the action, such as starting the Manager or checking a Worker’s report.
 :::
 
 ## Step 2: Work Through the Planning Phase
