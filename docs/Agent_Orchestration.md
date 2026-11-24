@@ -9,23 +9,26 @@ import Diagram from '@site/src/components/Diagram';
 
 # Agent Orchestration
 
-The [Planner, Manager and Workers](Agent_Roles.md) coordinate through planning documents, a file-based Message Bus and shared records. You deliver their messages, keeping each exchange open to review.
+The [Planner, Manager and Workers](Agent_Roles.md) coordinate through planning documents and shared files. The Manager's subagents return their results to it directly. When the work uses Workers in separate conversations, the Manager and Workers exchange messages through a file-based Message Bus. By default, you deliver each message and can review it.
 
 ## Planning Documents
 
-The Planner creates three documents:
+The Planner creates two documents:
 
-- **Spec** (`.apm/spec.md`) - Required behavior, design decisions and constraints. Its Workspace section records repositories, references and agreed Git setup.
-- **Plan** (`.apm/plan.md`) - Ordered milestones called **Stages**, each containing bounded assignments called **Tasks**. Tasks name a Worker, dependencies, outputs and validation criteria.
-- **Rules** - Shared Worker execution conventions, in the `APM_RULES` block of workspace-root `AGENTS.md`. For Claude Code, the Planner imports it from an existing workspace `CLAUDE.md`, preserving your instructions.
+- **Spec** (`.apm/spec.md`) - Intended outcomes, required behavior, design decisions, acceptance criteria and constraints, including the version control agreement.
+- **Plan** (`.apm/plan.md`) - How to deliver and check the work through ordered milestones called **Stages**, each containing bounded units of work called **Tasks**. Each Task names who carries it out (the Manager or a Worker), its dependencies, outputs and checks.
 
-Spec Notes hold design assumptions and context; Plan Notes hold coordination considerations. Settled requirements, dependencies and conventions stay in their owning sections. APM procedures stay in the role guides.
+Lasting workspace conventions live in workspace-root `AGENTS.md`. The Planner proposes changes to it for your approval, and the Manager and Workers keep it current. For Claude Code, when both files exist, the Planner adds an import of `AGENTS.md` to `CLAUDE.md`, preserving your instructions.
 
-The Manager maintains these documents and copies relevant Spec and Plan content into assignments called **Task Prompts**. Workers read the Rules directly. [Workflow Overview](Workflow_Overview.md#task-review) covers changes during implementation.
+The Spec and Plan each have a Notes section. Spec Notes hold assumptions, open decisions and alternatives that apply across the design. Plan Notes record where you agreed to take part and how Tasks coordinate. They can suggest coordination options and say when those options would help.
+
+If you agree on supporting documents with the Planner or Manager, the Spec describes them in a Supporting Documents section after Notes. For each document, such as a research record under `.apm/research/`, it names its purpose, path, structure, maintainer and readers.
+
+The Manager maintains the Spec and Plan and copies relevant content into **Task Prompts**, the messages that assign Tasks to Workers. Workers read `AGENTS.md` directly when it exists. [Workflow Overview](Workflow_Overview.md#task-review) covers changes during implementation.
 
 ## The Message Bus
 
-The Message Bus lives in `.apm/bus/`. Each Worker has a folder named by its identifier, such as `frontend-agent`, with three files:
+When APM uses separate Worker conversations, their messages go through the Message Bus in `.apm/bus/`. Each Worker has a folder named by its identifier, such as `frontend-agent`, with three files:
 
 | Bus | File | Message |
 | :--- | :--- | :--- |
@@ -33,28 +36,25 @@ The Message Bus lives in `.apm/bus/`. Each Worker has a folder named by its iden
 | **Report Bus** | `report.md` | A Task Report from the Worker: the outcome and Task Log path |
 | **Handoff Bus** | `handoff.md` | A Handoff Prompt: instructions for a fresh conversation |
 
-The Manager's folder holds only `handoff.md`. Each file holds at most one temporary message. An agent clears a processed message before replying; Handoff Prompts are cleared after loading. A Task Prompt stays populated during execution, so its presence does not prove delivery is still needed.
+The Manager's folder holds only `handoff.md`, for its own Handoffs. Each file holds one message at a time; its reader clears it after processing.
 
-You deliver each message by invoking a skill in its recipient's conversation. [Getting Started](Getting_Started.md#step-4-your-first-task-cycle) walks through the delivery steps.
+You deliver each message by invoking a skill in its recipient's conversation. [Getting Started](Getting_Started.md#working-with-a-worker) walks through the delivery steps.
 
 <Diagram name="message-bus" alt="The Manager writes to the Worker's Task Bus and the Worker reads it; the Worker writes to its Report Bus and the Manager reads it; you sit between them on both paths." phone />
 
-Agents outside APM can contribute through their own bus folders. Their reports carry their evidence directly; they do not become Workers or write Task Logs.
-
 ## Task Prompts and Dispatch
 
-### How Task Prompts Are Built
+### Task Prompts and Subagent Briefs
 
-A Task Prompt gives a Worker the objective, instructions, working directory, expected output and validation. The Manager selects relevant Spec decisions, dependency outputs, coordination notes and lasting findings for the Plan's Task, including each needed contract once. This keeps each assignment self-contained.
+A Task Prompt gives a Worker the objective, instructions, working directory, expected output and validation. The Manager adds the Spec decisions, dependency outputs and findings the Task needs.
+
+Subagents get a shorter brief from the agent that delegates to them: the objective, permitted scope, needed context and expected results. The delegating agent checks their results before relying on them.
 
 ### Dependency Context
 
-A Task depends on another when it needs that Task's output. The Manager scales the supplied context to the Worker's familiarity:
+A Task depends on another when it needs that Task's output. Before starting a Task, the Manager checks its listed dependencies against the results it needs and resolves any mismatches in the Plan and Tracker.
 
-- **Same-Worker dependency** - Its own earlier work: key outputs, paths and how to build on them.
-- **Cross-Worker dependency** - Unfamiliar work: what was produced, which files to read and how to integrate it.
-
-After a Handoff, a Worker has not loaded its earlier-Stage Task Logs, so those dependencies need Cross-Worker context. Recovery may also leave gaps that require fuller instructions.
+For a Worker's own earlier work, the Manager points briefly to the key outputs. For work the Worker hasn't seen, including its own earlier work after a Handoff, it explains what was produced, which files to read and how to build on it.
 
 ### Dispatch Modes
 
@@ -62,66 +62,66 @@ A dispatch sends ready work to a free Worker:
 
 - **Single** - One Task.
 - **Batch** - Two or three Tasks for the same Worker: independent ready Tasks or a dependency chain. The Worker runs them in order and reports once.
-- **Parallel** - Independent Tasks or batches for different Workers at the same time. This requires version control and a separate Git worktree for each Worker.
+- **Parallel** - Independent Tasks or batches for different Workers at the same time. For work in one repository, use separate working copies where available, such as Git worktrees, Jujutsu workspaces or Mercurial shared clones. Check what state and resources they still share. In a shared working directory, give each Task separate writable paths and keep inputs stable. The same rules apply to the Manager's subagents.
 
-With version control, each dispatch gets a branch and the Manager coordinates merges. It reviews reports and dispatches ready work without waiting for unrelated Workers.
+The Manager integrates accepted work as agreed during planning and makes sure each Task has the earlier work it depends on.
 
-Task size and dispatch mode determine how often exchanges pass through you. Discuss Task size with the Planner and dispatch preferences with the Manager.
+With Workers, Task size and dispatch mode determine how often exchanges pass through you. Discuss Task size with the Planner and dispatch preferences with the Manager.
+
+The Manager's subagents can take one Task, a group of related Tasks or part of several, and each returns its results when it finishes.
 
 ## Memory and Session State
 
-Shared files keep the session's state outside any conversation. The **Tracker** holds live coordination state; **Memory** preserves work history and continuation context.
+The **Tracker** and **Memory** are the coordination documents. The Tracker shows what is happening now and what needs to happen next. Memory preserves work history and context for later work.
 
 <Diagram name="overview" variant="state" alt="The overview diagram with the planning documents, the Tracker, and Memory highlighted." phone />
 
 ### The Tracker
 
-The Tracker (`.apm/tracker.md`) records Task states and next actions, branches and worktrees, each Worker's conversation number and context, and coordination notes. Task IDs link to their latest reported logs; a pending attempt's destination stays in its Task Prompt. Notes remain while ongoing work needs them or their decisions await a Stage summary or Index entry. The Manager updates the Tracker after review and dispatch. Tasks are Waiting on dependencies, Ready to assign, Active through execution and review, or Done after a final decision.
+The Tracker (`.apm/tracker.md`) records Task states and next actions, branches and worktrees, the Manager's and each Worker's conversation number, and current coordination notes. Each Handoff starts a role's next numbered conversation; the number identifies which conversation wrote each log. Tasks are Waiting on dependencies, Ready to assign, Active through execution and review, or Done after a final decision.
 
-### The Index
-
-The Index (`.apm/memory/index.md`) holds brief findings and accepted or unresolved limits that later work needs, with source links and a table linking to Stage summaries. Each summary records accepted outcomes, consequential findings and decisions, validation and limits, with links to its Task Logs.
+Tracker Notes explain blockers, pending decisions, tentative preferences and proposals that affect current work. They say when the information applies and how it affects the next action or decision.
 
 ### File-based Memory
 
 Memory lives in `.apm/memory/`:
 
-- **Task Logs** - A Worker's evidence and findings for each attempt. The original is `stage-<NN>/task-<NN>-<MM>.log.md`; follow-ups use `task-<NN>-<MM>.followup-01.log.md`, `followup-02` and onward in that folder. Each follow-up links to the original and previous follow-up, preserving earlier evidence.
+- **Task Logs** - Results, validation and findings for each Task, in `stage-<NN>/`. The Manager writes one log for each of its own Tasks; a Worker writes one for each attempt, and follow-up logs link back to earlier ones.
 - **Stage summaries** - The Manager's record of a Stage, at `stage-<NN>/stage-<NN>.summary.md`.
-- **Handoff Logs** - Working context for the next conversation, at `handoffs/<agent-slug>/handoff-<NN>.log.md`.
+- **Handoff Logs** - What the next conversation needs to continue, at `handoffs/<agent-slug>/handoff-<NN>.log.md`.
 
-Stage summaries group each Task's attempt logs and record final review decisions. Index findings link to the attempt or summary that supports them. [Quick Reference](Quick_Reference.md#project-structure) shows the full directory layout.
+[Quick Reference](Quick_Reference.md#project-structure) shows the full directory layout.
+
+### The Index
+
+The Index (`.apm/memory/index.md`) lists Stage outcomes and links to their summaries. Index Notes preserve findings, limits, established preferences and agreed changes that matter to later work, with links to their sources.
+
+Each Stage summary records accepted outcomes, findings, decisions, validation results and any issues you accepted, with links to its Task Logs. The Manager keeps the summary current until the next Stage starts or the session closes. When a later Stage changes an earlier result, its summary links to the earlier work.
+
+When a Tracker or Index note describes a consequential document update, it gives the before and after, the reason for the change, and its effect on the work. It links to the updated section.
 
 <Diagram name="state-compression" alt="Task Logs hold execution detail and the Tracker holds coordination detail; Stage summaries condense the results, and the Index links to them and records lasting findings." phone />
 
 ## Handoff and Continuity
 
-A Handoff transfers a Manager or Worker role to a fresh conversation. The outgoing agent checks current files and Git state, prepares its continuation records and asks you to review them. The incoming agent uses the approved records to resume. [Getting Started](Getting_Started.md#context-limits) gives the steps.
+A Handoff transfers a Manager or Worker role to a fresh conversation. The outgoing agent checks current files and any version control state, writes its Handoff Log and Handoff Prompt, and gives you a short recap. Reviewing the Handoff files is optional. [Getting Started](Getting_Started.md#context-limits) gives the steps.
 
 ### Why Handoff Works
 
-A Handoff saves selected working context in files that later conversations can reread. It produces two records:
+A Handoff writes down what later conversations need to continue. It produces two files:
 
 - **Handoff Log** - What was done, decided and observed beyond the Task Logs. It stays in Memory.
 - **Handoff Prompt** - Checked current state, what to read and where to resume. It travels through the Handoff Bus.
 
-[Context Engineering](Context_Engineering.md#context-across-conversations) explains why APM uses these records rather than relying on conversation compaction.
+[Context Engineering](Context_Engineering.md#context-across-conversations) explains why APM uses these files rather than relying on conversation compaction.
 
 <Diagram name="handoff" alt="The outgoing agent writes a Handoff Log to Memory and a Handoff Prompt to the Handoff Bus; you open a new conversation, where the incoming agent reads both with other relevant session state." phone />
 
-### Manager vs Worker Handoff
-
-The Manager records outstanding assignments, reports and merges. A Worker mid-Task keeps its Task Prompt in the bus and records where to resume; mid-batch, it also records which Tasks are already logged.
-
-### Context Reconstruction
-
-An incoming Manager reads planning documents, the Tracker, the Index, its Handoff Log and the Task Logs needed for current coordination.
-
-An incoming Worker reads the Rules, its Handoff Log and the latest relevant attempt logs for its Tasks in the current Stage, following earlier links where needed. A pending attempt resumes with the log path in its Task Prompt. The Manager supplies richer dependency context for earlier work it has not read.
+Before its Handoff, the Manager pauses running subagents and records outstanding Task Prompts, Task Reports and any work you are doing yourself. A Worker records where to resume its current Task, including any part you are doing yourself. The incoming agent reads its Handoff Log with the session files it needs, such as the Tracker for a Manager or its recent Task Logs for a Worker.
 
 ### Recovery
 
-Recovery rebuilds context after compaction or a lost conversation without changing the role's conversation number. It rereads instructions, bus messages and project files, asking you about gaps the records cannot settle. See [Troubleshooting](Troubleshooting_Guide.md#context-recovery) for commands and recovery problems.
+Recovery rebuilds context after compaction or a lost conversation without changing the role's conversation number. It rereads instructions, bus messages and project files, asking you about gaps the files cannot settle. See [Troubleshooting](Troubleshooting_Guide.md#context-recovery) for commands and recovery problems.
 
 ## Next Steps
 

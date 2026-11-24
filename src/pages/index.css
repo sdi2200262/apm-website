@@ -6,6 +6,9 @@
 .cover-body { display: grid; grid-template-columns: minmax(0, 640px); justify-content: center; align-content: center; gap: 56px; min-height: max(640px, calc(100svh - 57px)); padding: 72px 0; text-align: center; }
 .cover h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 400; line-height: 1.04; text-wrap: balance; }
 .cover-body .subtitle { margin-inline: auto; }
+.cover-body p { text-wrap: pretty; } /* no lone last words */
+.nobr { white-space: nowrap; } /* keeps a term button with the punctuation after it */
+.cover-body p + p { margin-top: 1.5em; margin-top: 1lh; } /* one blank line between cover paragraphs */
 /* Cover definitions (Cover in index.js): a quiet line under the paragraph. Its box keeps a fixed height, so nothing shifts;
    the longest note runs two lines past it into the cover's bottom padding, so the cover centres on what is always shown. */
 .cover .note { height: calc(3em + 20px); }

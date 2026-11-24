@@ -108,12 +108,13 @@ class D:
 
 def fades(hl):
     # Which groups fade when `hl` is highlighted: P/I planning/implementation agents, M/W the Manager/Workers,
-    # PS/IS their files (MS the Manager's Tracker, WS the Workers' Memory edge),
+    # PS/IS their files (MS the Manager's Tracker, WS the Workers' Memory edge, SP the Spec/Plan node itself),
     # U the users and relays, H the Planning-to-Implementation arrow. Phase maps keep their own files.
     return dict(P=hl not in (None, 'planning'), I=hl not in (None, 'manager', 'workers'), M=hl not in (None, 'manager'), W=hl not in (None, 'workers'),
                 PS=hl not in (None, 'planning', 'state'), IS=hl not in (None, 'state', 'manager', 'workers'),
                 MS=hl not in (None, 'state', 'manager'), WS=hl not in (None, 'state', 'workers'),
-                U=hl not in (None, 'user'), H=hl is not None and hl != 'user')
+                U=hl not in (None, 'user'), H=hl is not None and hl != 'user',
+                SP=hl not in (None, 'planning', 'state', 'manager'))  # Spec/Plan node: the Manager keeps them current
 
 
 def desktop(t, hl):
@@ -134,7 +135,7 @@ def desktop(t, hl):
     d.edge(u1, ma, (1, .5), (0, .5), dashed=True, fade=f['H'])  # hand-off from Planning to Implementation
     d.edge(ma, u2, (1, .5), (0, .5), both=True, fade=f['M'] and f['U'])
     d.edge(u2, wo, (1, .5), (0, .5), both=True, fade=f['W'] and f['U'])
-    sp = d.icon('file-cog', (X[0] + X[1]) / 2, FY, 'Spec, Plan, Rules', f['PS'])
+    sp = d.icon('file-cog', (X[0] + X[1]) / 2, FY, 'Spec, Plan', f['SP'])
     d.edge(d.point(X[0], LY), sp, en=(0, .5), line=True, dashed=True, fade=f['PS'], wp=[(X[0], FY)])
     d.edge(d.point(X[1], LY), sp, en=(1, .5), line=True, dashed=True, fade=f['PS'], wp=[(X[1], FY)])
     bus = d.icon('inbox', X[3], BY, 'Message Bus', f['IS'] and f['U'])
@@ -160,7 +161,7 @@ def phone(t, hl=None):
     pl = d.icon('bot', L, A, 'Planner', f['P'])
     u1 = d.icon('user', R, A, 'User', f['P'] and f['U'])
     d.edge(pl, u1, (1, .5), (0, .5), both=True, fade=f['P'] and f['U'])
-    sp = d.icon('file-cog', M, S, 'Spec, Plan, Rules', f['PS'])
+    sp = d.icon('file-cog', M, S, 'Spec, Plan', f['SP'])
     d.edge(d.point(L, A + LB), sp, en=(0, .5), line=True, dashed=True, fade=f['PS'], wp=[(L, S)])
     d.edge(d.point(R, A + LB), sp, en=(1, .5), line=True, dashed=True, fade=f['PS'], wp=[(R, S)])
     d.text(M, T2, 300, 'Implementation Phase', f['I'])
@@ -338,7 +339,7 @@ def handoff_phone(t):
     return d
 
 
-def planning_phase(t):
+def planning_phase(t, docs='Spec, Plan, Rules'):
     # Two left-to-right rows, as in the source: discovery above, documents below. The clarification loop
     # returns over row 1; "Yes" runs down the left lane into the documents; the revision loop returns over row 2.
     d, LB = D(720, 420, t, 9), 38
@@ -356,7 +357,7 @@ def planning_phase(t):
     review = d.icon('user', REVIEW, LOWER, 'User reviews\nfor completeness')
     checked = d.shape('rhombus', CHECK, LOWER, 64, 50, 'Aligned?')
     done = d.shape('ellipse', END, LOWER, 60, 60, 'Planning\ncomplete')
-    specs = d.icon('file-cog', WRITE, FILE, 'Spec, Plan, Rules')
+    specs = d.icon('file-cog', WRITE, FILE, docs)
 
     for source, target in ((start, initiate), (initiate, gather), (gather, requirements)):
         d.edge(source, target, (1, .5), (0, .5))
@@ -379,16 +380,16 @@ def planning_phase(t):
     return d
 
 
-def implementation_phase(t):
+def implementation_phase(t, docs='Spec, Plan, Rules'):
     # The original workflow in bands: handoff across the top, assignment, execution, reporting. The first
     # Aligned? sits above the Manager's update so its "Yes" drops straight in; "User initiates new Worker"
     # hangs below the New Worker? decision and feeds the notification. Dashed channels: a spine down column M
-    # (Manager, Message Bus, Workers' reports) with the Tracker and Spec, Plan, Rules tied to it, and the
+    # (Manager, Message Bus, Workers' reports) with the Tracker and planning documents tied to it, and the
     # Message Bus line across WORK with Memory and Deliverables hanging from it. Each dashed segment is drawn once.
     d = D(770, 920, t, 9)
     L, M, R, E = 100, 380, 535, 630  # columns: reviewer, main, New Worker?, Workers
     LOOP, LANE = 742, 58  # x's of the retry loop and the project-complete lane
-    TR, PL = M - 120, M + 120  # Tracker and Spec, Plan, Rules (Memory and Deliverables share them)
+    TR, PL = M - 120, M + 120  # Tracker and planning documents (Memory and Deliverables share them)
     INIT, ASSIGN, WORK, REPORT = 100, 290, 545, 790
     DOC, STATE, LOOP1 = 460, 665, 205  # LOOP1: y of the revise loop and of User initiates new Worker
     S = 9  # the top row sits 9px right, so its Yes drops straight into the update's top-right
@@ -402,7 +403,7 @@ def implementation_phase(t):
     note(d, R, LOOP1 - 29, 'User initiates\nnew Worker', 100)  # above its icon, clear of the Yes line below
     notify_workers = d.icon('user', E, ASSIGN, 'User notifies\nWorkers')
     tracker = d.icon('file-chart-column-increasing', TR, DOC, 'Tracker')
-    plan = d.icon('file-cog', PL, DOC, 'Spec, Plan, Rules')
+    plan = d.icon('file-cog', PL, DOC, docs)
     second_aligned = d.shape('rhombus', L, ASSIGN, 64, 58, 'Aligned?')
     complete = d.shape('ellipse', LANE, 420, 64, 64, 'Project\ncomplete')
     review_logs = d.icon('bot', L, WORK, 'Manager reviews\nlogs and reports')
@@ -464,7 +465,11 @@ def implementation_phase(t):
 # Coded figures: name -> (desktop layout, phone layout or None). Output <name>[-phone]-<theme>.svg.
 FIGURES = {'message-bus': (message_bus, message_bus_phone), 'state-compression': (state_compression, state_compression_phone),
            'handoff': (handoff, handoff_phone),
-           'planning-phase-overview': (planning_phase, None), 'implementation-phase-overview': (implementation_phase, None)}
+           'planning-phase-overview': (planning_phase, None), 'implementation-phase-overview': (implementation_phase, None),
+           # The two phase figures above keep their thesis labels for the Research reader; the docs use these copies,
+           # labelled with the current planning documents.
+           'planning-phase': (lambda t: planning_phase(t, 'Spec, Plan'), None),
+           'implementation-phase': (lambda t: implementation_phase(t, 'Spec, Plan'), None)}
 
 
 def literata_ttf(tmp):
