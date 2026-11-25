@@ -228,7 +228,7 @@ The CLI keeps global settings in `~/.apm/config.json`: your saved custom reposit
 
 ## Workspace Metadata
 
-Each installation has `.apm/metadata.json`, which `apm update`, `apm add`, `apm remove`, and `apm archive` read for the current state.
+Each installation has `.apm/metadata.json`. Every command reads it for the current state; `apm init` and `apm custom` read it to detect an existing installation.
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -248,6 +248,6 @@ Each archive in `.apm/archives/` contains its own `metadata.json` with the same 
 | Field | Type | Description |
 | :--- | :--- | :--- |
 | `archivedAt` | string | ISO 8601 timestamp of archival |
-| `reason` | string | Why the archive was created (e.g. `"archive"`, `"update"`, `"migration"`) |
+| `reason` | string | Why the archive was created: `"archive"` or `"update"`. Archives migrated by hand from older versions may show other values |
 
 `archivedWorktrees` records moved worktree paths, source repositories, branches and whether unfinished files were present. `apm archive --list` reads the metadata and shows the worktree count.

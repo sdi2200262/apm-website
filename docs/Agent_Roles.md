@@ -15,9 +15,9 @@ APM has three roles. The Planner defines the work, the Manager coordinates imple
 
 | Role | Context Scope | Conversations | Active Phase |
 | :--- | :--- | :--- | :--- |
-| **Planner** | Project requirements and workspace research | One | Planning Phase |
+| **Planner** | Project requirements, workspace research and `AGENTS.md` | One | Planning Phase |
 | **Manager** | Planning documents, the Tracker and Memory | Successive via Handoff | Implementation Phase |
-| **Worker** | Its Task Prompts, `AGENTS.md` and its conversation | One per area, successive via Handoff | Implementation Phase |
+| **Worker** | Its Task Prompts, its Task Logs, `AGENTS.md` and its conversation | One per area, successive via Handoff | Implementation Phase |
 
 A **Handoff** moves the Manager or a Worker to a fresh conversation when context runs low. The role continues from shared files; [Agent Orchestration](Agent_Orchestration.md#handoff-and-continuity) explains how.
 
