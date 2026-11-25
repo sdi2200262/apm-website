@@ -26,7 +26,7 @@ The CLI checks archive-entry paths against the project root, skips entries under
 
 ## The Security Disclaimer
 
-Installing, adding or updating from a custom repository requires your acknowledgement that its templates are unreviewed. Saving the repository with `skipDisclaimer` enabled suppresses that prompt on later use. This setting does not verify the repository or warn if it is later compromised.
+Installing, adding or updating from a custom repository requires your acknowledgement that its templates are unreviewed. After you install or update from a repository you haven't saved, the CLI offers to save it and then asks whether to skip the disclaimer in future. Answering yes sets `skipDisclaimer` and suppresses the prompt on later use. Repositories saved with `apm custom --add-repo` keep the prompt. This setting does not verify the repository or warn if it is later compromised.
 
 To manage saved repositories:
 

@@ -33,7 +33,7 @@ Choose `agents` for agents using `AGENTS.md` and `.agents/skills/`, such as Code
 apm init -a agents claude
 ```
 
-The CLI installs skills and procedure guides for your target, plus session files under `.apm/`. See the [CLI Guide](CLI_Guide.md#installation) for local installation and file paths.
+The CLI installs skills and procedure guides for your target, plus session files under `.apm/`. See the [CLI Guide](CLI_Guide.md#installation) for local installation and the [target table](CLI_Guide.md#apm-init) for file paths.
 
 APM's commands are skills. Examples here use Claude Code's `/` syntax; in Codex, use `$`, such as `$apm-1-initiate-planner`. Other assistants use their skill picker or chat syntax. Each APM agent works in its own conversation; keep active chats open.
 
@@ -162,7 +162,7 @@ apm archive --name horse-tinder-v1
 apm init
 ```
 
-The next Planner can use relevant archives as context. See [`apm archive`](CLI_Guide.md#apm-archive) for details.
+Archiving keeps the session records and moves linked Git worktrees into the archive. It then clears the active session files and the installed skills and guides; `AGENTS.md` stays. The next Planner can use relevant archives as context. See [`apm archive`](CLI_Guide.md#apm-archive) for details.
 
 ## Next Steps
 

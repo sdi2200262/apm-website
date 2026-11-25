@@ -11,7 +11,7 @@ Commands, paths and workflow steps to keep at hand. For your first session, foll
 
 ## Commands
 
-Invoke these skills by name in your agent conversations. Examples use Claude Code's `/` syntax; in Codex, use `$`. Other assistants use their own skill picker or chat syntax. In the single-skill research preview (see [Getting Started](Getting_Started.md#installation)), invoke `/apm` and ask for these steps in plain words:
+Invoke these skills by name in your agent conversations. Examples use Claude Code's `/` syntax; in Codex, use `$`. Other assistants use their own skill picker or chat syntax. In the single-skill research preview (see [`apm init`](CLI_Guide.md#apm-init)), invoke `/apm` and ask for these steps in plain words:
 
 | Command | What it does |
 | :--- | :--- |
@@ -34,7 +34,7 @@ Run these in a terminal in the project workspace:
 | `apm init` | Initialise APM with official templates |
 | `apm custom -r owner/repo` | Initialise from a custom repository |
 | `apm update` | Archive the session and install an available update from its source |
-| `apm archive` | Archive the current session to `.apm/archives/` and remove installed assistant files |
+| `apm archive` | Archive the session to `.apm/archives/`, then clear the session files and installed templates |
 | `apm archive --name my-feature` | Archive with a custom name |
 | `apm add -a claude` | Add an installation target |
 | `apm remove -a claude` | Remove an installation target |
@@ -116,6 +116,6 @@ For context lost without a Handoff, see [Recovery](Troubleshooting_Guide.md#cont
 To stop early, tell the Manager; it pauses active work and records what's unfinished. An optional `/apm-8-summarize-session` can run in a new chat or in the Manager's chat. To archive and start another session:
 
 ```bash
-apm archive                        # move .apm/ files to archives, clean workspace
+apm archive                        # archive the session, then clear session files and templates
 apm init                           # reinstall and start a new session (the Planner detects past archives)
 ```
