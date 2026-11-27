@@ -30,6 +30,8 @@ The workflow:
 
 The [customisation skill](https://github.com/sdi2200262/agentic-project-management/tree/main/skills/apm-customization) can guide your assistant through these changes and checks.
 
+For a working example, [apm-atlassian](https://github.com/sdi2200262/apm-atlassian) adds Spec and Plan review in Confluence, Stage claims in Jira, teammate handoffs, and shared APM session documents in Bitbucket.
+
 ## The Build
 
 Two files configure the build:
